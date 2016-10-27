@@ -5,8 +5,13 @@ python:
   - "3.5"
 install:
   - pip install -r requirements.txt
+  - pip install coverage
+  - pip install codacy-coverage
 before_script:
   - DJANGO_SETTINGS_MODULE=nanou.settings.prod python nanou/manage.py migrate
   - DJANGO_SETTINGS_MODULE=nanou.settings.prod python nanou/manage.py runserver --insecure &
 script:
-  - python nanou/manage.py test
+  - coverage run nanou/manage.py test nanou
+after_success:
+  - coverage xml
+  - python-codacy-coverage -r coverage.xml
