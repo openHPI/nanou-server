@@ -1,0 +1,9 @@
+jshint:
+  enabled: true
+
+scss:
+  enabled: true
+
+python:
+  enabled: true
+  config_file: tox.ini
