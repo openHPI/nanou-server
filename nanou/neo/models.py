@@ -41,3 +41,7 @@ class NeoModel(GraphObject):
             return [i.__primaryvalue__ for i in attr]
         else:
             return attr
+
+    def delete(self):
+        with NeoGraph() as graph:
+            return graph.delete(self)

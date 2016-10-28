@@ -3,11 +3,12 @@ from django.urls import reverse_lazy
 
 from nanou.widgets import SemanticUISelectMultiple
 from neo.views import NeoListView, NeoDetailView, NeoDeleteView, NeoUpdateView, NeoCreateView
+from neo.forms import NeoForm
 
 from models import Video
 
 
-class VideoForm(forms.Form):
+class VideoForm(NeoForm):
     name = forms.CharField(
         label='Your name',
         max_length=100,
