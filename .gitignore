@@ -90,3 +90,8 @@ ENV/
 
 # Database
 *.sqlite3
+
+# npm/yarn
+node_modules/
+yarn.lock
+.yarnclean

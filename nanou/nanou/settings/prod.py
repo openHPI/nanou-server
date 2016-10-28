@@ -13,6 +13,9 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static/')  # noqa
+
+
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 

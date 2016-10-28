@@ -1,0 +1,12 @@
+{
+  "name": "nanou-server",
+  "version": "1.0.0",
+  "repository": {
+    "url": "git@github.com:openHPI/nanou-server.git",
+    "type": "git"
+  },
+  "author": "Max Bothe <mathebox@gmail.com>",
+  "dependencies": {
+    "semantic-ui": "2.2.4"
+  }
+}

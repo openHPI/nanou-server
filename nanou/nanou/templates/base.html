@@ -1,0 +1,34 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>nanou</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'semantic-ui/dist/semantic.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'nanou/css/base.css' %}">
+</head>
+
+<body>
+
+    <div class="ui container">
+        <div class="ui borderless main menu">
+            <a class="header item">nanou</a>
+            <div class="right menu">
+                <a class="ui item">{{ user }}</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui main text container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+
+</html>
