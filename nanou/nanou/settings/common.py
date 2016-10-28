@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'videos',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +112,10 @@ NPM_FILE_PATTERNS = {
         'dist/semantic.min.css',
         'dist/themes/default/assets/fonts/*',
     ],
+    'jquery': [
+        'dist/jquery.min.js',
+        'dist/jquery.min-map',
+    ],
 }
 
 
@@ -146,6 +151,19 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+
+# Example neo4j config
+# Configure your instance in local_settings.py
+NEO_DATABASE = {
+    'secure': False,
+    'host': 'localhost',
+    'http_port': 7474,
+    'https_port': 7473,
+    'bolt_port': 7687,
+    'user': 'neo4j',
+    'password': '',
 }
 
 

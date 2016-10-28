@@ -12,23 +12,24 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'semantic-ui/dist/semantic.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'nanou/css/base.css' %}">
+
+    <script type="text/javascript" src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'semantic-ui/dist/semantic.min.js' %}"></script>
 </head>
 
 <body>
-
     <div class="ui container">
         <div class="ui borderless main menu">
             <a class="header item">nanou</a>
+            <a href="{% url 'videos:list' %}" class="item">Videos</a>
             <div class="right menu">
                 <a class="ui item">{{ user }}</a>
             </div>
         </div>
     </div>
 
-    <div class="ui main text container">
-        {% block content %}
-        {% endblock %}
-    </div>
+    {% block content %}
+    {% endblock %}
 </body>
 
 </html>
