@@ -163,7 +163,7 @@ NEO_DATABASE = {
     'https_port': 7473,
     'bolt_port': 7687,
     'user': 'neo4j',
-    'password': '',
+    'password': 'neo4j',
 }
 
 
