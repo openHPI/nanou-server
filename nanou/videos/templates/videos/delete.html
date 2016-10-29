@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui text container">
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Do you really want to delete video "{{ video.name }}"?</p>
+        <input class="ui negative button" type="submit" value="Delete" />
+        <a class="ui basic button" href="{% url 'videos:list'%}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

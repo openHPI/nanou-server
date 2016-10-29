@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1>Video: {{ video.name }}</h1>
+    <ul>
+        <li>
+            Required by videos: {{video.required_by_videos|length}}
+            <ul>
+                {% for v in video.required_by_videos %}
+                <li>{{v.name}}</li>
+                {% endfor%}
+            </ul>
+        </li>
+        <li>
+            Required videos: {{video.required_videos|length}}
+            <ul>
+                {% for v in video.required_videos %}
+                <li>{{v.name}}</li>
+                {% endfor%}
+            </ul>
+        </li>
+    </ul>
+    <p>
+        <a href="{% url 'videos:update' video.id %}" class="ui primary basic button">Edit</a>
+        <a href="{% url 'videos:delete' video.id %}" class="ui negative basic button">Delete</a>
+        <a href="{% url 'videos:list' %}" class="ui basic button">Back to list of videos</a>
+    </p>
+</div>
+{% endblock %}
