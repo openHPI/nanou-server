@@ -1,3 +1,5 @@
+sudo: required
+dist: trusty
 language: python
 python:
   - "2.7"
@@ -7,7 +9,7 @@ env:
   global:
     - NEO_VERSION=3.0.3
 before_install:
-  - java install oraclejdk8
+  - jdk_switcher use oraclejdk8
   # install Neo4j locally:
   - wget dist.neo4j.org/neo4j-community-$NEO_VERSION-unix.tar.gz
   - tar -xzf neo4j-community-$NEO_VERSION-unix.tar.gz
