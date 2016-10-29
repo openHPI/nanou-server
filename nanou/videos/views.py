@@ -5,7 +5,7 @@ from nanou.widgets import SemanticUISelectMultiple
 from neo.views import NeoListView, NeoDetailView, NeoDeleteView, NeoUpdateView, NeoCreateView
 from neo.forms import NeoForm
 
-from models import Video
+from .models import Video
 
 
 class VideoForm(NeoForm):

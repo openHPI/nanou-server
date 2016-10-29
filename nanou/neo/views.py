@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 
-from utils import NeoGraph, get_neo_object_or_404
+from .utils import NeoGraph, get_neo_object_or_404
 
 
 class NeoListView(ListView):

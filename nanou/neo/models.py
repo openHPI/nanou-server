@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from py2neo.ogm import GraphObject, Related, RelatedObjects
 
-from utils import NeoGraph
+from .utils import NeoGraph
 
 
 class NeoModel(GraphObject):
