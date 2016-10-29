@@ -3,11 +3,18 @@ python:
   - "2.7"
   - "3.4"
   - "3.5"
+env:
+  global:
+    - NEO_VERSION=3.0.3
+    - NEO_DB_NAME=test
 install:
   - pip install -r requirements.txt
   - pip install coverage
   - pip install codacy-coverage
 before_script:
+  - neokit install $NEO_DB_NAME $NEO_VERSION
+  - neokit disable-auth $NEO_DB_NAME
+  - neokit start $NEO_DB_NAME
   - DJANGO_SETTINGS_MODULE=nanou.settings.prod python nanou/manage.py migrate
   - DJANGO_SETTINGS_MODULE=nanou.settings.prod python nanou/manage.py runserver --insecure &
 script:
@@ -15,3 +22,5 @@ script:
 after_success:
   - coverage xml
   - python-codacy-coverage -r coverage.xml
+after_script:
+  - neokit stop $NEO_DB_NAME
