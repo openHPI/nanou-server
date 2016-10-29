@@ -19,6 +19,22 @@
                 <li>{{v.name}}</li>
                 {% endfor%}
             </ul>
+        </li>    
+        <li>
+            Required groups: {{video.required_groups|length}}
+            <ul>
+                {% for g in video.required_groups %}
+                <li>{{g.name}}</li>
+                {% endfor%}
+            </ul>
+        </li>
+        <li>
+            Contained in groups: {{video.contained_in_groups|length}}
+            <ul>
+                {% for g in video.contained_in_groups %}
+                <li>{{g.name}}</li>
+                {% endfor%}
+            </ul>
         </li>
     </ul>
     <p>

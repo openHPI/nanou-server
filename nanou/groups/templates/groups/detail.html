@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1>Group: {{ group.name }}</h1>
+    <ul>
+        <li>
+            Required by videos: {{group.required_by_videos|length}}
+            <ul>
+                {% for v in group.required_by_videos %}
+                <li>{{v.name}}</li>
+                {% endfor%}
+            </ul>
+        </li>
+        <li>
+            Contained videos: {{group.contained_videos|length}}
+            <ul>
+                {% for v in group.contained_videos %}
+                <li>{{v.name}}</li>
+                {% endfor%}
+            </ul>
+        </li>
+    </ul>
+    <p>
+        <a href="{% url 'groups:update' group.id %}" class="ui primary basic button">Edit</a>
+        <a href="{% url 'groups:delete' group.id %}" class="ui negative basic button">Delete</a>
+        <a href="{% url 'groups:list' %}" class="ui basic button">Back to list of groups</a>
+    </p>
+</div>
+{% endblock %}

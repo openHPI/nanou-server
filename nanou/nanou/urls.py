@@ -22,5 +22,6 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.landingpage, name='landingpage'),
+    url(r'^groups/', include('groups.urls', namespace='groups')),
     url(r'^videos/', include('videos.urls', namespace='videos')),
 ]

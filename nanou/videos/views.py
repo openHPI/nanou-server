@@ -4,13 +4,14 @@ from django.urls import reverse_lazy
 from nanou.widgets import SemanticUISelectMultiple
 from neo.views import NeoListView, NeoDetailView, NeoDeleteView, NeoUpdateView, NeoCreateView
 from neo.forms import NeoForm
+from groups.models import Group
 
 from .models import Video
 
 
 class VideoForm(NeoForm):
     name = forms.CharField(
-        label='Your name',
+        label='Name',
         max_length=100,
         required=True
     )
@@ -23,6 +24,18 @@ class VideoForm(NeoForm):
     required_videos = forms.MultipleChoiceField(
         label='Required videos',
         choices=[(video.id, video.name) for video in Video.all()],
+        required=False,
+        widget=SemanticUISelectMultiple(),
+    )
+    required_groups = forms.MultipleChoiceField(
+        label='Required by videos',
+        choices=[(group.id, group.name) for group in Group.all()],
+        required=False,
+        widget=SemanticUISelectMultiple(),
+    )
+    contained_in_groups = forms.MultipleChoiceField(
+        label='Required videos',
+        choices=[(group.id, group.name) for group in Group.all()],
         required=False,
         widget=SemanticUISelectMultiple(),
     )
