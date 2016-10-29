@@ -3,6 +3,8 @@ python:
   - "2.7"
   - "3.4"
   - "3.5"
+jdk:
+  - oraclejdk8
 env:
   global:
     - NEO_VERSION=3.0.3
