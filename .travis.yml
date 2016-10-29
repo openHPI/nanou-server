@@ -3,8 +3,15 @@ python:
   - "2.7"
   - "3.4"
   - "3.5"
-services:
-    - neo4j
+env:
+  global:
+    - NEO_VERSION=3.0.3
+before_install:
+  # install Neo4j locally:
+  - wget dist.neo4j.org/neo4j-community-$NEO_VERSION-unix.tar.gz
+  - tar -xzf neo4j-community-$NEO_VERSION-unix.tar.gz
+  - sed -i.bak s/dbms.security.auth_enabled=true/dbms.security.auth_enabled=false/g neo4j-community-$NEO_VERSION/conf/neo4j-server.properties
+  - neo4j-community-$NEO_VERSION/bin/neo4j start
 install:
   - pip install -r requirements.txt
   - pip install coverage
