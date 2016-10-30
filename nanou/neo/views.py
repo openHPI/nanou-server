@@ -31,7 +31,6 @@ class NeoCreateView(CreateView):
             kwargs['is_new_instance'] = True
         return super(NeoCreateView, self).get_context_data(**kwargs)
 
-
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         form = form_class(request.POST)

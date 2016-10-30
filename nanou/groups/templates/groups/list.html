@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1 class="ui header">Groups</h1>
+    <table class="ui single line table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th class="right aligned">
+                    <a href="{% url 'groups:create' %}" class="ui primary button">Add Group</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr>
+                <td>
+                    <a href="{% url 'groups:detail' group.id %}">{{ group.name }}</a>
+                </td>
+                <td class="right aligned">
+                    <a href="{% url 'groups:update' group.id %}" class="ui secondary basic button">Edit</a>
+                    <a href="{% url 'groups:delete' group.id %}" class="ui negative basic button">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">
+                    No groups available.
+                </td>
+            </tr>
+            {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
