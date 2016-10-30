@@ -17,7 +17,8 @@
         </div>
         {% endfor %}
 
-        <input class="ui primary button" type="submit" value="Save" />
+        <button class="ui primary button" type="submit" value="Save">Save</button>
+        <a href="{% url 'groups:list' %}" class="ui basic button">Back to list of groups</a>
     </form>
 </div>
 {% endblock %}
