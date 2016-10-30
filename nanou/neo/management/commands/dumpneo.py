@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         export = list()
-        for app_name, app_config in apps.app_configs.items():
+        for app_config in apps.app_configs.values():
             if module_has_submodule(app_config.module, MODELS_MODULE_NAME):
                 models_module_name = '{}.{}'.format(app_config.name, MODELS_MODULE_NAME)
                 models_module = import_module(models_module_name)
