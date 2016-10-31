@@ -1,0 +1,117 @@
+[
+    {
+        "fields": {
+            "contained_videos": [
+                3,
+                4
+            ],
+            "name": "Group",
+            "required_by_videos": [
+                2
+            ]
+        },
+        "model": "groups.models.Group",
+        "id": 5
+    },
+    {
+        "fields": {
+            "required_groups": [],
+            "required_videos": [],
+            "name": "A",
+            "required_by_videos": [
+                2,
+                1
+            ],
+            "contained_in_groups": []
+        },
+        "model": "videos.models.Video",
+        "id": 0
+    },
+    {
+        "fields": {
+            "required_groups": [],
+            "required_videos": [
+                0
+            ],
+            "name": "B",
+            "required_by_videos": [],
+            "contained_in_groups": []
+        },
+        "model": "videos.models.Video",
+        "id": 1
+    },
+    {
+        "fields": {
+            "required_groups": [
+                5
+            ],
+            "required_videos": [
+                0
+            ],
+            "name": "C",
+            "required_by_videos": [],
+            "contained_in_groups": []
+        },
+        "model": "videos.models.Video",
+        "id": 2
+    },
+    {
+        "fields": {
+            "required_groups": [],
+            "required_videos": [],
+            "name": "D",
+            "required_by_videos": [],
+            "contained_in_groups": [
+                5
+            ]
+        },
+        "model": "videos.models.Video",
+        "id": 3
+    },
+    {
+        "fields": {
+            "required_groups": [],
+            "required_videos": [],
+            "name": "E",
+            "required_by_videos": [],
+            "contained_in_groups": [
+                5
+            ]
+        },
+        "model": "videos.models.Video",
+        "id": 4
+    },
+    {
+        "fields": {
+            "required_groups": [],
+            "required_videos": [],
+            "name": "54321",
+            "required_by_videos": [],
+            "contained_in_groups": []
+        },
+        "model": "videos.models.Video",
+        "id": 7
+    },
+    {
+        "fields": {
+            "required_groups": [],
+            "required_videos": [],
+            "name": 123456,
+            "required_by_videos": [],
+            "contained_in_groups": []
+        },
+        "model": "videos.models.Video",
+        "id": 9
+    },
+    {
+        "fields": {
+            "required_groups": [],
+            "required_videos": [],
+            "name": "4321",
+            "required_by_videos": [],
+            "contained_in_groups": []
+        },
+        "model": "videos.models.Video",
+        "id": 10
+    }
+]

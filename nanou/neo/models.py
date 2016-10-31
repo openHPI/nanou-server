@@ -11,6 +11,11 @@ class NeoModel(GraphObject):
         with NeoGraph() as graph:
             return cls.select(graph)
 
+    @classmethod
+    def first(cls):
+        with NeoGraph() as graph:
+            return cls.select(graph).first()
+
     @property
     def id(self):
         return self.__primaryvalue__

@@ -60,9 +60,9 @@ class NeoUpdateView(UpdateView):
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         form = form_class(request.POST)
+        obj = self.get_object()
         if form.is_valid():
             with NeoGraph() as graph:
-                obj = self.get_object()
                 for k, v in form.cleaned_data.items():
                     obj.update_prop(k, v)
                 graph.push(obj)
