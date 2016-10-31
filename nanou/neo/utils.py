@@ -15,7 +15,8 @@ def get_neo_object_or_404(cls, pk, graph):
 
 class NeoGraph(object):
     def __enter__(self):
-        return Graph(**settings.NEO_DATABASE)
+        neo_db = settings.TEST_NEO_DATABASE if settings.TESTING else settings.NEO_DATABASE
+        return Graph(**neo_db)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass

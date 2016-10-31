@@ -168,6 +168,15 @@ NEO_DATABASE = {
     'password': 'neo4j',
 }
 
+TEST_NEO_DATABASE = {
+    'bolt': False,
+    'secure': False,
+    'host': 'localhost',
+    'http_port': 7475,
+    'user': 'neo4j',
+    'password': 'neo4j',
+}
+
 
 TESTING = 'test' in sys.argv
 

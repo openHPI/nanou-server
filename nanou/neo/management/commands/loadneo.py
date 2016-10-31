@@ -1,5 +1,7 @@
 import json
+import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from py2neo.ogm import Property, Related
 
@@ -13,10 +15,12 @@ class Command(BaseCommand):
         parser.add_argument('args', metavar='fixture', nargs='+', help='Fixture labels.')
 
     def handle(self, *fixture_paths, **options):
+        self.verbosity = options['verbosity']
+
         for path in fixture_paths:
             object_map = dict()
             relationship_count = 0
-            with open(path, 'r') as fixture_file:
+            with open(os.path.join(settings.BASE_DIR, path), 'r') as fixture_file:
                 data = json.load(fixture_file)
 
                 # create objects with properties
@@ -41,11 +45,12 @@ class Command(BaseCommand):
             with NeoGraph() as graph:
                 for obj in object_map.values():
                     graph.create(obj)
-            self.stdout.write('{path}: {obj_count} objects and {rel_count} relationships created'.format(**{
-                'path': path,
-                'obj_count': len(object_map),
-                'rel_count': relationship_count/2,
-            }))
+            if self.verbosity >= 1:
+                self.stdout.write('{path}: {obj_count} objects and {rel_count} relationships created'.format(**{
+                    'path': path,
+                    'obj_count': len(object_map),
+                    'rel_count': relationship_count/2,
+                }))
 
 
 def _model_class(entry):
