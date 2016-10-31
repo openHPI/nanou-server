@@ -44,4 +44,9 @@ class NeoModel(GraphObject):
 
     def delete(self):
         with NeoGraph() as graph:
+            for prop_name, prop in self.__class__.__dict__.items():
+                if isinstance(prop, Related):
+                    rel_objects = getattr(self, prop_name)
+                    rel_objects.clear()
+            graph.push(self)
             return graph.delete(self)
