@@ -177,8 +177,7 @@ TEST_NEO_DATABASE = {
     'password': 'neo4j',
 }
 
-
-TESTING = 'test' in sys.argv
+TESTING = any(arg.endswith('test') for arg in sys.argv)
 
 # speed up tests
 if TESTING:
