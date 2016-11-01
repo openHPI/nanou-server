@@ -30,9 +30,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'groups',
-    'neo',
-    'videos',
+    'groups.apps.GroupsConfig',
+    'neo.apps.NeoConfig',
+    'videos.apps.VideosConfig',
 ]
 
 MIDDLEWARE = [
@@ -89,6 +89,10 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'landingpage'
 
 
 # Static files (CSS, JavaScript, Images)

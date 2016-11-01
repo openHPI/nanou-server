@@ -1,0 +1,12 @@
+.ui.stacked.segment:after {
+    border-top: 0;
+}
+
+.ui.grid.login-wrapper {
+    height: 100%;
+    padding: 8px;
+}
+
+.ui.grid.login-wrapper .column{
+    max-width: 450px;
+}

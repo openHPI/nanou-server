@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
 from nanou.widgets import SemanticUISelectMultiple
@@ -41,33 +42,33 @@ class VideoForm(NeoForm):
     )
 
 
-class VideoListView(NeoListView):
+class VideoListView(LoginRequiredMixin, NeoListView):
     model = Video
     template_name = 'videos/list.html'
     context_object_name = 'videos'
 
 
-class VideoDetailView(NeoDetailView):
+class VideoDetailView(LoginRequiredMixin, NeoDetailView):
     model = Video
     template_name = 'videos/detail.html'
     context_object_name = 'video'
 
 
-class VideoDeleteView(NeoDeleteView):
+class VideoDeleteView(LoginRequiredMixin, NeoDeleteView):
     model = Video
     template_name = 'videos/delete.html'
     success_url = reverse_lazy('videos:list')
     context_object_name = 'video'
 
 
-class VideoUpdateView(NeoUpdateView):
+class VideoUpdateView(LoginRequiredMixin, NeoUpdateView):
     model = Video
     template_name = 'videos/form.html'
     success_url = reverse_lazy('videos:list')
     form_class = VideoForm
 
 
-class VideoCreateView(NeoCreateView):
+class VideoCreateView(LoginRequiredMixin, NeoCreateView):
     model = Video
     template_name = 'videos/form.html'
     success_url = reverse_lazy('videos:list')

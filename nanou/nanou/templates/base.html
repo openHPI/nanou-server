@@ -24,7 +24,14 @@
             <a href="{% url 'videos:list' %}" class="item">Videos</a>
             <a href="{% url 'groups:list' %}" class="item">Groups</a>
             <div class="right menu">
-                <a class="ui item">{{ user }}</a>
+                <a class="ui item"></a>
+                <div class="ui simple dropdown link item">
+                    <span class="text">{{ user }}</span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                      <a href="{% url 'logout' %}" class="item">Logout</a>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>

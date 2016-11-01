@@ -1,5 +1,7 @@
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+
 
 from nanou.widgets import SemanticUISelectMultiple
 from neo.views import NeoListView, NeoDetailView, NeoDeleteView, NeoUpdateView, NeoCreateView
@@ -29,33 +31,33 @@ class GroupForm(NeoForm):
     )
 
 
-class GroupListView(NeoListView):
+class GroupListView(LoginRequiredMixin, NeoListView):
     model = Group
     template_name = 'groups/list.html'
     context_object_name = 'groups'
 
 
-class GroupDetailView(NeoDetailView):
+class GroupDetailView(LoginRequiredMixin, NeoDetailView):
     model = Group
     template_name = 'groups/detail.html'
     context_object_name = 'group'
 
 
-class GroupDeleteView(NeoDeleteView):
+class GroupDeleteView(LoginRequiredMixin, NeoDeleteView):
     model = Group
     template_name = 'groups/delete.html'
     success_url = reverse_lazy('groups:list')
     context_object_name = 'group'
 
 
-class GroupUpdateView(NeoUpdateView):
+class GroupUpdateView(LoginRequiredMixin, NeoUpdateView):
     model = Group
     template_name = 'groups/form.html'
     success_url = reverse_lazy('groups:list')
     form_class = GroupForm
 
 
-class GroupCreateView(NeoCreateView):
+class GroupCreateView(LoginRequiredMixin, NeoCreateView):
     model = Group
     template_name = 'groups/form.html'
     success_url = reverse_lazy('groups:list')
