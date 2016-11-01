@@ -18,7 +18,7 @@ before_install:
 install:
   - pip install -r requirements.txt
   - pip install coverage
-  - pip install git+https://github.com/mathebox/python-codacy-coverage.git@debug
+  - pip install git+https://github.com/mathebox/python-codacy-coverage.git@fix-file-lookup
 before_script:
   - DJANGO_SETTINGS_MODULE=nanou.settings.test python nanou/manage.py migrate
   - DJANGO_SETTINGS_MODULE=nanou.settings.test python nanou/manage.py runserver --insecure &
