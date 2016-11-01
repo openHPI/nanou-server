@@ -1,5 +1,5 @@
 [run]
-source = nanou/
+source = ./
 
 [report]
 omit =
