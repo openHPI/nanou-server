@@ -5,9 +5,13 @@ from neo.tests import NeoTestCase
 from groups.models import Group
 
 
-class GroupViewTests(NeoTestCase):
+class GroupLoggedInViewTests(NeoTestCase):
+    fixtures = ['users_views_testdata']
     neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
     csrf_client = Client(enforce_csrf_checks=True)
+
+    def setUp(self):
+        self.client.login(username='admin', password='admin')
 
     # List
     def test_get_list_view(self):
@@ -134,3 +138,41 @@ class GroupViewTests(NeoTestCase):
         group = Group.first()
         response = self.csrf_client.post(reverse('groups:delete', kwargs={'pk': group.id}))
         self.assertEqual(response.status_code, 403)
+
+
+class GroupViewwNoPermissionTests(NeoTestCase):
+    """User testing the views is not logged and therefore lacking the required permissions."""
+    neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
+
+    # List
+    def test_get_list_view(self):
+        url = reverse('groups:list')
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('login') + '?next=' + url)
+
+    # Detail
+    def test_get_detail_view(self):
+        group = Group.first()
+        url = reverse('groups:detail', kwargs={'pk': group.id})
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('login') + '?next=' + url)
+
+    # Create
+    def test_get_create_view(self):
+        url = reverse('groups:create')
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('login') + '?next=' + url)
+
+    # Update
+    def test_get_update_view(self):
+        group = Group.first()
+        url = reverse('groups:update', kwargs={'pk': group.id})
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('login') + '?next=' + url)
+
+    # Delete
+    def test_get_delete_view(self):
+        group = Group.first()
+        url = reverse('groups:delete', kwargs={'pk': group.id})
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('login') + '?next=' + url)

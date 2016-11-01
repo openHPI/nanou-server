@@ -1,0 +1,67 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>nanou</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'semantic-ui/dist/semantic.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'nanou/css/login.css' %}">
+</head>
+
+<body>
+    <div class="login-wrapper ui middle aligned center aligned grid">
+      <div class="column">
+        <h2 class="ui orange header">
+          <div class="content">
+            nanou
+          </div>
+        </h2>
+        <form method="post" class="ui large form" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="ui stacked segment">
+                <div class="field">
+                  <div class="ui left icon input">
+                    <i class="user icon"></i>
+                    <input type="text" class="form-control" name="username" placeholder="{{ form.username.label }}" value="{{ form.username.value | default:'' }}" required />
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="ui left icon input">
+                    <i class="lock icon"></i>
+                    <input type="password" class="form-control" name="password" placeholder="{{ form.password.label }}" value="{{ form.password.value | default:'' }}" required />
+                  </div>
+                </div>
+                <input type="submit" class="ui fluid large orange submit button" value="Login" />
+                <input type="hidden" name="next" value="{{ next }}" />
+            </div>
+        </form>
+
+        {% if form.errors %}
+        <div class="ui error message">
+            Your username and password didn't match. Please try again.
+        </div>
+        {% endif %}
+
+        {% if next %}
+           {% if user.is_authenticated %}
+           <div class="ui error message">
+               Your account doesn't have access to this page. To proceed,
+               please login with an account that has access.
+           </div>
+           {% else %}
+           <div class="ui error message">
+               Please login to see this page.
+           </div>
+           {% endif %}
+        {% endif %}
+      </div>
+    </div>
+</body>
+
+</html>
