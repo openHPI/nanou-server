@@ -1,0 +1,8 @@
+[run]
+source = nanou/
+
+[report]
+omit =
+    */migrations/*
+    nanou/nanou/settings/*
+    nanou/nanou/wsgi.py
