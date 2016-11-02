@@ -1,8 +1,8 @@
 from django import forms
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse_lazy
+from django.views import View
 
 from nanou.widgets import SemanticUISelectMultiple
 from neo.forms import NeoForm
@@ -49,6 +49,9 @@ class SocialUserUpdateView(LoginRequiredMixin, NeoUpdateView):
         return context
 
 
-@login_required
-def login_success(request):
-    return HttpResponse('Successfully authenticated.')
+class LoggedInView(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return HttpResponse('Successfully authenticated.')
+        else:
+            return HttpResponseForbidden('Authentication failed.')
