@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1 class="ui header">Social Users</h1>
+    <table class="ui single line table">
+        <thead>
+            <tr>
+                <th>User id</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for socialuser in socialusers %}
+            <tr>
+                <td>
+                    <a href="{% url 'socialusers:detail' socialuser.id %}">{{ socialuser.id }}</a>
+                </td>
+                <td class="right aligned">
+                    <a href="{% url 'socialusers:update' socialuser.id %}" class="ui secondary basic button">Edit</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">
+                    No social users available.
+                </td>
+            </tr>
+            {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

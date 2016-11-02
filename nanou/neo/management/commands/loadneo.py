@@ -37,10 +37,11 @@ class Command(BaseCommand):
                     obj = object_map[entry['id']]
                     for prop_name in _relationships(model_class):
                         related_objects = getattr(obj, prop_name)
-                        for related_id in entry['fields'][prop_name]:
-                            rel_obj = object_map[related_id]
-                            related_objects.add(rel_obj)
-                            relationship_count += 1
+                        if prop_name in entry['fields']:
+                            for related_id in entry['fields'][prop_name]:
+                                rel_obj = object_map[related_id]
+                                related_objects.add(rel_obj)
+                                relationship_count += 1
 
             with NeoGraph() as graph:
                 for obj in object_map.values():

@@ -1,0 +1,26 @@
+[
+    {
+        "fields": {
+            "user_id": 0,
+            "wathed_videos": []
+        },
+        "model": "socialusers.models.SocialUser",
+        "id": 0
+    },
+    {
+        "fields": {
+            "user_id": 1,
+            "wathed_videos": []
+        },
+        "model": "socialusers.models.SocialUser",
+        "id": 1
+    },
+    {
+        "fields": {
+            "user_id": 2,
+            "wathed_videos": []
+        },
+        "model": "socialusers.models.SocialUser",
+        "id": 2
+    }
+]
