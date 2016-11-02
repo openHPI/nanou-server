@@ -12,7 +12,7 @@ class Command(TestCommand):
         neo4j database has to be stopped,but will be started again afterwards.
     '''
 
-    def handle(self, *args, **options):
+    def handle(self, *test_labels, **options):
         self.verbosity = options['verbosity']
         last_db = None
         warehouse = Warehouse()
@@ -43,7 +43,12 @@ class Command(TestCommand):
         warehouse.get(TEST_NEO_DB_NAME).start()
 
         # Run tests
-        super(Command, self).handle(*args, **options)
+        from django.conf import settings
+        from django.test.utils import get_runner
+
+        TestRunner = get_runner(settings, options['testrunner'])
+        test_runner = TestRunner(**options)
+        failures = test_runner.run_tests(test_labels)
 
         # Stop test neo db
         if self.verbosity >= 1:
