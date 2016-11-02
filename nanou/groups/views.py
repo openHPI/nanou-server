@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
-
 from nanou.widgets import SemanticUISelectMultiple
 from neo.views import NeoListView, NeoDetailView, NeoDeleteView, NeoUpdateView, NeoCreateView
 from neo.forms import NeoForm

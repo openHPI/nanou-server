@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1>Group: {{ socialuser.name }}</h1>
+    <ul>
+        <li>
+            Required by videos: {{socialuser.watched_videos|length}}
+            <ul>
+                {% for v in socialuser.watched_videos %}
+                <li>{{v.name}}</li>
+                {% endfor%}
+            </ul>
+        </li>
+    </ul>
+    <p>
+        <a href="{% url 'socialusers:update' socialuser.id %}" class="ui primary basic button">Edit</a>
+        <a href="{% url 'socialusers:list' %}" class="ui basic button">Back to list of social users</a>
+    </p>
+</div>
+{% endblock %}

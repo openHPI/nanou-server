@@ -1,3 +1,4 @@
 Django==1.10.2
 django-npm==1.0.0
+python-social-auth==0.2.21
 py2neo==3.1.2

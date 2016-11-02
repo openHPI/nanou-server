@@ -30,8 +30,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social.apps.django_app.default',
     'groups.apps.GroupsConfig',
     'neo.apps.NeoConfig',
+    'socialusers.apps.SocialUsersConfig',
     'videos.apps.VideosConfig',
 ]
 
@@ -93,6 +95,13 @@ USE_TZ = True
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'landingpage'
+
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.google.GoogleOAuth2',
+    'socialusers.backends.HpiOpenIdAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 
 # Static files (CSS, JavaScript, Images)
@@ -180,6 +189,17 @@ TEST_NEO_DATABASE = {
     'user': 'neo4j',
     'password': 'neo4j',
 }
+
+
+###########################################
+# Social Auth                             #
+###########################################
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'socialusers:logged_in'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''  # configure google oauth2 in local_settings.py
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+
 
 TESTING = any(arg.endswith('test') for arg in sys.argv)
 

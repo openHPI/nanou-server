@@ -10,3 +10,4 @@ class Video(NeoModel):
     required_videos = RelatedTo('videos.models.Video', 'REQUIRES_VIDEO')
     required_groups = RelatedTo('groups.models.Group', 'REQUIRES_GROUP')
     contained_in_groups = RelatedFrom('groups.models.Group', 'CONTAINS')
+    watched_by = RelatedFrom('socialusers.models.SocialUser', 'WATCHED')

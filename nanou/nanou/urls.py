@@ -24,7 +24,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout_then_login, name='logout'),
+    url(r'^social/', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', views.landingpage, name='landingpage'),
     url(r'^groups/', include('groups.urls', namespace='groups')),
+    url(r'^socialusers/', include('socialusers.urls', namespace='socialusers')),
     url(r'^videos/', include('videos.urls', namespace='videos')),
 ]
