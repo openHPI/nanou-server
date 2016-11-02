@@ -6,7 +6,7 @@ from neo.utils import NeoGraph
 from socialusers.models import SocialUser
 
 
-@receiver(post_save, sender=UserSocialAuth)
+@receiver(post_save, sender=UserSocialAuth, dispatch_uid='create_neo_socialuser')
 def create_neo_socialuser(sender, **kwargs):
     if kwargs.get('created', False):
         user = SocialUser()
