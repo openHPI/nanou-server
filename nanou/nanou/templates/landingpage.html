@@ -1,7 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="ui main text container">
-    <h1 class="ui header">nanou</h1>
+<div class="ui main container">
+    <h1 class="ui center aligned header">
+        <span>
+            <i class="huge video play icon"></i>
+            <i class="normal plus icon"></i>
+            <i class="huge sitemap icon"></i>
+            <i class="normal plus icon"></i>
+            <i class="huge options icon"></i>
+        </span>
+    </h1>
+    <div class="ui three column doubling stackable grid">
+        <div class="column">
+            <div class="ui segment">
+                <h3>Videos</h3>
+                <p>{{ video_count }} Item{{ video_count|pluralize }}</p>
+                <a class="ui button" href="{% url 'videos:list' %}">Show list of videos</a>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <h3>Groups</h3>
+                <p>{{ group_count }} Item{{ group_count|pluralize }}</p>
+                <a class="ui button" href="{% url 'groups:list' %}">Show list of groups</a>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui segment">
+                <h3>Social users</h3>
+                <p>{{ socialuser_count }} Item{{ socialuser_count|pluralize }}</p>
+                <a class="ui button" href="{% url 'socialusers:list' %}">Show list of users</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

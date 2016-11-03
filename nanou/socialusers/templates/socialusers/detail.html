@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="ui main text container">
-    <h1>Group: {{ socialuser.name }}</h1>
+    <h1>Social user with id {{ socialuser.id }}</h1>
     <ul>
         <li>
             Required by videos: {{socialuser.watched_videos|length}}
