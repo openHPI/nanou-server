@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.management.commands.test import Command as TestCommand
 from neokit import Warehouse
 
