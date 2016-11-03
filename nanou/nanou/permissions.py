@@ -8,7 +8,7 @@ class GlobalPermissionManager(models.Manager):
         db_alias = kwargs['db_alias']
         del kwargs['db_alias']
 
-        ct, created = ContentType.objects.using(db_alias).get_or_create(
+        ct, _ = ContentType.objects.using(db_alias).get_or_create(
             model='globalpermission',
             app_label=self.model._meta.app_label,
         )
