@@ -19,7 +19,7 @@ class Command(TestCommand):
 
         # Stop running neo db
         if self.verbosity >= 1:
-            self.stdout.write('Stopping running neo4j database ...')
+            self.stdout.write('Stopping running neo4j database...')
         for db_name, graph_server in warehouse.directory().items():
             if graph_server.running() is not None:
                 last_db = db_name
@@ -28,7 +28,7 @@ class Command(TestCommand):
         # Create test neo db if not existiant
         if TEST_NEO_DB_NAME not in warehouse.directory():
             if self.verbosity >= 1:
-                self.stdout.write('Installing test neo4j database ...')
+                self.stdout.write('Installing test neo4j database...')
             warehouse.install(TEST_NEO_DB_NAME)
             test_db = warehouse.get(TEST_NEO_DB_NAME)
             test_db.http_port = settings.TEST_NEO_DATABASE['http_port']
@@ -39,7 +39,7 @@ class Command(TestCommand):
 
         # Start test neo db
         if self.verbosity >= 1:
-            self.stdout.write('Starting test neo4j database ...')
+            self.stdout.write('Starting test neo4j database...')
         warehouse.get(TEST_NEO_DB_NAME).start()
 
         # Run tests
@@ -49,10 +49,13 @@ class Command(TestCommand):
         TestRunner = get_runner(settings, options['testrunner'])
         test_runner = TestRunner(**options)
         failures = test_runner.run_tests(test_labels)
+        if self.verbosity >= 2:
+            if bool(failures):
+                self.stdout.write('Tests failed...')
 
         # Stop test neo db
         if self.verbosity >= 1:
-            self.stdout.write('Stopping test neo4j database ...')
+            self.stdout.write('Stopping test neo4j database...')
         warehouse.get(TEST_NEO_DB_NAME).stop()
 
         # Start paused neo db
