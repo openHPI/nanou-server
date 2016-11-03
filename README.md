@@ -7,5 +7,7 @@
 ## How to setup
 ```bash
 pip install -r requirements.txt
+[start neo4j database]
+python nanou/manage.py migrate
 python nanou/manage.py runserver
 ```
