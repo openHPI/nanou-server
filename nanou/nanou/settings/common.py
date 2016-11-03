@@ -196,7 +196,8 @@ TEST_NEO_DATABASE = {
 # Social Auth                             #
 ###########################################
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'socialusers:logged_in'
+SOCIAL_AUTH_LOGIN_URL = 'sociallogin:login'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'sociallogin:logged_in'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''  # configure google oauth2 in local_settings.py
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''

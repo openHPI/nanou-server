@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import render
 from django.urls import reverse_lazy
 
 from nanou.widgets import SemanticUISelectMultiple
@@ -52,7 +53,11 @@ class SocialUserUpdateView(PermissionRequiredMixin, NeoUpdateView):
         return context
 
 
-@permission_required('consume_curriculum')
+def login(request):
+    return render(request, 'socialusers/login.html')
+
+
+@permission_required('consume_curriculum', login_url='sociallogin:login')
 def login_success(request):
     if request.user.is_authenticated:
         return HttpResponse('Successfully authenticated.')
