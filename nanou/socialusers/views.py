@@ -15,7 +15,7 @@ from .models import SocialUser
 
 
 class SocialUserForm(NeoForm):
-    wathed_videos = forms.MultipleChoiceField(
+    watched_videos = forms.MultipleChoiceField(
         label='Watched videos',
         choices=[(video.id, video.name) for video in Video.all()],
         required=False,
@@ -57,7 +57,7 @@ def login(request):
     return render(request, 'socialusers/login.html')
 
 
-@permission_required('consume_curriculum', login_url='sociallogin:login')
+@permission_required('nanou.consume_curriculum', login_url='sociallogin:login')
 def login_success(request):
     if request.user.is_authenticated:
         return HttpResponse('Successfully authenticated.')

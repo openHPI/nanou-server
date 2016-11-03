@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social.apps.django_app.default',
     'nanou',
+    'api.apps.ApiConfig',
     'groups.apps.GroupsConfig',
     'neo.apps.NeoConfig',
     'socialusers.apps.SocialUsersConfig',

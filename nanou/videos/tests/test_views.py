@@ -136,7 +136,7 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 403)
 
 
-class VideoViewWrongPermissionMixin(object):
+class VideoViewWrongPermissionsMixin(object):
     """Mixins for user testing the views is logged if the user lacks the required permissions."""
 
     # List
@@ -182,7 +182,7 @@ class VideoViewManagerTests(NeoTestCase, VideoViewCorrcetPermissionsMixin):
         self.client.login(username='manager', password='admin')
 
 
-class VideoViewSocialUserests(NeoTestCase, VideoViewWrongPermissionMixin):
+class VideoViewSocialUserests(NeoTestCase, VideoViewWrongPermissionsMixin):
     """User testing the views is logged in as social user and therefore lacking the required permissions."""
     fixtures = ['users_testdata']
     neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
@@ -191,7 +191,7 @@ class VideoViewSocialUserests(NeoTestCase, VideoViewWrongPermissionMixin):
         self.client.login(username='socialuser', password='admin')
 
 
-class VideoViewNoPermissionTests(NeoTestCase, VideoViewWrongPermissionMixin):
+class VideoViewNoPermissionTests(NeoTestCase, VideoViewWrongPermissionsMixin):
     """User testing the views is not logged and therefore lacking the required permissions."""
     fixtures = ['users_testdata']
     neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']

@@ -25,6 +25,8 @@ class Command(TestCommand):
                 graph_server.stop()
 
         # Create test neo db if not existiant
+        from django.conf import settings
+
         if TEST_NEO_DB_NAME not in warehouse.directory():
             if self.verbosity >= 1:
                 self.stdout.write('Installing test neo4j database...')
@@ -42,7 +44,6 @@ class Command(TestCommand):
         warehouse.get(TEST_NEO_DB_NAME).start()
 
         # Run tests
-        from django.conf import settings
         from django.test.utils import get_runner
 
         TestRunner = get_runner(settings, options['testrunner'])
@@ -60,7 +61,7 @@ class Command(TestCommand):
         # Start paused neo db
         if last_db:
             if self.verbosity >= 1:
-                self.stdout.write('Starting last neo4j database ...')
+                self.stdout.write('Starting last neo4j database...')
             warehouse.get(last_db).start()
         else:
             if self.verbosity >= 2:

@@ -81,7 +81,7 @@ class SocialUserViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 403)
 
 
-class SocialUserViewWrongPermissionMixin(object):
+class SocialUserViewWrongPermissionsMixin(object):
     """Mixins for user testing the views is logged if the user lacks the required permissions."""
 
     # List
@@ -114,7 +114,7 @@ class SocialUserViewManagerTests(NeoTestCase, SocialUserViewCorrcetPermissionsMi
         self.client.login(username='manager', password='admin')
 
 
-class SocialUserViewSocialUserTests(NeoTestCase, SocialUserViewWrongPermissionMixin):
+class SocialUserViewSocialUserTests(NeoTestCase, SocialUserViewWrongPermissionsMixin):
     """User testing the views is logged in as social user and therefore lacking the required permissions."""
     fixtures = ['users_testdata']
     neo_fixtures = ['socialusers/fixtures/neo_socialuser_testdata.json']
@@ -123,7 +123,7 @@ class SocialUserViewSocialUserTests(NeoTestCase, SocialUserViewWrongPermissionMi
         self.client.login(username='socialuser', password='admin')
 
 
-class SocialUserViewNoPermissionTests(NeoTestCase, SocialUserViewWrongPermissionMixin):
+class SocialUserViewNoPermissionTests(NeoTestCase, SocialUserViewWrongPermissionsMixin):
     """User testing the views is not logged and therefore lacking the required permissions."""
     fixtures = ['users_testdata']
     neo_fixtures = ['socialusers/fixtures/neo_socialuser_testdata.json']
