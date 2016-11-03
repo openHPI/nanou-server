@@ -1,7 +1,7 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
 
 
-@login_required
+@permission_required('nanou.manage_curriculum')
 def landingpage(request):
     return render(request, 'landingpage.html')

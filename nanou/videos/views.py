@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 
 from nanou.widgets import SemanticUISelectMultiple
@@ -42,33 +42,38 @@ class VideoForm(NeoForm):
     )
 
 
-class VideoListView(LoginRequiredMixin, NeoListView):
+class VideoListView(PermissionRequiredMixin, NeoListView):
+    permission_required = 'nanou.manage_curriculum'
     model = Video
     template_name = 'videos/list.html'
     context_object_name = 'videos'
 
 
-class VideoDetailView(LoginRequiredMixin, NeoDetailView):
+class VideoDetailView(PermissionRequiredMixin, NeoDetailView):
+    permission_required = 'nanou.manage_curriculum'
     model = Video
     template_name = 'videos/detail.html'
     context_object_name = 'video'
 
 
-class VideoDeleteView(LoginRequiredMixin, NeoDeleteView):
+class VideoDeleteView(PermissionRequiredMixin, NeoDeleteView):
+    permission_required = 'nanou.manage_curriculum'
     model = Video
     template_name = 'videos/delete.html'
     success_url = reverse_lazy('videos:list')
     context_object_name = 'video'
 
 
-class VideoUpdateView(LoginRequiredMixin, NeoUpdateView):
+class VideoUpdateView(PermissionRequiredMixin, NeoUpdateView):
+    permission_required = 'nanou.manage_curriculum'
     model = Video
     template_name = 'videos/form.html'
     success_url = reverse_lazy('videos:list')
     form_class = VideoForm
 
 
-class VideoCreateView(LoginRequiredMixin, NeoCreateView):
+class VideoCreateView(PermissionRequiredMixin, NeoCreateView):
+    permission_required = 'nanou.manage_curriculum'
     model = Video
     template_name = 'videos/form.html'
     success_url = reverse_lazy('videos:list')

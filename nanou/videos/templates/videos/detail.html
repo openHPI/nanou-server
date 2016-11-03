@@ -19,7 +19,7 @@
                 <li>{{v.name}}</li>
                 {% endfor%}
             </ul>
-        </li>    
+        </li>
         <li>
             Required groups: {{video.required_groups|length}}
             <ul>
@@ -38,9 +38,11 @@
         </li>
     </ul>
     <p>
+        {% if perms.nanou.manage_curriculum %}
         <a href="{% url 'videos:update' video.id %}" class="ui primary basic button">Edit</a>
         <a href="{% url 'videos:delete' video.id %}" class="ui negative basic button">Delete</a>
         <a href="{% url 'videos:list' %}" class="ui basic button">Back to list of videos</a>
+        {% endif %}
     </p>
 </div>
 {% endblock %}

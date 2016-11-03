@@ -14,8 +14,10 @@
         </li>
     </ul>
     <p>
+        {% if perms.nanou.manage_curriculum %}
         <a href="{% url 'socialusers:update' socialuser.id %}" class="ui primary basic button">Edit</a>
         <a href="{% url 'socialusers:list' %}" class="ui basic button">Back to list of social users</a>
+        {% endif %}
     </p>
 </div>
 {% endblock %}

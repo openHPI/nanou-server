@@ -14,10 +14,16 @@
             {% for socialuser in socialusers %}
             <tr>
                 <td>
+                    {% if perms.nanou.manage_curriculum %}
                     <a href="{% url 'socialusers:detail' socialuser.id %}">{{ socialuser.id }}</a>
+                    {% else %}
+                    socialuser.id
+                    {% endif %}
                 </td>
                 <td class="right aligned">
+                    {% if perms.nanou.manage_curriculum %}
                     <a href="{% url 'socialusers:update' socialuser.id %}" class="ui secondary basic button">Edit</a>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}

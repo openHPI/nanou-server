@@ -4,7 +4,7 @@ from neo.tests import NeoTestCase
 
 
 class SocialUserTests(NeoTestCase):
-    fixtures = ['socialusers_testdata']
+    fixtures = ['users_testdata']
 
     def test_creation(self):
         all_socialusers = SocialUser.all()

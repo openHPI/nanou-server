@@ -5,13 +5,9 @@ from neo.tests import NeoTestCase
 from socialusers.models import SocialUser
 
 
-class SocialUserLoggedInViewTests(NeoTestCase):
-    fixtures = ['users_views_testdata']
-    neo_fixtures = ['socialusers/fixtures/neo_socialuser_testdata.json']
+class SocialUserViewCorrcetPermissionsMixin(object):
+    """Mixins for user testing the views is logged if the user has the required permissions."""
     csrf_client = Client(enforce_csrf_checks=True)
-
-    def setUp(self):
-        self.client.login(username='admin', password='admin')
 
     # List
     def test_get_list_view(self):
@@ -85,9 +81,8 @@ class SocialUserLoggedInViewTests(NeoTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class SocialUserViewwNoPermissionTests(NeoTestCase):
-    """User testing the views is not logged and therefore lacking the required permissions."""
-    neo_fixtures = ['socialusers/fixtures/neo_socialuser_testdata.json']
+class SocialUserViewWrongPermissionMixin(object):
+    """Mixins for user testing the views is logged if the user lacks the required permissions."""
 
     # List
     def test_get_list_view(self):
@@ -108,3 +103,27 @@ class SocialUserViewwNoPermissionTests(NeoTestCase):
         url = reverse('socialusers:update', kwargs={'pk': user.id})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
+
+
+class SocialUserViewManagerTests(NeoTestCase, SocialUserViewCorrcetPermissionsMixin):
+    """User testing the views is logged in as manager and therefore has the required permissions."""
+    fixtures = ['users_testdata']
+    neo_fixtures = ['socialusers/fixtures/neo_socialuser_testdata.json']
+
+    def setUp(self):
+        self.client.login(username='manager', password='admin')
+
+
+class SocialUserViewSocialUserTests(NeoTestCase, SocialUserViewWrongPermissionMixin):
+    """User testing the views is logged in as social user and therefore lacking the required permissions."""
+    fixtures = ['users_testdata']
+    neo_fixtures = ['socialusers/fixtures/neo_socialuser_testdata.json']
+
+    def setUp(self):
+        self.client.login(username='socialuser', password='admin')
+
+
+class SocialUserViewNoPermissionTests(NeoTestCase, SocialUserViewWrongPermissionMixin):
+    """User testing the views is not logged and therefore lacking the required permissions."""
+    fixtures = ['users_testdata']
+    neo_fixtures = ['socialusers/fixtures/neo_socialuser_testdata.json']

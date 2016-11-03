@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 
 from nanou.widgets import SemanticUISelectMultiple
@@ -30,33 +30,38 @@ class GroupForm(NeoForm):
     )
 
 
-class GroupListView(LoginRequiredMixin, NeoListView):
+class GroupListView(PermissionRequiredMixin, NeoListView):
+    permission_required = 'nanou.manage_curriculum'
     model = Group
     template_name = 'groups/list.html'
     context_object_name = 'groups'
 
 
-class GroupDetailView(LoginRequiredMixin, NeoDetailView):
+class GroupDetailView(PermissionRequiredMixin, NeoDetailView):
+    permission_required = 'nanou.manage_curriculum'
     model = Group
     template_name = 'groups/detail.html'
     context_object_name = 'group'
 
 
-class GroupDeleteView(LoginRequiredMixin, NeoDeleteView):
+class GroupDeleteView(PermissionRequiredMixin, NeoDeleteView):
+    permission_required = 'nanou.manage_curriculum'
     model = Group
     template_name = 'groups/delete.html'
     success_url = reverse_lazy('groups:list')
     context_object_name = 'group'
 
 
-class GroupUpdateView(LoginRequiredMixin, NeoUpdateView):
+class GroupUpdateView(PermissionRequiredMixin, NeoUpdateView):
+    permission_required = 'nanou.manage_curriculum'
     model = Group
     template_name = 'groups/form.html'
     success_url = reverse_lazy('groups:list')
     form_class = GroupForm
 
 
-class GroupCreateView(LoginRequiredMixin, NeoCreateView):
+class GroupCreateView(PermissionRequiredMixin, NeoCreateView):
+    permission_required = 'nanou.manage_curriculum'
     model = Group
     template_name = 'groups/form.html'
     success_url = reverse_lazy('groups:list')
