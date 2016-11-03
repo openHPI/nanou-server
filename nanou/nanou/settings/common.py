@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social.apps.django_app.default',
+    'nanou',
     'groups.apps.GroupsConfig',
     'neo.apps.NeoConfig',
     'socialusers.apps.SocialUsersConfig',

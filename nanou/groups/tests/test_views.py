@@ -5,13 +5,9 @@ from neo.tests import NeoTestCase
 from groups.models import Group
 
 
-class GroupLoggedInViewTests(NeoTestCase):
-    fixtures = ['users_views_testdata']
-    neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
+class GroupViewCorrcetPermissionsMixin(object):
+    """Mixins for user testing the views is logged if the user has the required permissions."""
     csrf_client = Client(enforce_csrf_checks=True)
-
-    def setUp(self):
-        self.client.login(username='admin', password='admin')
 
     # List
     def test_get_list_view(self):
@@ -140,9 +136,8 @@ class GroupLoggedInViewTests(NeoTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class GroupViewwNoPermissionTests(NeoTestCase):
-    """User testing the views is not logged and therefore lacking the required permissions."""
-    neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
+class GroupViewWrongPermissionMixin(object):
+    """Mixins for user testing the views is logged if the user lacks the required permissions."""
 
     # List
     def test_get_list_view(self):
@@ -176,3 +171,27 @@ class GroupViewwNoPermissionTests(NeoTestCase):
         url = reverse('groups:delete', kwargs={'pk': group.id})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
+
+
+class GroupViewManagerTests(NeoTestCase, GroupViewCorrcetPermissionsMixin):
+    """User testing the views is logged in as manager and therefore has the required permissions."""
+    fixtures = ['users_testdata']
+    neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
+
+    def setUp(self):
+        self.client.login(username='manager', password='admin')
+
+
+class GroupViewSocialUserests(NeoTestCase, GroupViewWrongPermissionMixin):
+    """User testing the views is logged in as social user and therefore lacking the required permissions."""
+    fixtures = ['users_testdata']
+    neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
+
+    def setUp(self):
+        self.client.login(username='socialuser', password='admin')
+
+
+class GroupViewNoPermissionTests(NeoTestCase, GroupViewWrongPermissionMixin):
+    """User testing the views is not logged and therefore lacking the required permissions."""
+    fixtures = ['users_testdata']
+    neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']

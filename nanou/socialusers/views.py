@@ -1,6 +1,6 @@
 from django import forms
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse_lazy
 
@@ -22,19 +22,22 @@ class SocialUserForm(NeoForm):
     )
 
 
-class SocialUserListView(LoginRequiredMixin, NeoListView):
+class SocialUserListView(PermissionRequiredMixin, NeoListView):
+    permission_required = 'nanou.manage_curriculum'
     model = SocialUser
     template_name = 'socialusers/list.html'
     context_object_name = 'socialusers'
 
 
-class SocialUserDetailView(LoginRequiredMixin, NeoDetailView):
+class SocialUserDetailView(PermissionRequiredMixin, NeoDetailView):
+    permission_required = 'nanou.manage_curriculum'
     model = SocialUser
     template_name = 'socialusers/detail.html'
     context_object_name = 'socialuser'
 
 
-class SocialUserUpdateView(LoginRequiredMixin, NeoUpdateView):
+class SocialUserUpdateView(PermissionRequiredMixin, NeoUpdateView):
+    permission_required = 'nanou.manage_curriculum'
     model = SocialUser
     template_name = 'socialusers/form.html'
     success_url = reverse_lazy('socialusers:list')
@@ -49,7 +52,7 @@ class SocialUserUpdateView(LoginRequiredMixin, NeoUpdateView):
         return context
 
 
-@login_required
+@permission_required('consume_curriculum')
 def login_success(request):
     if request.user.is_authenticated:
         return HttpResponse('Successfully authenticated.')

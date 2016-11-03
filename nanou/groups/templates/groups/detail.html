@@ -22,9 +22,11 @@
         </li>
     </ul>
     <p>
+        {% if perms.nanou.manage_curriculum %}
         <a href="{% url 'groups:update' group.id %}" class="ui primary basic button">Edit</a>
         <a href="{% url 'groups:delete' group.id %}" class="ui negative basic button">Delete</a>
         <a href="{% url 'groups:list' %}" class="ui basic button">Back to list of groups</a>
+        {% endif %}
     </p>
 </div>
 {% endblock %}
