@@ -1,3 +1,5 @@
+import json
+
 from django.test import Client
 from django.urls import reverse
 from django.utils import six
@@ -20,7 +22,11 @@ class ApiViewCorrectPermissionsMixin(object):
     def watch_and_next_videos(self, video_name, next_videos):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
-            response = self.client.post(reverse('api:watched_video', kwargs={'video_id': obj.id}))
+            response = self.client.post(
+                reverse('api:watched_videos'),
+                json.dumps({'videos': [obj.id]}),
+                content_type='application/json',
+            )
             self.assertEqual(response.status_code, 200)
             response = self.client.get(reverse('api:next_videos'))
             self.assertEqual(response.status_code, 200)
@@ -43,23 +49,34 @@ class ApiViewCorrectPermissionsMixin(object):
 
     # GET /api/watched/<video_id>
     def test_get_watch_video(self):
-        with NeoGraph() as graph:
-            obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
-            response = self.client.get(reverse('api:watched_video', kwargs={'video_id': obj.id}))
-            self.assertEqual(response.status_code, 405)
+        response = self.client.get(reverse('api:watched_videos'))
+        self.assertEqual(response.status_code, 405)
 
     # POST /api/watched/<video_id>
     def test_post_watch_video(self):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
-            response = self.client.post(reverse('api:watched_video', kwargs={'video_id': obj.id}))
+            response = self.client.post(
+                reverse('api:watched_videos'),
+                json.dumps({'videos': [obj.id]}),
+                content_type='application/json',
+            )
             self.assertEqual(response.status_code, 200)
 
-    def test_post_watch_video_without_csrf(self):
-        with NeoGraph() as graph:
-            obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
-            response = self.csrf_client.post(reverse('api:watched_video', kwargs={'video_id': obj.id}))
-            self.assertEqual(response.status_code, 403)
+    def test_post_watch_video_missing_data(self):
+        response = self.client.post(
+            reverse('api:watched_videos'),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_post_watch_video_wrong_data(self):
+        response = self.client.post(
+            reverse('api:watched_videos'),
+            json.dumps({'videos': 'foobar'}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
 
 
 class ApiViewWrongPermissionsMixin(object):
@@ -72,16 +89,18 @@ class ApiViewWrongPermissionsMixin(object):
 
     # GET /api/watched/<video_id>
     def test_get_watch_video(self):
-        with NeoGraph() as graph:
-            obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
-            response = self.client.get(reverse('api:watched_video', kwargs={'video_id': obj.id}))
-            self.assertEqual(response.status_code, 405)
+        response = self.client.get(reverse('api:watched_videos'))
+        self.assertEqual(response.status_code, 405)
 
     # POST /api/watched/<video_id>
     def test_post_watch_video(self):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
-            response = self.client.post(reverse('api:watched_video', kwargs={'video_id': obj.id}))
+            response = self.client.post(
+                reverse('api:watched_videos'),
+                json.dumps({'videos': [obj.id]}),
+                content_type='application/json'
+            )
             self.assertEqual(response.status_code, 403)
 
 
