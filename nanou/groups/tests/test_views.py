@@ -136,7 +136,7 @@ class GroupViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 403)
 
 
-class GroupViewWrongPermissionMixin(object):
+class GroupViewWrongPermissionsMixin(object):
     """Mixins for user testing the views is logged if the user lacks the required permissions."""
 
     # List
@@ -182,7 +182,7 @@ class GroupViewManagerTests(NeoTestCase, GroupViewCorrcetPermissionsMixin):
         self.client.login(username='manager', password='admin')
 
 
-class GroupViewSocialUserests(NeoTestCase, GroupViewWrongPermissionMixin):
+class GroupViewSocialUserests(NeoTestCase, GroupViewWrongPermissionsMixin):
     """User testing the views is logged in as social user and therefore lacking the required permissions."""
     fixtures = ['users_testdata']
     neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']
@@ -191,7 +191,7 @@ class GroupViewSocialUserests(NeoTestCase, GroupViewWrongPermissionMixin):
         self.client.login(username='socialuser', password='admin')
 
 
-class GroupViewNoPermissionTests(NeoTestCase, GroupViewWrongPermissionMixin):
+class GroupViewNoPermissionTests(NeoTestCase, GroupViewWrongPermissionsMixin):
     """User testing the views is not logged and therefore lacking the required permissions."""
     fixtures = ['users_testdata']
     neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']

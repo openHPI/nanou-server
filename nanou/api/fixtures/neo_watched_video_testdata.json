@@ -1,0 +1,41 @@
+[
+    {
+        "fields": {
+            "required_videos": [],
+            "name": "A",
+            "required_by_videos": [
+                1
+            ]
+        },
+        "model": "videos.models.Video",
+        "id": 0
+    },
+    {
+        "fields": {
+            "required_videos": [
+                0
+            ],
+            "name": "B",
+            "required_by_videos": []
+        },
+        "model": "videos.models.Video",
+        "id": 1
+    },
+    {
+        "fields": {
+            "required_videos": [],
+            "name": "C",
+            "required_by_videos": []
+        },
+        "model": "videos.models.Video",
+        "id": 2
+    },
+    {
+        "fields": {
+            "user_id": 3,
+            "wathed_videos": []
+        },
+        "model": "socialusers.models.SocialUser",
+        "id": 3
+    }
+]

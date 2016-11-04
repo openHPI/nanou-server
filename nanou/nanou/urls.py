@@ -22,12 +22,17 @@ from . import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
+    # manage views
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout_then_login, name='logout'),
     url(r'^social/', include('social.apps.django_app.urls', namespace='social')),
-    url(r'^social/', include('socialusers.urls_login', namespace='sociallogin')),
     url(r'^$', views.landingpage, name='landingpage'),
     url(r'^groups/', include('groups.urls', namespace='groups')),
     url(r'^socialusers/', include('socialusers.urls', namespace='socialusers')),
     url(r'^videos/', include('videos.urls', namespace='videos')),
+
+    # user views
+    url(r'^social/', include('socialusers.urls_login', namespace='sociallogin')),
+    url(r'^api/', include('api.urls', namespace='api')),
 ]
