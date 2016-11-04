@@ -20,14 +20,14 @@ def next_videos(request):
 @require_POST
 @permission_required('nanou.consume_curriculum', raise_exception=True)
 def watched_videos(request):
-        video_ids = json.loads(request.body).get('videos')
-        if video_ids and type(video_ids) == list and len(video_ids) > 0:
-            socialuser = SocialUser.user_for_django_user(request.user.id)
-            with NeoGraph() as graph:
-                for video_id in video_ids:
-                    video = get_neo_object_or_404(Video, int(video_id), graph)
-                    socialuser.watched_videos.add(video)
-                graph.push(socialuser)
-                return HttpResponse()
-        else:
-            return HttpResponseBadRequest()
+    video_ids = json.loads(request.body.decode('utf-8')).get('videos')
+    if video_ids and isinstance(video_ids, list) and len(video_ids) > 0:
+        socialuser = SocialUser.user_for_django_user(request.user.id)
+        with NeoGraph() as graph:
+            for video_id in video_ids:
+                video = get_neo_object_or_404(Video, int(video_id), graph)
+                socialuser.watched_videos.add(video)
+            graph.push(socialuser)
+            return HttpResponse()
+    else:
+        return HttpResponseBadRequest()
