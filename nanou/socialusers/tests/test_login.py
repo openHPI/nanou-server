@@ -2,6 +2,7 @@ import json
 
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import six
 
 from rest_framework.authtoken.models import Token
 
@@ -13,7 +14,10 @@ class SocialLoginCorrectPermissionsMixin(object):
     def test_get_authstatus(self):
         response = self.client.get(reverse('sociallogin:status'))
         self.assertEqual(response.status_code, 200)
-        json_content = json.loads(response.content)
+        response_content = response.content
+        if six.PY3:
+            response_content = str(response_content, encoding='utf8')
+        json_content = json.loads(response_content)
         self.assertTrue('token' in json_content)
 
 
