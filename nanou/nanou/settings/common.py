@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'social.apps.django_app.default',
     'nanou',
     'api.apps.ApiConfig',
@@ -197,11 +199,24 @@ TEST_NEO_DATABASE = {
 # Social Auth                             #
 ###########################################
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_LOGIN_URL = 'sociallogin:login'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'sociallogin:logged_in'
+SOCIAL_AUTH_LOGIN_URL = 'sociallogin:login-providers'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'sociallogin:status'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''  # configure google oauth2 in local_settings.py
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+
+
+###########################################
+# REST framework                          #
+###########################################
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+       'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
 
 
 TESTING = any(arg.endswith('test') for arg in sys.argv)

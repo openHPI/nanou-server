@@ -5,6 +5,6 @@ from . import views
 
 app_name = 'api'
 urlpatterns = [
-    url(r'next/$', views.next_videos, name='next_videos'),
-    url(r'watched/$', views.watched_videos, name='watched_videos'),
+    url(r'next/$', views.NextVideosView.as_view(), name='next_videos'),
+    url(r'watch/$', views.WatchVideosView.as_view(), name='watch_videos'),
 ]
