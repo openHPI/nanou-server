@@ -4,6 +4,8 @@ from django.test import Client
 from django.urls import reverse
 from django.utils import six
 
+from rest_framework.authtoken.models import Token
+
 from neo.tests import NeoTestCase
 from neo.utils import NeoGraph
 from videos.models import Video
@@ -13,51 +15,51 @@ class ApiViewCorrectPermissionsMixin(object):
     """Mixins for user testing the views is logged if the user has the required permissions."""
     csrf_client = Client(enforce_csrf_checks=True)
 
-    def assertJSONResponse(self, response, json):
+    def assertJSONData(self, response, json):
         response_content = response.content
         if six.PY3:
             response_content = str(response_content, encoding='utf8')
-        self.assertJSONEqual(response_content, json)
+        self.assertJSONEqual(response_content, {'data': json})
 
     def watch_and_next_videos(self, video_name, next_videos):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
             response = self.client.post(
-                reverse('api:watched_videos'),
+                reverse('api:watch_videos'),
                 json.dumps({'videos': [obj.id]}),
                 content_type='application/json',
             )
             self.assertEqual(response.status_code, 200)
             response = self.client.get(reverse('api:next_videos'))
             self.assertEqual(response.status_code, 200)
-            self.assertJSONResponse(response, next_videos)
+            self.assertJSONData(response, next_videos)
 
     # GET /api/next_videos
     def test_next_videos_view(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONResponse(response, ['A', 'C'])
+        self.assertJSONData(response, ['A', 'C'])
 
     def test_next_videos_view_workflow(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONResponse(response, ['A', 'C'])
+        self.assertJSONData(response, ['A', 'C'])
 
         self.watch_and_next_videos('A', ['B', 'C'])
         self.watch_and_next_videos('C', ['B'])
         self.watch_and_next_videos('B', [])
 
-    # GET /api/watched/<video_id>
+    # GET /api/watch/
     def test_get_watch_video(self):
-        response = self.client.get(reverse('api:watched_videos'))
+        response = self.client.get(reverse('api:watch_videos'))
         self.assertEqual(response.status_code, 405)
 
-    # POST /api/watched/<video_id>
+    # POST /api/watch/
     def test_post_watch_video(self):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
             response = self.client.post(
-                reverse('api:watched_videos'),
+                reverse('api:watch_videos'),
                 json.dumps({'videos': [obj.id]}),
                 content_type='application/json',
             )
@@ -65,14 +67,14 @@ class ApiViewCorrectPermissionsMixin(object):
 
     def test_post_watch_video_missing_data(self):
         response = self.client.post(
-            reverse('api:watched_videos'),
+            reverse('api:watch_videos'),
             content_type='application/json',
         )
         self.assertEqual(response.status_code, 400)
 
     def test_post_watch_video_wrong_data(self):
         response = self.client.post(
-            reverse('api:watched_videos'),
+            reverse('api:watch_videos'),
             json.dumps({'videos': 'foobar'}),
             content_type='application/json',
         )
@@ -85,23 +87,23 @@ class ApiViewWrongPermissionsMixin(object):
     # /api/next_videos
     def test_next_videos_view(self):
         response = self.client.get(reverse('api:next_videos'))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
-    # GET /api/watched/<video_id>
+    # GET /api/watch/
     def test_get_watch_video(self):
-        response = self.client.get(reverse('api:watched_videos'))
-        self.assertEqual(response.status_code, 405)
+        response = self.client.get(reverse('api:watch_videos'))
+        self.assertEqual(response.status_code, 401)
 
-    # POST /api/watched/<video_id>
+    # POST /api/watch/
     def test_post_watch_video(self):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
             response = self.client.post(
-                reverse('api:watched_videos'),
+                reverse('api:watch_videos'),
                 json.dumps({'videos': [obj.id]}),
                 content_type='application/json'
             )
-            self.assertEqual(response.status_code, 403)
+            self.assertEqual(response.status_code, 401)
 
 
 class ApiViewManagerTests(NeoTestCase, ApiViewWrongPermissionsMixin):
@@ -113,13 +115,23 @@ class ApiViewManagerTests(NeoTestCase, ApiViewWrongPermissionsMixin):
         self.client.login(username='manager', password='admin')
 
 
-class ApiViewSocialUserests(NeoTestCase, ApiViewCorrectPermissionsMixin):
+class ApiViewSocialUserests(NeoTestCase, ApiViewWrongPermissionsMixin):
     """User testing the views is logged in as social user and therefore lacking the required permissions."""
     fixtures = ['users_testdata.json']
     neo_fixtures = ['api/fixtures/neo_watched_video_testdata.json']
 
     def setUp(self):
         self.client.login(username='socialuser', password='admin')
+
+
+class ApiViewTokenTests(NeoTestCase, ApiViewCorrectPermissionsMixin):
+    """User testing the views is not logged and therefore lacking the required permissions."""
+    fixtures = ['users_testdata']
+    neo_fixtures = ['api/fixtures/neo_watched_video_testdata.json']
+
+    def setUp(self):
+        token = Token.objects.first()
+        self.client.defaults['HTTP_AUTHORIZATION'] = 'Token ' + token.key
 
 
 class ApiViewNoPermissionTests(NeoTestCase, ApiViewWrongPermissionsMixin):

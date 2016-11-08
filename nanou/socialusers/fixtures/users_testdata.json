@@ -66,5 +66,13 @@
             "uid": "social@gmail.com",
             "extra_data": ""
         }
+    },
+    {
+        "model": "authtoken.token",
+        "pk": "ab171029ccb107613153716ae05299e351630a17",
+        "fields": {
+            "user": 3,
+            "created": "2016-11-08T07:39:44.620Z"
+        }
     }
 ]

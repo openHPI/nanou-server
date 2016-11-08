@@ -5,6 +5,6 @@ from . import views
 
 app_name = 'sociallogin'
 urlpatterns = [
-    url(r'^login/$', views.login, name='login'),
-    url(r'^logged-in/$', views.login_success, name='logged_in'),
+    url(r'^status/$', views.AuthStatusView.as_view(), name='status'),
+    url(r'^login-providers/$', views.LoginProvidersView.as_view(), name='login_providers'),
 ]

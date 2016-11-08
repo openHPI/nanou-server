@@ -1,9 +1,16 @@
 from django import forms
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
+from django.views import View
+
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.views import APIView
 
 from nanou.widgets import SemanticUISelectMultiple
 from neo.forms import NeoForm
@@ -53,13 +60,39 @@ class SocialUserUpdateView(PermissionRequiredMixin, NeoUpdateView):
         return context
 
 
-def login(request):
-    return render(request, 'socialusers/login.html')
+class LoginProvidersView(APIView):
+    permission_classes = (AllowAny,)
+    providers = {  # display_name: backend_name
+        'hpi': 'hpi-openid',
+        'google': 'google-oauth2',
+    }
+
+    def get(self, request):
+        return Response({
+            'data': {
+                name: request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))
+                for name, backend in self.providers.items()
+            },
+        })
 
 
-@permission_required('nanou.consume_curriculum', login_url='sociallogin:login')
-def login_success(request):
-    if request.user.is_authenticated:
-        return HttpResponse('Successfully authenticated.')
-    else:
-        return HttpResponseForbidden('Authentication failed.')
+class AuthStatusView(View):
+    def get(self, request):
+        rest_request = Request(request)
+        try:
+            user_token = TokenAuthentication().authenticate(rest_request)
+            if user_token is None:
+                raise AuthenticationFailed
+            user, token = user_token
+        except AuthenticationFailed:
+            try:
+                user_session = SessionAuthentication().authenticate(rest_request)
+                if user_session is None:
+                    raise AuthenticationFailed
+                user, _ = user_session
+                if not user.has_perm('nanou.consume_curriculum'):
+                    raise AuthenticationFailed
+                token, _ = Token.objects.get_or_create(user=user)
+            except AuthenticationFailed:
+                return HttpResponseRedirect(reverse('sociallogin:login_providers'))
+        return JsonResponse({'token': token.key})
