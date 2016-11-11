@@ -81,17 +81,13 @@
             {% endfor %}
             {% if perms.nanou.manage_curriculum %}
             <tr>
-                <td class="left aligned top aligned">
-                    <a href="{% url 'groups:list' %}" class="ui basic button">To start node</a>
-                </td>
+                <td class="left aligned top aligned"></td>
                 <td class="middle aligned top aligned" colspan="2" style="text-align: center;">
                     {% if relationship.props|length %}
                     <button class="ui primary button" type="submit" value="Save">Save</button>
                     {% endif %}
                 </td>
-                <td class="right aligned top aligned">
-                    <a href="{% url 'groups:list' %}" class="ui basic button">To end node/a>
-                </td>
+                <td class="right aligned top aligned"></td>
             </tr>
             {% endif %}
         </table>

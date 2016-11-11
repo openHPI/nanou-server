@@ -42,14 +42,15 @@ class NeoRelationshipDetailView(PermissionRequiredMixin, View):
     def post(self, request, pk1, rel_type, pk2, *args, **kwargs):
         a, rel, b = self.check_objects(pk1, rel_type, pk2)
         valid = self.validate_post_data(request.POST, rel)
-        context = self.create_context_data(a, rel, b)
-        context.update({'messages': {}})
+        messages = {}
         if valid:
             with NeoGraph() as graph:
                 for key in rel:
                     rel[key] = request.POST[key]
                 graph.push(rel)
-            context['messages'].update({'success': ['Relationship updated']})
+            messages.update({'success': ['Relationship updated']})
         else:
-            context['messages'].update({'error': ['Saving failed: Invalid data']})
+            messages.update({'error': ['Saving failed: Invalid data']})
+        context = self.create_context_data(a, rel, b)
+        context.update({'messages': messages})
         return render(request, self.template_name, context)
