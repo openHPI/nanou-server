@@ -1,0 +1,17 @@
+{{ label }}: {{selection|length}}
+<table class="ui very basic table">
+{% for obj in selection%}
+<tr>
+    <td>
+        <a href="">{{obj.name}}</a>
+    </td>
+    <td class="ui right aligned">
+        {% if reverse_relationship %}
+        <a href="{% url 'neoextras:relation' obj.id rel_type start_obj.id %}" class="ui mini button">Edit relationship</a>
+        {% else %}
+        <a href="{% url 'neoextras:relation' start_obj.id rel_type obj.id %}" class="ui mini button">Edit relationship</a>
+        {% endif %}
+    </td>
+</tr>
+{% endfor%}
+</table>

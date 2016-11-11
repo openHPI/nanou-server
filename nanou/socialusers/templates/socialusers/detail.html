@@ -1,16 +1,12 @@
 {% extends "base.html" %}
+{% load neo_extras %}
 
 {% block content %}
 <div class="ui main text container">
     <h1>Social user with id {{ socialuser.id }}</h1>
     <ul>
         <li>
-            Watched videos: {{socialuser.watched_videos|length}}
-            <ul>
-                {% for v in socialuser.watched_videos %}
-                <li>{{v.name}}</li>
-                {% endfor%}
-            </ul>
+            {% show_relationship_items socialuser socialuser.watched_videos 'Watched videos' %}
         </li>
     </ul>
     <p>
