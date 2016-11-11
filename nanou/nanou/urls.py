@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^social/', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', views.landingpage, name='landingpage'),
     url(r'^groups/', include('groups.urls', namespace='groups')),
+    url(r'^neo/', include('neoextras.urls', namespace='neoextras')),
     url(r'^socialusers/', include('socialusers.urls', namespace='socialusers')),
     url(r'^videos/', include('videos.urls', namespace='videos')),
 
