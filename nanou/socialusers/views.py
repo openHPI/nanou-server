@@ -13,7 +13,7 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 
 from nanou.widgets import SemanticUISelectMultiple
-from neo.forms import NeoForm
+from neo.forms import NeoForm, NeoRelationshipField
 from neo.utils import NeoGraph
 from neo.views import NeoListView, NeoDetailView, NeoUpdateView
 from videos.models import Video
@@ -22,11 +22,9 @@ from .models import SocialUser
 
 
 class SocialUserForm(NeoForm):
-    watched_videos = forms.MultipleChoiceField(
+    watched_videos = NeoRelationshipField(
         label='Watched videos',
-        choices=[(video.id, video.name) for video in Video.all()],
-        required=False,
-        widget=SemanticUISelectMultiple(),
+        model=Video,
     )
 
 
