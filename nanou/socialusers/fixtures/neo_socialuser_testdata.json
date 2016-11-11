@@ -1,26 +1,25 @@
-[
-    {
-        "fields": {
-            "user_id": 0,
-            "wathed_videos": []
+{
+    "nodes": [
+        {
+            "attributes": {
+                "user_id": 0
+            },
+            "model": "socialusers.models.SocialUser",
+            "id": 0
         },
-        "model": "socialusers.models.SocialUser",
-        "id": 0
-    },
-    {
-        "fields": {
-            "user_id": 1,
-            "wathed_videos": []
+        {
+            "attributes": {
+                "user_id": 1
+            },
+            "model": "socialusers.models.SocialUser",
+            "id": 1
         },
-        "model": "socialusers.models.SocialUser",
-        "id": 1
-    },
-    {
-        "fields": {
-            "user_id": 2,
-            "wathed_videos": []
-        },
-        "model": "socialusers.models.SocialUser",
-        "id": 2
-    }
-]
+        {
+            "attributes": {
+                "user_id": 2
+            },
+            "model": "socialusers.models.SocialUser",
+            "id": 2
+        }
+    ]
+}
