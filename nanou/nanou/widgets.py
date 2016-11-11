@@ -8,9 +8,13 @@ class SemanticUISelectMultiple(forms.widgets.SelectMultiple):
 
     def render(self, name, value, attrs=None):
         html = super(SemanticUISelectMultiple, self).render(name, value, attrs)
-        script = '<script type="text/javascript"> \
-                $(function() { \
-                    $("#%s").dropdown(); \
-                }); \
-            </script>' % (attrs['id'],)
+        script = (
+            '<script type="text/javascript">'
+            '$(function() {'
+            '$("#%(id)s").dropdown();'
+            '});'
+            '</script>'
+        ) % {
+            'id': attrs['id'],
+        }
         return mark_safe(''.join(html + script))

@@ -1,6 +1,5 @@
 -r common.txt
 flake8==3.0.4
 flake8-comprehensions==1.2.1
-flake8-pep3101==0.5
 flake8-quotes==0.8.1
 tox==2.4.1
