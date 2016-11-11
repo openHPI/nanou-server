@@ -1,24 +1,15 @@
 {% extends "base.html" %}
+{% load neo_extras %}
 
 {% block content %}
 <div class="ui main text container">
     <h1>Group: {{ group.name }}</h1>
     <ul>
         <li>
-            Required by videos: {{group.required_by_videos|length}}
-            <ul>
-                {% for v in group.required_by_videos %}
-                <li>{{v.name}}</li>
-                {% endfor%}
-            </ul>
+            {% show_relationship_items group group.required_by_videos 'Required by videos' %}
         </li>
         <li>
-            Contained videos: {{group.contained_videos|length}}
-            <ul>
-                {% for v in group.contained_videos %}
-                <li>{{v.name}}</li>
-                {% endfor%}
-            </ul>
+            {% show_relationship_items group group.contained_videos 'Contained videos' %}
         </li>
     </ul>
     <p>
