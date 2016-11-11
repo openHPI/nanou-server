@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'groups.apps.GroupsConfig',
     'neo.apps.NeoConfig',
+    'neoextras.apps.NeoExtrasConfig',
     'socialusers.apps.SocialUsersConfig',
     'videos.apps.VideosConfig',
 ]

@@ -13,6 +13,22 @@ def get_neo_object_or_404(cls, pk, graph):
     return obj
 
 
+def get_neo_node_or_404(pk, graph):
+    try:
+        return graph.node(pk)
+    except IndexError:
+        raise Http404(_('No node found matching the id %(node_id)s') %
+                      {'node_id': pk})
+
+
+def get_neo_relationship_or_404(a, rel_type, b, graph):
+    rel = graph.match_one(a, rel_type, b)
+    if rel is None:
+        raise Http404(_('No relationship "%(rel_type)s" found from %(node_a)s to %(node_b)s') %
+                      {'node_a': a, 'node_b': b, 'rel_type': rel_type})
+    return rel
+
+
 class NeoGraph(object):
     def __enter__(self):
         neo_db = settings.TEST_NEO_DATABASE if settings.TESTING else settings.NEO_DATABASE

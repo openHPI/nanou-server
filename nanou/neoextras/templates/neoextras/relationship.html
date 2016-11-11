@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <form class="ui form" action="" method="post">
+        {% csrf_token %}
+        {% if messages %}
+            {% if messages.error|length %}
+                {% for error in messages.error%}
+                    <div class="ui red message">{{error}}</div>
+                {% endfor%}
+            {% endif %}
+            {% if messages.succes|length %}
+                {% for success in messages.success%}
+                    <div class="ui red message">{{success}}</div>
+                {% endfor%}
+            {% endif %}
+        {% endif %}
+
+        <table class="ui very basic table">
+            <thead>
+                <th class="left aligned">
+                    {{ start_node.label }}
+                </th>
+                <th class="center aligned" colspan="2">
+                    --- {{ relationship.type }} -->
+                </th>
+                <th class="right aligned">
+                    {{ end_node.label }}
+                </th>
+            </thead>
+            {% for prop, value in relationship.props.items %}
+                <tr>
+                    {% if forloop.first %}
+                    <td class="left aligned top aligned" rowspan="{{relationship.props|length}}">
+                        {% for prop, value in start_node.props.items %}
+                        <div>
+                            {{prop}}: {{value}}
+                        </div>
+                        {% endfor %}
+                    </td>
+                    {% endif %}
+                    <td class="right aligned middle aligned" style="border-top: 0;">
+                        <div>
+                            {{prop}}
+                        </div>
+                    </td>
+                    <td class="left aligned middle aligned" style="border-top: 0; padding-right: 11px;">
+                        <div>
+                            <input name="{{prop}}" value="{{value}}" />
+                        </div>
+                    </td>
+                    {% if forloop.first %}
+                    <td class="right aligned top aligned" rowspan="{{relationship.props|length}}">
+                        {% for prop, value in end_node.props.items %}
+                        <div>
+                            {{prop}}: {{value}}
+                        </div>
+                        {% endfor %}
+                    </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td class="left aligned top aligned">
+                        {% for prop, value in start_node.props.items %}
+                        <div>
+                            {{prop}}: {{value}}
+                        </div>
+                        {% endfor %}
+                    </td>
+                    <td colspan="2"></td>
+                    <td class="right aligned top aligned">
+                        {% for prop, value in end_node.props.items %}
+                        <div>
+                            {{prop}}: {{value}}
+                        </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            {% if perms.nanou.manage_curriculum %}
+            <tr>
+                <td class="left aligned top aligned">
+                    <a href="{% url 'groups:list' %}" class="ui basic button">To start node</a>
+                </td>
+                <td class="middle aligned top aligned" colspan="2" style="text-align: center;">
+                    {% if relationship.props|length %}
+                    <button class="ui primary button" type="submit" value="Save">Save</button>
+                    {% endif %}
+                </td>
+                <td class="right aligned top aligned">
+                    <a href="{% url 'groups:list' %}" class="ui basic button">To end node/a>
+                </td>
+            </tr>
+            {% endif %}
+        </table>
+    </form>
+</div>
+{% endblock %}
