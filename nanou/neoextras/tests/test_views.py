@@ -35,9 +35,6 @@ class NeoExtrasViewCorrcetPermissionsMixin(object):
     def assertRelationContext(self, response, data=None):
         for key in ['start_node', 'end_node', 'relationship']:
             self.assertIn(key, response.context)
-            if data:
-                self.assertIn(key, data)
-                self.assertEqual(response.context[key], data[key])
 
     # Update
     def test_get_update_view(self):
@@ -52,13 +49,17 @@ class NeoExtrasViewCorrcetPermissionsMixin(object):
 
     def test_post_update_view(self):
         data = {
-            'weight': 0.7,
-            'foo': 'baz'
+            'weight': '0.7',
+            'foo': 'baz',
         }
         response = self.client.post(reverse('neoextras:relation', kwargs=get_valid_kwargs()), data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertRelationContext(response)
-        self.assertIn('messages', response.context, data)
+        self.assertIn('messages', response.context)
+        for key in data:
+            props = response.context['relationship']['props']
+            self.assertIn(key, props)
+            self.assertEqual(props[key], data[key])
         self.assertIn('success', response.context['messages'])
 
     def test_post_update_view_no_data(self):
