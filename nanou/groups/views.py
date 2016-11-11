@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 
 from nanou.widgets import SemanticUISelectMultiple
 from neo.views import NeoListView, NeoDetailView, NeoDeleteView, NeoUpdateView, NeoCreateView
-from neo.forms import NeoForm
+from neo.forms import NeoForm, NeoRelationshipField
 from videos.models import Video
 
 from .models import Group
@@ -16,17 +16,13 @@ class GroupForm(NeoForm):
         max_length=100,
         required=True
     )
-    required_by_videos = forms.MultipleChoiceField(
+    required_by_videos = NeoRelationshipField(
         label='Required by videos',
-        choices=[(video.id, video.name) for video in Video.all()],
-        required=False,
-        widget=SemanticUISelectMultiple(),
+        model=Video,
     )
-    contained_videos = forms.MultipleChoiceField(
+    contained_videos = NeoRelationshipField(
         label='Contained videos',
-        choices=[(video.id, video.name) for video in Video.all()],
-        required=False,
-        widget=SemanticUISelectMultiple(),
+        model=Video,
     )
 
 
