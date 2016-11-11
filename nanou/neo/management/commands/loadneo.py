@@ -3,7 +3,7 @@ import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from py2neo.ogm import Property, Related
+from py2neo.ogm import RelatedTo
 
 from neo.utils import NeoGraph
 
@@ -22,26 +22,24 @@ class Command(BaseCommand):
             relationship_count = 0
             with open(os.path.join(settings.BASE_DIR, path), 'r') as fixture_file:
                 data = json.load(fixture_file)
+                nodes = data.get('nodes', [])
+                relationships = data.get('relationships', [])
 
                 # create objects with properties
-                for entry in data:
-                    model_class = _model_class(entry)
+                for node_entry in nodes:
+                    model_class = _model_class(node_entry)
                     obj = model_class()
-                    for prop_name in _properties(model_class):
-                        setattr(obj, prop_name, entry['fields'][prop_name])
-                    object_map[entry['id']] = obj
+                    for name, value in node_entry['attributes'].items():
+                        setattr(obj, name, value)
+                    object_map[node_entry['id']] = obj
 
                 # create relationship between objects
-                for entry in data:
-                    model_class = _model_class(entry)
-                    obj = object_map[entry['id']]
-                    for prop_name in _relationships(model_class):
-                        related_objects = getattr(obj, prop_name)
-                        if prop_name in entry['fields']:
-                            for related_id in entry['fields'][prop_name]:
-                                rel_obj = object_map[related_id]
-                                related_objects.add(rel_obj)
-                                relationship_count += 1
+                for rel_entry in relationships:
+                    start_obj = object_map[rel_entry['start_node_id']]
+                    end_obj = object_map[rel_entry['end_node_id']]
+                    selection, to_obj = _find_selection(start_obj, end_obj, rel_entry['type'])
+                    selection.add(to_obj, rel_entry['attributes'])
+                    relationship_count += 1
 
             with NeoGraph() as graph:
                 for obj in object_map.values():
@@ -50,7 +48,7 @@ class Command(BaseCommand):
                 self.stdout.write('{path}: {obj_count} objects and {rel_count} relationships created'.format(**{
                     'path': path,
                     'obj_count': len(object_map),
-                    'rel_count': relationship_count/2,
+                    'rel_count': relationship_count,
                 }))
 
 
@@ -60,19 +58,14 @@ def _model_class(entry):
     return getattr(module, class_name)
 
 
-def _properties(model_class):
-    return (
-        prop_name
-        for prop_name, prop in model_class.__dict__.items()
-        if (not(prop_name.startswith('__') and prop_name.endswith('__'))
-            and isinstance(prop, Property))
-    )
-
-
-def _relationships(model_class):
-    return (
-        rel_name
-        for rel_name, rel in model_class.__dict__.items()
-        if (not(rel_name.startswith('__') and rel_name.endswith('__'))
-            and isinstance(rel, Related))
-    )
+def _find_selection(start_obj, end_obj, rel_type):
+    for relationship_name, relationship in start_obj.__class__.__dict__.items():
+        if isinstance(relationship, RelatedTo):
+            selection = getattr(start_obj, relationship_name)
+            if selection._RelatedObjects__match_args[1] == rel_type:
+                return selection, end_obj
+    for relationship_name, relationship in end_obj.__class__.__dict__.items():
+        if isinstance(relationship, RelatedTo):
+            selection = getattr(end_obj, relationship_name)
+            if selection._RelatedObjects__match_args[1] == rel_type:
+                return selection, start_obj

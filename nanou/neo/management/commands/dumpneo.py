@@ -14,17 +14,28 @@ class Command(BaseCommand):
     help = 'Dumps all neo4j models'
 
     def handle(self, *args, **options):
-        export = list()
+        export = {
+            'nodes': [],
+            'relationships': [],
+        }
         for app_config in apps.app_configs.values():
             if module_has_submodule(app_config.module, MODELS_MODULE_NAME):
                 models_module_name = '{}.{}'.format(app_config.name, MODELS_MODULE_NAME)
                 models_module = import_module(models_module_name)
                 for member_name, member in inspect.getmembers(models_module, inspect.isclass):
-                    if issubclass(member, NeoModel) and member != NeoModel:
+                    if member.__module__ == models_module_name and issubclass(member, NeoModel) and member != NeoModel:
                         for obj in member.all():
-                            export.append({
+                            export['nodes'].append({
                                 'model': '{}.{}'.format(member.__module__, member_name),
                                 'id': obj.id,
-                                'fields': obj.value_dict()
+                                'attributes': obj.property_dict()
                             })
+                            for start_node, relationship, end_node, attrs in obj.relationships():
+                                export['relationships'].append({
+                                    'type': relationship._RelatedObjects__match_args[1],
+                                    'start_node_id': start_node.id,
+                                    'end_node_id': end_node.id,
+                                    'attributes': attrs,
+                                })
+
         self.stdout.write(json.dumps(export, indent=4))

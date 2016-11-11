@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from py2neo.ogm import GraphObject, Related, RelatedObjects
+from py2neo.ogm import GraphObject, Property, Related, RelatedTo, RelatedObjects
 
 from .utils import NeoGraph
 
@@ -39,6 +39,27 @@ class NeoModel(GraphObject):
             for k in self.__class__.__dict__
             if not k.startswith('_')
         }
+
+    def property_dict(self):
+        return {
+            key: getattr(self, key)
+            for key, value in self.__class__.__dict__.items()
+            if isinstance(value, Property)
+        }
+
+    def relationships(self):
+        def node(obj):
+            return obj._GraphObject__ogm.node
+
+        relationships = []
+        with NeoGraph() as graph:
+            for relationship_name, relationship in self.__class__.__dict__.items():
+                if isinstance(relationship, RelatedTo):
+                    selection = getattr(self, relationship_name)
+                    for obj in selection:
+                        rel = graph.match_one(node(self), selection._RelatedObjects__match_args[1], node(obj))
+                        relationships.append((self, selection, obj, dict(rel)))
+        return relationships
 
     def _get_property(self, k):
         attr = getattr(self, k)

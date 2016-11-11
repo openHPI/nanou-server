@@ -1,41 +1,40 @@
-[
-    {
-        "fields": {
-            "required_videos": [],
-            "name": "A",
-            "required_by_videos": [
-                1
-            ]
+{
+    "relationships": [
+        {
+            "start_node_id": 2,
+            "attributes": {},
+            "type": "REQUIRES_VIDEO",
+            "end_node_id": 1
+        }
+    ],
+    "nodes": [
+        {
+            "attributes": {
+                "user_id": 3
+            },
+            "model": "socialusers.models.SocialUser",
+            "id": 4
         },
-        "model": "videos.models.Video",
-        "id": 0
-    },
-    {
-        "fields": {
-            "required_videos": [
-                0
-            ],
-            "name": "B",
-            "required_by_videos": []
+        {
+            "attributes": {
+                "name": "A"
+            },
+            "model": "videos.models.Video",
+            "id": 1
         },
-        "model": "videos.models.Video",
-        "id": 1
-    },
-    {
-        "fields": {
-            "required_videos": [],
-            "name": "C",
-            "required_by_videos": []
+        {
+            "attributes": {
+                "name": "B"
+            },
+            "model": "videos.models.Video",
+            "id": 2
         },
-        "model": "videos.models.Video",
-        "id": 2
-    },
-    {
-        "fields": {
-            "user_id": 3,
-            "wathed_videos": []
-        },
-        "model": "socialusers.models.SocialUser",
-        "id": 3
-    }
-]
+        {
+            "attributes": {
+                "name": "C"
+            },
+            "model": "videos.models.Video",
+            "id": 3
+        }
+    ]
+}
