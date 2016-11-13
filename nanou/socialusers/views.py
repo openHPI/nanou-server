@@ -1,4 +1,3 @@
-from django import forms
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -12,7 +11,6 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from nanou.widgets import SemanticUISelectMultiple
 from neo.forms import NeoForm, NeoRelationshipField
 from neo.utils import NeoGraph
 from neo.views import NeoListView, NeoDetailView, NeoUpdateView
