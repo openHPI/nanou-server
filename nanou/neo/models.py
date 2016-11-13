@@ -20,6 +20,10 @@ class NeoModel(GraphObject):
     def id(self):
         return self.__primaryvalue__
 
+    @property
+    def pk(self):
+        return self.__primaryvalue__
+
     def update_prop(self, k, v):
         if hasattr(self, k):
             if isinstance(self.__class__.__dict__[k], Related):

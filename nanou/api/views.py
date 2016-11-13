@@ -1,37 +1,40 @@
-from django.http import Http404
-
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from neo.utils import NeoGraph, get_neo_object_or_404
+from api.serializers import VideoSerializer
+from neo.utils import NeoGraph
 from socialusers.models import SocialUser
 from videos.models import Video
 
 
 class NextVideosView(APIView):
+    resource_name = 'videos'
+
     def get(self, request):
         socialuser = SocialUser.user_for_django_user(request.user.id)
-        return Response({
-            'data': [video.name for video in socialuser.next_videos()],
-        })
+        next_videos = socialuser.next_videos()
+        serializer = VideoSerializer(next_videos, many=True)
+        return Response(serializer.data)
 
 
-class WatchVideosView(APIView):
+class WatchVideoView(APIView):
+    resource_name = 'videos'
+
     def post(self, request):
-        video_ids = request.data.get('videos', [])
-        if not isinstance(video_ids, list) or len(video_ids) == 0:
-            content = {'error': {'videos': 'Require non-empty list of video ids'}}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        socialuser = SocialUser.user_for_django_user(request.user.id)
+        with NeoGraph() as graph:
+            video = Video.select(graph, request.data['id']).first()
+            if not video:
+                content = {
+                    'title': 'Found non-existing video id',
+                    'id': request.data['id'],
+                }
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            socialuser = SocialUser.user_for_django_user(request.user.id)
-            with NeoGraph() as graph:
-                for video_id in video_ids:
-                    video = get_neo_object_or_404(Video, int(video_id), graph)
-                    socialuser.watched_videos.add(video)
-                graph.push(socialuser)
-                return Response({'meta': {'watch_video_count': len(video_ids)}})
-        except Http404:
-            content = {'error': {'videos': 'Found non-existing video ids'}}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            if video in socialuser.watched_videos:
+                return Response({'meta': {'count': 0}})
+
+            socialuser.watched_videos.add(video)
+            graph.push(socialuser)
+            return Response({'meta': {'count': 1}})
