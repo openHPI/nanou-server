@@ -6,7 +6,7 @@
         {% csrf_token %}
         <p>Do you really want to delete video "{{ video.name }}"?</p>
 
-        {% if perms.nanou.manage_curriculum %}
+        {% if perms.base.manage_curriculum %}
         <input class="ui negative button" type="submit" value="Delete" />
         <a class="ui basic button" href="{% url 'videos:list'%}">Cancel</a>
         {% endif %}

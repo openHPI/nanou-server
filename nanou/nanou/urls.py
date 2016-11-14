@@ -17,8 +17,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
-from . import views
-
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,7 +25,7 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout_then_login, name='logout'),
     url(r'^social/', include('social.apps.django_app.urls', namespace='social')),
-    url(r'^$', views.landingpage, name='landingpage'),
+    url(r'^', include('base.urls', namespace='landingpage')),
     url(r'^groups/', include('groups.urls', namespace='groups')),
     url(r'^neo/', include('neoextras.urls', namespace='neoextras')),
     url(r'^socialusers/', include('socialusers.urls', namespace='socialusers')),

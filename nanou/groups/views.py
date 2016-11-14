@@ -26,21 +26,21 @@ class GroupForm(NeoForm):
 
 
 class GroupListView(PermissionRequiredMixin, NeoListView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = Group
     template_name = 'groups/list.html'
     context_object_name = 'groups'
 
 
 class GroupDetailView(PermissionRequiredMixin, NeoDetailView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = Group
     template_name = 'groups/detail.html'
     context_object_name = 'group'
 
 
 class GroupDeleteView(PermissionRequiredMixin, NeoDeleteView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = Group
     template_name = 'groups/delete.html'
     success_url = reverse_lazy('groups:list')
@@ -48,7 +48,7 @@ class GroupDeleteView(PermissionRequiredMixin, NeoDeleteView):
 
 
 class GroupUpdateView(PermissionRequiredMixin, NeoUpdateView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = Group
     template_name = 'groups/form.html'
     success_url = reverse_lazy('groups:list')
@@ -56,7 +56,7 @@ class GroupUpdateView(PermissionRequiredMixin, NeoUpdateView):
 
 
 class GroupCreateView(PermissionRequiredMixin, NeoCreateView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = Group
     template_name = 'groups/form.html'
     success_url = reverse_lazy('groups:list')

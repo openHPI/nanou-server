@@ -17,7 +17,7 @@
         </div>
         {% endfor %}
 
-        {% if perms.nanou.manage_curriculum %}
+        {% if perms.base.manage_curriculum %}
         <button class="ui primary button" type="submit" value="Save">Save</button>
         <a href="{% url 'groups:list' %}" class="ui basic button">Back to list of groups</a>
         {% endif %}

@@ -1,6 +1,6 @@
 from django import forms
 
-from nanou.widgets import SemanticUISelectMultiple
+from base.widgets import SemanticUISelectMultiple
 
 
 class NeoForm(forms.Form):
