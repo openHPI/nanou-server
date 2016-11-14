@@ -6,7 +6,7 @@ from neo.utils import NeoGraph, get_neo_node_or_404, get_neo_relationship_or_404
 
 
 class NeoRelationshipDetailView(PermissionRequiredMixin, View):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     template_name = 'neoextras/relationship.html'
 
     def check_objects(self, pk1, rel_type, pk2):

@@ -33,8 +33,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'social.apps.django_app.default',
-    'nanou',
     'api.apps.ApiConfig',
+    'base.apps.BaseConfig',
     'groups.apps.GroupsConfig',
     'neo.apps.NeoConfig',
     'neoextras.apps.NeoExtrasConfig',
@@ -57,7 +57,7 @@ ROOT_URLCONF = 'nanou.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(os.path.join(BASE_DIR, 'nanou'), 'templates')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,7 +115,6 @@ AUTHENTICATION_BACKENDS = (
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'nanou/static'),
 ]
 
 STATICFILES_FINDERS = [

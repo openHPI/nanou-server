@@ -27,21 +27,21 @@ class SocialUserForm(NeoForm):
 
 
 class SocialUserListView(PermissionRequiredMixin, NeoListView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = SocialUser
     template_name = 'socialusers/list.html'
     context_object_name = 'socialusers'
 
 
 class SocialUserDetailView(PermissionRequiredMixin, NeoDetailView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = SocialUser
     template_name = 'socialusers/detail.html'
     context_object_name = 'socialuser'
 
 
 class SocialUserUpdateView(PermissionRequiredMixin, NeoUpdateView):
-    permission_required = 'nanou.manage_curriculum'
+    permission_required = 'base.manage_curriculum'
     model = SocialUser
     template_name = 'socialusers/form.html'
     success_url = reverse_lazy('socialusers:list')
@@ -86,7 +86,7 @@ class AuthStatusView(View):
                 if user_session is None:
                     raise AuthenticationFailed
                 user, _ = user_session
-                if not user.has_perm('nanou.consume_curriculum'):
+                if not user.has_perm('base.consume_curriculum'):
                     raise AuthenticationFailed
                 token, _ = Token.objects.get_or_create(user=user)
             except AuthenticationFailed:

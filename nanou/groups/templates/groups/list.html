@@ -8,7 +8,7 @@
             <tr>
                 <th>Name</th>
                 <th class="right aligned">
-                    {% if perms.nanou.manage_curriculum %}
+                    {% if perms.base.manage_curriculum %}
                     <a href="{% url 'groups:create' %}" class="ui primary button">Add Group</a>
                     {% endif %}
                 </th>
@@ -21,7 +21,7 @@
                     <a href="{% url 'groups:detail' group.id %}">{{ group.name }}</a>
                 </td>
                 <td class="right aligned">
-                    {% if perms.nanou.manage_curriculum %}
+                    {% if perms.base.manage_curriculum %}
                     <a href="{% url 'groups:update' group.id %}" class="ui secondary basic button">Edit</a>
                     <a href="{% url 'groups:delete' group.id %}" class="ui negative basic button">Delete</a>
                     {% endif %}

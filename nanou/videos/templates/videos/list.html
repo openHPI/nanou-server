@@ -8,7 +8,7 @@
             <tr>
                 <th>Name</th>
                 <th class="right aligned">
-                    {% if perms.nanou.manage_curriculum %}
+                    {% if perms.base.manage_curriculum %}
                     <a href="{% url 'videos:create' %}" class="ui primary button">Add Video</a>
                     {% endif %}
                 </th>
@@ -18,14 +18,14 @@
             {% for video in videos %}
             <tr>
                 <td>
-                    {% if perms.nanou.manage_curriculum %}
+                    {% if perms.base.manage_curriculum %}
                     <a href={% url 'videos:detail' video.id %}>{{ video.name }}</a>
                     {% else %}
                     {{ video.name }}
                     {% endif %}
                 </td>
                 <td class="right aligned">
-                    {% if perms.nanou.manage_curriculum %}
+                    {% if perms.base.manage_curriculum %}
                     <a href="{% url 'videos:update' video.id %}" class="ui secondary basic button">Edit</a>
                     <a href="{% url 'videos:delete' video.id %}" class="ui negative basic button">Delete</a>
                     {% endif %}

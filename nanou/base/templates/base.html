@@ -11,7 +11,7 @@
     <title>nanou</title>
 
     <link rel="stylesheet" type="text/css" href="{% static 'semantic-ui/dist/semantic.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'nanou/css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'base/css/base.css' %}">
 
     <script type="text/javascript" src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'semantic-ui/dist/semantic.min.js' %}"></script>
@@ -21,7 +21,7 @@
     <div class="ui container">
         <div class="ui borderless main menu">
             <a class="header item">nanou</a>
-            {% if perms.nanou.manage_curriculum %}
+            {% if perms.base.manage_curriculum %}
             <a href="{% url 'videos:list' %}" class="item">Videos</a>
             <a href="{% url 'groups:list' %}" class="item">Groups</a>
             <a href="{% url 'socialusers:list' %}" class="item">Users</a>

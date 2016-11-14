@@ -7,7 +7,7 @@ class NanouViewCorrcetPermissionsMixin(object):
     csrf_client = Client(enforce_csrf_checks=True)
 
     def test_get_landing_page(self):
-        response = self.client.get(reverse('landingpage'))
+        response = self.client.get(reverse('base:landingpage'))
         self.assertEqual(response.status_code, 200)
 
 
@@ -15,7 +15,7 @@ class NanouViewWrongPermissionMixin(object):
     """Mixins for user testing the views is logged if the user lacks the required permissions."""
 
     def test_get_landing_page(self):
-        url = reverse('landingpage')
+        url = reverse('base:landingpage')
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
