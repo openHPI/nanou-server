@@ -7,13 +7,17 @@
         {% csrf_token %}
 
         {{ form.media }}
-        {{ form.non_field_errors }}
+        {% for error in form.non_field_errors %}
+        <div class="ui red message">{{ error }}</div>
+        {% endfor %}
 
         {% for field in form.visible_fields %}
         <div class="field">
-            {{ field.errors }}
             {{ field.label_tag }}
             {{ field }}
+            {% for error in field.errors %}
+            <div class="ui red message">{{ error }}</div>
+            {% endfor %}
         </div>
         {% endfor %}
 

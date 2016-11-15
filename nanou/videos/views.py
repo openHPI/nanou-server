@@ -3,7 +3,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 
 from groups.models import Group
-from neo.forms import NeoForm, NeoRelationshipField
+from neo.forms import (NeoForm, NeoRelationshipField,
+                       NeoRelationshipNoSelfRefField)
 from neo.views import (NeoCreateView, NeoDeleteView, NeoDetailView,
                        NeoListView, NeoUpdateView)
 
@@ -16,11 +17,11 @@ class VideoForm(NeoForm):
         max_length=100,
         required=True
     )
-    required_by_videos = NeoRelationshipField(
+    required_by_videos = NeoRelationshipNoSelfRefField(
         label='Required by videos',
         model=Video,
     )
-    required_videos = NeoRelationshipField(
+    required_videos = NeoRelationshipNoSelfRefField(
         label='Required videos',
         model=Video,
     )
