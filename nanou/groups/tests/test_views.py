@@ -1,8 +1,8 @@
 from django.test import Client
 from django.urls import reverse
 
-from neo.tests import NeoTestCase
 from groups.models import Group
+from neo.tests import NeoTestCase
 
 
 class GroupViewCorrcetPermissionsMixin(object):

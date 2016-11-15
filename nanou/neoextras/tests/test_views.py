@@ -2,8 +2,8 @@ from django.test import Client
 from django.urls import reverse
 from django.utils import six
 
-from neo.tests import NeoTestCase
 from groups.models import Group
+from neo.tests import NeoTestCase
 
 
 def get_valid_kwargs():

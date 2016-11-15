@@ -1,19 +1,19 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.views import View
-
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.authentication import (SessionAuthentication,
+                                           TokenAuthentication)
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from neo.forms import NeoForm, NeoRelationshipField
 from neo.utils import NeoGraph
-from neo.views import NeoListView, NeoDetailView, NeoUpdateView
+from neo.views import NeoDetailView, NeoListView, NeoUpdateView
 from videos.models import Video
 
 from .models import SocialUser

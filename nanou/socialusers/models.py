@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.http import Http404
 from django.utils.translation import ugettext as _
-
 from py2neo.ogm import Property, RelatedTo
 
 from neo.models import NeoModel

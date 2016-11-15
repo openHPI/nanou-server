@@ -3,7 +3,6 @@ import json
 from django.test import Client
 from django.urls import reverse
 from django.utils import six
-
 from rest_framework.authtoken.models import Token
 
 from neo.tests import NeoTestCase

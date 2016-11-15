@@ -2,7 +2,6 @@ from django.conf.urls import url
 
 from . import views
 
-
 app_name = 'socialusers'
 urlpatterns = [
     url(r'^$', views.SocialUserListView.as_view(), name='list'),

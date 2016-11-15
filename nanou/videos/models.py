@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from py2neo.ogm import Property, RelatedFrom, RelatedTo
+
 from neo.models import NeoModel
 
 

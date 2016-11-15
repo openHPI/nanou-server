@@ -1,6 +1,6 @@
-from importlib import import_module
 import inspect
 import json
+from importlib import import_module
 
 from django.apps import apps
 from django.apps.config import MODELS_MODULE_NAME

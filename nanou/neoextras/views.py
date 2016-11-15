@@ -2,7 +2,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render
 from django.views import View
 
-from neo.utils import NeoGraph, get_neo_node_or_404, get_neo_relationship_or_404
+from neo.utils import (NeoGraph, get_neo_node_or_404,
+                       get_neo_relationship_or_404)
 
 
 class NeoRelationshipDetailView(PermissionRequiredMixin, View):

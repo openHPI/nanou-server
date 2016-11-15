@@ -2,9 +2,10 @@ from django import forms
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 
-from neo.views import NeoListView, NeoDetailView, NeoDeleteView, NeoUpdateView, NeoCreateView
-from neo.forms import NeoForm, NeoRelationshipField
 from groups.models import Group
+from neo.forms import NeoForm, NeoRelationshipField
+from neo.views import (NeoCreateView, NeoDeleteView, NeoDetailView,
+                       NeoListView, NeoUpdateView)
 
 from .models import Video
 
