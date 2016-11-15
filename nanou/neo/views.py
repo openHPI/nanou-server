@@ -33,12 +33,12 @@ class NeoCreateView(CreateView):
         return super(NeoCreateView, self).get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):
+        model = self.model
+        obj = model()
         form_class = self.get_form_class()
-        form = form_class(request.POST)
+        form = form_class(request.POST, instance=obj)
         if form.is_valid():
             with NeoGraph() as graph:
-                model = self.model
-                obj = model()
                 for k, v in form.cleaned_data.items():
                     obj.update_prop(k, v)
                 graph.create(obj)
@@ -59,9 +59,9 @@ class NeoUpdateView(UpdateView):
             return obj.value_dict()
 
     def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = form_class(request.POST)
         obj = self.get_object()
+        form_class = self.get_form_class()
+        form = form_class(request.POST, instance=obj)
         if form.is_valid():
             with NeoGraph() as graph:
                 for k, v in form.cleaned_data.items():
