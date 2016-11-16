@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.http import Http404
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 from py2neo.ogm import Property, RelatedTo
 
@@ -12,6 +13,9 @@ from videos.models import Video
 class SocialUser(NeoModel):
     user_id = Property()
     watched_videos = RelatedTo('videos.models.Video', 'WATCHED')
+
+    def get_absolute_url(self):
+        return reverse('socialusers:detail', args=[self.id])
 
     @classmethod
     def user_for_django_user(cls, dj_id):

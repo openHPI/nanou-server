@@ -1,9 +1,9 @@
-{{ label }}: {{selection|length}}
+{{ label }}: {{ selection|length }}
 <table class="ui very basic table">
-{% for obj in selection%}
+{% for obj in selection %}
 <tr>
     <td>
-        <a href="">{{obj.name}}</a>
+        <a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a>
     </td>
     <td class="ui right aligned">
         {% if reverse_relationship %}

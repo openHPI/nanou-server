@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.urls import reverse
 from py2neo.ogm import Property, RelatedFrom, RelatedTo
 
 from neo.models import NeoModel
@@ -12,3 +13,6 @@ class Video(NeoModel):
     required_groups = RelatedTo('groups.models.Group', 'REQUIRES_GROUP')
     contained_in_groups = RelatedFrom('groups.models.Group', 'CONTAINS')
     watched_by = RelatedFrom('socialusers.models.SocialUser', 'WATCHED')
+
+    def get_absolute_url(self):
+        return reverse('videos:detail', args=[self.id])
