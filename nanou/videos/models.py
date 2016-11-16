@@ -4,11 +4,8 @@ from django.urls import reverse
 from py2neo.ogm import Property
 
 from neo.models import NeoModel, NeoRelatedFrom, NeoRelatedTo
-from socialusers.models import WATCHED_DEFAULT_PROPS
-
-CATEGORY_DEFAULT_PROPS = {
-    'weight': 1.0
-}
+from socialusers.properties import WATCHED_DEFAULT_PROPS
+from videos.properties import CATEGORY_DEFAULT_PROPS
 
 
 class Video(NeoModel):

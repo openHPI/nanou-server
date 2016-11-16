@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-from datetime import datetime
-
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import ugettext as _
@@ -9,17 +7,8 @@ from py2neo.ogm import Property
 
 from neo.models import NeoModel, NeoRelatedTo
 from neo.utils import NeoGraph
+from socialusers.properties import WATCHED_DEFAULT_PROPS, PREFERENCE_DEFAULT_PROPS
 from videos.models import Video
-
-WATCHED_DEFAULT_PROPS = {
-    'date': datetime.min.isoformat(),
-    'rating': -1,
-    'progress': -1,
-}
-
-PREFERENCE_DEFAULT_PROPS = {
-    'weight': 1.0,
-}
 
 
 class SocialUser(NeoModel):
