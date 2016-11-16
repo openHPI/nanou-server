@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
 
-from py2neo.ogm import (GraphObject, Property, Related, RelatedObjects,
-                        RelatedTo)
+from py2neo.ogm import (GraphObject, Property, Related, RelatedFrom,
+                        RelatedObjects, RelatedTo)
 
 from .utils import NeoGraph
+
+DEFAULT_PROPS_KEY = 'default_props'
 
 
 class NeoModel(GraphObject):
@@ -27,14 +29,20 @@ class NeoModel(GraphObject):
 
     def update_prop(self, k, v):
         if hasattr(self, k):
-            if isinstance(self.__class__.__dict__[k], Related):
+            if isinstance(self.__class__.__dict__[k], DefaultPropertyMixin):
+                int_values = [int(x) for x in v]
+                default_props = self.__class__.__dict__[k].default_props
                 attr = getattr(self, k)
-                attr.clear()
+                    # Remove deleted objects
+                for obj in attr:
+                    if obj.id not in int_values:
+                        attr.remove(obj)
+                # Add new objects
                 with NeoGraph() as graph:
-                    for id_new in v:
+                    for id_new in int_values:
                         obj_new = attr.related_class.select(graph, int(id_new)).first()
-                        if obj_new:
-                            attr.add(obj_new)
+                        if obj_new and obj_new not in attr:
+                            attr.add(obj_new, default_props)
             else:
                 setattr(self, k, v)
 
@@ -81,3 +89,29 @@ class NeoModel(GraphObject):
                     rel_objects.clear()
             graph.push(self)
             return graph.delete(self)
+
+
+class DefaultPropertyMixin(object):
+    default_props = {}
+
+    def __init__(self, *args, **kwargs):
+        if DEFAULT_PROPS_KEY in kwargs:
+            props = kwargs.get(DEFAULT_PROPS_KEY)
+            if isinstance(props, dict):
+                self.default_props = props
+            else:
+                raise ValueError('default_props has to be a dict')
+            del kwargs[DEFAULT_PROPS_KEY]
+        super(DefaultPropertyMixin, self).__init__(*args, **kwargs)
+
+
+class NeoRelated(DefaultPropertyMixin, Related):
+    pass
+
+
+class NeoRelatedFrom(DefaultPropertyMixin, RelatedFrom):
+    pass
+
+
+class NeoRelatedTo(DefaultPropertyMixin, RelatedTo):
+    pass

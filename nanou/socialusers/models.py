@@ -3,16 +3,16 @@ from __future__ import unicode_literals
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import ugettext as _
-from py2neo.ogm import Property, RelatedTo
+from py2neo.ogm import Property
 
-from neo.models import NeoModel
+from neo.models import NeoModel, NeoRelatedTo
 from neo.utils import NeoGraph
-from videos.models import Video
+from videos.models import Video, WATCHED_DEFAULT_PROPS
 
 
 class SocialUser(NeoModel):
     user_id = Property()
-    watched_videos = RelatedTo('videos.models.Video', 'WATCHED')
+    watched_videos = NeoRelatedTo('videos.models.Video', 'WATCHED', default_props=WATCHED_DEFAULT_PROPS)
 
     def get_absolute_url(self):
         return reverse('socialusers:detail', args=[self.id])
