@@ -33,7 +33,7 @@ class NeoModel(GraphObject):
                 int_values = [int(x) for x in v]
                 default_props = self.__class__.__dict__[k].default_props
                 attr = getattr(self, k)
-                    # Remove deleted objects
+                # Remove deleted objects
                 for obj in attr:
                     if obj.id not in int_values:
                         attr.remove(obj)

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load neo_extras %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1>Category: {{ category.name }}</h1>
+    <ul>
+        <li>
+            {% show_relationship_items category category.videos 'Videos' %}
+        </li>
+    </ul>
+    <p>
+        {% if perms.base.manage_curriculum %}
+        <a href="{% url 'categories:update' category.id %}" class="ui primary basic button">Edit</a>
+        <a href="{% url 'categories:delete' category.id %}" class="ui negative basic button">Delete</a>
+        <a href="{% url 'categories:list' %}" class="ui basic button">Back to list of categories</a>
+        {% endif %}
+    </p>
+</div>
+{% endblock %}

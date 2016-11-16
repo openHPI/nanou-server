@@ -69,3 +69,4 @@ def _find_selection(start_obj, end_obj, rel_type):
             selection = getattr(end_obj, relationship_name)
             if selection._RelatedObjects__match_args[1] == rel_type:
                 return selection, start_obj
+    raise ValueError('Unable to find selection (%s, %s, %s)' % (start_obj, rel_type, end_obj))

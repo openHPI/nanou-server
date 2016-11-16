@@ -6,6 +6,9 @@
     <h1>Social user with id {{ socialuser.id }}</h1>
     <ul>
         <li>
+            {% show_relationship_items socialuser socialuser.preferences 'Preferences' %}
+        </li>
+        <li>
             {% show_relationship_items socialuser socialuser.watched_videos 'Watched videos' %}
         </li>
     </ul>
