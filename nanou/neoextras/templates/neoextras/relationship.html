@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load neo_relationships %}
 
 {% block content %}
 <div class="ui main text container">
@@ -81,13 +82,17 @@
             {% endfor %}
             {% if perms.base.manage_curriculum %}
             <tr>
-                <td class="left aligned top aligned"></td>
+                <td class="left aligned top aligned">
+                    <a class="ui button" href="{% model_for_node start_node.node %}">To start node</a>
+                </td>
                 <td class="middle aligned top aligned" colspan="2" style="text-align: center;">
                     {% if relationship.props|length %}
                     <button class="ui primary button" type="submit" value="Save">Save</button>
                     {% endif %}
                 </td>
-                <td class="right aligned top aligned"></td>
+                <td class="right aligned top aligned">
+                    <a class="ui button" href="{% model_for_node end_node.node %}">To end node</a>
+                </td>
             </tr>
             {% endif %}
         </table>

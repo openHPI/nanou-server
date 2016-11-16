@@ -20,10 +20,12 @@ class NeoRelationshipDetailView(PermissionRequiredMixin, View):
     def create_context_data(self, a, rel, b):
         return {
             'start_node': {
+                'node': a,
                 'label': '|'.join(a._Node__labels),
                 'props': dict(a),
             },
             'end_node': {
+                'node': b,
                 'label': '|'.join(b._Node__labels),
                 'props': dict(b),
             },
