@@ -7,12 +7,14 @@ from py2neo.ogm import Property
 
 from neo.models import NeoModel, NeoRelatedTo
 from neo.utils import NeoGraph
-from videos.models import Video, WATCHED_DEFAULT_PROPS
+from socialusers.properties import WATCHED_DEFAULT_PROPS, PREFERENCE_DEFAULT_PROPS
+from videos.models import Video
 
 
 class SocialUser(NeoModel):
     user_id = Property()
     watched_videos = NeoRelatedTo('videos.models.Video', 'WATCHED', default_props=WATCHED_DEFAULT_PROPS)
+    preferences = NeoRelatedTo('categories.models.Category', 'HAS_PREFERENCE', default_props=PREFERENCE_DEFAULT_PROPS)
 
     def get_absolute_url(self):
         return reverse('socialusers:detail', args=[self.id])

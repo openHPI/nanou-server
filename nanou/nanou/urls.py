@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout_then_login, name='logout'),
     url(r'^social/', include('social.apps.django_app.urls', namespace='social')),
     url(r'^', include('base.urls', namespace='landingpage')),
+    url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^groups/', include('groups.urls', namespace='groups')),
     url(r'^neo/', include('neoextras.urls', namespace='neoextras')),
     url(r'^socialusers/', include('socialusers.urls', namespace='socialusers')),

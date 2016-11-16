@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'social.apps.django_app.default',
     'api.apps.ApiConfig',
     'base.apps.BaseConfig',
+    'categories.apps.CategoriesConfig',
     'groups.apps.GroupsConfig',
     'neo.apps.NeoConfig',
     'neoextras.apps.NeoExtrasConfig',

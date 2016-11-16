@@ -11,6 +11,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from categories.models import Category
 from neo.forms import NeoForm, NeoRelationshipField
 from neo.utils import NeoGraph
 from neo.views import NeoDetailView, NeoListView, NeoUpdateView
@@ -23,6 +24,10 @@ class SocialUserForm(NeoForm):
     watched_videos = NeoRelationshipField(
         label='Watched videos',
         model=Video,
+    )
+    preferences = NeoRelationshipField(
+        label='Preferences',
+        model=Category,
     )
 
 

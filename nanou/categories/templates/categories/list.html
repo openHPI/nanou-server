@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1 class="ui header">Categories</h1>
+    <table class="ui single line table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th class="right aligned">
+                    {% if perms.base.manage_curriculum %}
+                    <a href="{% url 'categories:create' %}" class="ui primary button">Add Category</a>
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td>
+                    <a href="{% url 'categories:detail' category.id %}">{{ category.name }}</a>
+                </td>
+                <td class="right aligned">
+                    {% if perms.base.manage_curriculum %}
+                    <a href="{% url 'categories:update' category.id %}" class="ui secondary basic button">Edit</a>
+                    <a href="{% url 'categories:delete' category.id %}" class="ui negative basic button">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">
+                    No categories available.
+                </td>
+            </tr>
+            {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

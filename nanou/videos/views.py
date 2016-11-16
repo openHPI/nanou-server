@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 
+from categories.models import Category
 from groups.models import Group
 from neo.forms import (NeoForm, NeoRelationshipField,
                        NeoRelationshipNoSelfRefField)
@@ -26,12 +27,16 @@ class VideoForm(NeoForm):
         model=Video,
     )
     required_groups = NeoRelationshipField(
-        label='Required by videos',
+        label='Required by groups',
         model=Group,
     )
     contained_in_groups = NeoRelationshipField(
-        label='Required videos',
+        label='Required groups',
         model=Group,
+    )
+    categories = NeoRelationshipField(
+        label='Categories',
+        model=Category,
     )
 
 
