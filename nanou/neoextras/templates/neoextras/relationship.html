@@ -11,9 +11,9 @@
                     <div class="ui red message">{{error}}</div>
                 {% endfor%}
             {% endif %}
-            {% if messages.succes|length %}
+            {% if messages.success|length %}
                 {% for success in messages.success%}
-                    <div class="ui red message">{{success}}</div>
+                    <div class="ui green message">{{success}}</div>
                 {% endfor%}
             {% endif %}
         {% endif %}

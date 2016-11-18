@@ -36,7 +36,11 @@ class NeoRelationshipDetailView(PermissionRequiredMixin, View):
         }
 
     def validate_post_data(self, data, rel):
-        return all(key in data for key in rel) and all(key in rel for key in data) and len(rel) > 0
+        return (
+            all(key in data for key in rel) and
+            all(key in rel for key in data if key != 'csrfmiddlewaretoken') and
+            len(rel) > 0
+        )
 
     def get(self, request, pk1, rel_type, pk2):
         context = self.create_context_data(*self.check_objects(pk1, rel_type, pk2))
