@@ -4,7 +4,7 @@
             "start_node_id": 2,
             "attributes": {},
             "type": "REQUIRES_VIDEO",
-            "end_node_id": 1
+            "end_node_id": 3
         },
         {
             "start_node_id": 4,
@@ -15,7 +15,7 @@
             "end_node_id": 5
         },
         {
-            "start_node_id": 1,
+            "start_node_id": 3,
             "attributes": {
                 "weight": 0.5
             },

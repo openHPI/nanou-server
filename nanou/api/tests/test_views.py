@@ -33,8 +33,7 @@ class ApiViewCorrectPermissionsMixin(object):
         self.assertTrue(all('attributes' in item for item in json_response['data']))
         self.assertTrue(all('name' in item['attributes'] for item in json_response['data']))
         response_names = [item['attributes']['name'] for item in json_response['data']]
-        self.assertTrue(all(response_name in video_names for response_name in response_names))
-        self.assertTrue(all(video_name in response_names for video_name in video_names))
+        self.assertEqual(video_names, response_names)
 
     def watch_and_next_videos(self, video_name, next_videos):
         with NeoGraph() as graph:
@@ -56,16 +55,16 @@ class ApiViewCorrectPermissionsMixin(object):
     def test_next_videos_view(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONDataVideoNames(response, ['A', 'C'])
+        self.assertJSONDataVideoNames(response, ['C'])
 
     def test_next_videos_view_workflow(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONDataVideoNames(response, ['A', 'C'])
+        self.assertJSONDataVideoNames(response, ['C'])
 
-        self.watch_and_next_videos('A', ['B', 'C'])
-        self.watch_and_next_videos('C', ['B'])
-        self.watch_and_next_videos('B', [])
+        self.watch_and_next_videos('C', ['A', 'B'])
+        self.watch_and_next_videos('B', ['A'])
+        self.watch_and_next_videos('A', [])
 
     # GET /api/watch/
     def test_get_watch_video(self):
