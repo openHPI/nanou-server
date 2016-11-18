@@ -5,16 +5,25 @@
             "attributes": {},
             "type": "REQUIRES_VIDEO",
             "end_node_id": 1
+        },
+        {
+            "start_node_id": 4,
+            "attributes": {
+                "weight": 0.75
+            },
+            "type": "HAS_PREFERENCE",
+            "end_node_id": 5
+        },
+        {
+            "start_node_id": 1,
+            "attributes": {
+                "weight": 0.5
+            },
+            "type": "BELONGS_TO",
+            "end_node_id": 5
         }
     ],
     "nodes": [
-        {
-            "attributes": {
-                "user_id": 3
-            },
-            "model": "socialusers.models.SocialUser",
-            "id": 4
-        },
         {
             "attributes": {
                 "name": "A"
@@ -35,6 +44,20 @@
             },
             "model": "videos.models.Video",
             "id": 3
+        },
+        {
+            "attributes": {
+                "user_id": 3
+            },
+            "model": "socialusers.models.SocialUser",
+            "id": 4
+        },
+        {
+            "attributes": {
+                "name": "Category"
+            },
+            "model": "categories.models.Category",
+            "id": 5
         }
     ]
 }

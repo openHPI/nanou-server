@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext as _
 from py2neo.ogm import Property
 
+from categories.models import Category
 from neo.models import NeoModel, NeoRelatedTo
 from neo.utils import NeoGraph
 from socialusers.properties import WATCHED_DEFAULT_PROPS, PREFERENCE_DEFAULT_PROPS
@@ -41,3 +42,10 @@ class SocialUser(NeoModel):
                 'user_id': self.id
             })
             return [Video.wrap(d['v1']) for d in cursor.data()]
+
+    def ensure_preferences(self):
+        for category in Category.all():
+            if category not in self.preferences:
+                self.preferences.add(category, PREFERENCE_DEFAULT_PROPS)
+        with NeoGraph() as graph:
+            graph.push(self)
