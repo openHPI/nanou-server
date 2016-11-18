@@ -70,10 +70,8 @@ class LoginProvidersView(APIView):
 
     def get(self, request):
         return Response({
-            'data': {
-                name: request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))
-                for name, backend in self.providers.items()
-            },
+            name: request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))
+            for name, backend in self.providers.items()
         })
 
 
