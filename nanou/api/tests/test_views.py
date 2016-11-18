@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils import six
 from rest_framework.authtoken.models import Token
 
+from categories.models import Category
 from neo.tests import NeoTestCase
 from neo.utils import NeoGraph
 from videos.models import Video
@@ -51,7 +52,7 @@ class ApiViewCorrectPermissionsMixin(object):
             self.assertEqual(response.status_code, 200)
             self.assertJSONDataVideoNames(response, next_videos)
 
-    # GET /api/next_videos
+    # GET /api/next/
     def test_next_videos_view(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
@@ -128,11 +129,124 @@ class ApiViewCorrectPermissionsMixin(object):
         )
         self.assertEqual(response.status_code, 400)
 
+    # GET /api/preferences/
+    def test_get_preferences(self):
+        category = Category.first()
+        response = self.client.get(reverse('api:preferences'))
+        self.assertEqual(response.status_code, 200)
+        json = self.load_response_content(response)
+        self.assertEqual(json.get('data'), [{
+            u'type': u'preferences',
+            u'id': u'%s' % category.id,
+            u'attributes': {
+                u'name': u'Category',
+                u'weight': 0.75,
+            },
+        }])
+
+    # POST /api/preferences/
+    def test_post_preferences(self):
+        category = Category.first()
+        response = self.client.post(
+            reverse('api:preferences'),
+            json.dumps({u'data': {u'type': u'preferences',  u'attributes': {u'updates': [{
+                u'type': 'preferences',
+                u'id': u'%s' % category.id,
+                u'attributes': {
+                    u'weight': 0.25,
+                },
+            }]}}}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 200, response.content)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('meta'), {u'count': 1})
+
+    def test_post_preferences_missing_updates(self):
+        response = self.client.post(
+            reverse('api:preferences'),
+            json.dumps({u'data': {u'type': u'preferences', u'attributes': {}}}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 400)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('errors'), {u'title': u'Found no preference updates'})
+
+    def test_post_preferences_wrong_updates_format(self):
+        response = self.client.post(
+            reverse('api:preferences'),
+            json.dumps({u'data': {u'type': u'preferences', u'updates': 1}}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 400)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('errors'), {u'title': u'Found no preference updates'})
+
+    def test_post_preferences_missing_id(self):
+        response = self.client.post(
+            reverse('api:preferences'),
+            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
+                u'type': 'preferences',
+                u'attributes': {
+                    u'weight': 0.25,
+                },
+            }]}}}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 400)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
+
+    def test_post_preferences_missing_attributes(self):
+        category = Category.first()
+        response = self.client.post(
+            reverse('api:preferences'),
+            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
+                u'type': 'preferences',
+                u'id': u'%s' % category.id,
+            }]}}}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 400)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
+
+    def test_post_preferences_missing_weight(self):
+        category = Category.first()
+        response = self.client.post(
+            reverse('api:preferences'),
+            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
+                u'type': 'preferences',
+                u'id': u'%s' % category.id,
+                u'attributes': {},
+            }]}}}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 400)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
+
+    def test_post_preferences_invalid_id(self):
+        response = self.client.post(
+            reverse('api:preferences'),
+            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
+                u'type': 'preferences',
+                u'id': u'0',
+                u'attributes': {
+                    u'weight': 0.25,
+                },
+            }]}}}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 400, response.content)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('errors'), {u'id': u'0', u'title': u'Found non-existing category id'})
+
 
 class ApiViewWrongPermissionsMixin(object):
     """Mixins for user testing the views is logged if the user lacks the required permissions."""
 
-    # /api/next_videos
+    # GET /api/next/
     def test_next_videos_view(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 401)
@@ -149,9 +263,19 @@ class ApiViewWrongPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'videos': [obj.id]}),
-                content_type='application/json'
+                content_type='application/vnd.api+json'
             )
             self.assertEqual(response.status_code, 401)
+
+    # GET /api/preferences/
+    def test_get_preferences(self):
+        response = self.client.get(reverse('api:preferences'))
+        self.assertEqual(response.status_code, 401)
+
+    # POST /api/preferences/
+    def test_post_preferences(self):
+        response = self.client.post(reverse('api:preferences'))
+        self.assertEqual(response.status_code, 401)
 
 
 class ApiViewManagerTests(NeoTestCase, ApiViewWrongPermissionsMixin):
@@ -180,6 +304,10 @@ class ApiViewTokenTests(NeoTestCase, ApiViewCorrectPermissionsMixin):
     def setUp(self):
         token = Token.objects.first()
         self.client.defaults['HTTP_AUTHORIZATION'] = 'Token ' + token.key
+        # Delete SocialUser object that is created by the Djangos post_save signal.
+        # We need the node created by us because we want to create some relationships.
+        with NeoGraph() as graph:
+            graph.run('MATCH (a:SocialUser) WHERE NOT (a)-[:HAS_PREFERENCE]->() DELETE a')
 
 
 class ApiViewNoPermissionTests(NeoTestCase, ApiViewWrongPermissionsMixin):
