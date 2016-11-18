@@ -4,6 +4,9 @@
 {% block content %}
 <div class="ui main text container">
     <h1>Video: {{ video.name }}</h1>
+    <p>
+        URL: <a href="{{ video.url }}">{{ video.url }}</a>
+    </p>
     <ul>
         <li>
             {% show_relationship_items video video.required_by_videos 'Required by videos' %}

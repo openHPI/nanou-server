@@ -48,6 +48,7 @@ class VideoViewCorrcetPermissionsMixin(object):
     def test_post_create_view(self):
         data = {
             'name': 'Random Video',
+            'url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
         }
         response = self.client.post(reverse('videos:create'), data, follow=True)
         self.assertRedirects(response, reverse('videos:list'))
@@ -82,6 +83,7 @@ class VideoViewCorrcetPermissionsMixin(object):
         video = Video.first()
         data = {
             'name': 'Updated Video',
+            'url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
         }
         response = self.client.post(reverse('videos:update', kwargs={'pk': video.id}), data, follow=True)
         self.assertRedirects(response, reverse('videos:list'))

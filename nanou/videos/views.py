@@ -16,7 +16,11 @@ class VideoForm(NeoForm):
     name = forms.CharField(
         label='Name',
         max_length=100,
-        required=True
+        required=True,
+    )
+    url = forms.URLField(
+        label='URL',
+        required=True,
     )
     required_by_videos = NeoRelationshipNoSelfRefField(
         label='Required by videos',
