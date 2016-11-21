@@ -46,8 +46,7 @@ class PreferencesView(APIView):
 
     def get(self, request):
         socialuser = SocialUser.user_for_django_user(request.user.id)
-        socialuser.ensure_preferences()
-        serializer = PreferenceSerializer(list(socialuser.preferences), many=True, context={'socialuser': socialuser})
+        serializer = PreferenceSerializer(list(Category.all()), many=True, context={'socialuser': socialuser})
         return Response(serializer.data)
 
     def post(self, request):

@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.utils.translation import ugettext as _
 from py2neo.ogm import Property
 
-from categories.models import Category
 from neo.models import NeoModel, NeoRelatedTo
 from neo.utils import NeoGraph
 from socialusers.properties import WATCHED_DEFAULT_PROPS, PREFERENCE_DEFAULT_PROPS
@@ -46,14 +45,14 @@ class SocialUser(NeoModel):
             })
             return [Video.wrap(d['v1']) for d in cursor.data()]
 
-
     def next_videos_preferences(self, return_count=1):
         with NeoGraph() as graph:
             cursor = graph.run('''
                 START u=node({user_id})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
                 OPTIONAL MATCH (u)-[pref:HAS_PREFERENCE]->(cat:Category)<-[belongs:BELONGS_TO]-(v1)
-                WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps, AVG(toFloat(coalesce(belongs.weight,0)) * toFloat(coalesce(pref.weight,0))) as weight
+                WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps,
+                AVG(toFloat(coalesce(belongs.weight,0)) * toFloat(coalesce(pref.weight,1.0))) as weight
                 WHERE deps AND NOT (v1)<-[:WATCHED]-(u)
                 RETURN v1, weight
                 ORDER BY weight DESC, tostring(v1.name)
@@ -70,10 +69,6 @@ class SocialUser(NeoModel):
                 objects.append(Video.wrap(node))
             return objects
 
-
-    def ensure_preferences(self):
-        for category in Category.all():
-            if category not in self.preferences:
-                self.preferences.add(category, PREFERENCE_DEFAULT_PROPS)
-        with NeoGraph() as graph:
-            graph.push(self)
+    @property
+    def has_initialized_preferences(self):
+        return len(self.preferences) > 0
