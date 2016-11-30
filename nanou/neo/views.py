@@ -39,9 +39,12 @@ class NeoCreateView(CreateView):
         form = form_class(request.POST, instance=obj)
         if form.is_valid():
             with NeoGraph() as graph:
+                tx = graph.begin()
+                obj.id = tx.run('MATCH (n:{}) RETURN COUNT(n)+1'.format(model.__primarylabel__)).evaluate()
                 for k, v in form.cleaned_data.items():
                     obj.update_prop(k, v)
-                graph.create(obj)
+                tx.create(obj)
+                tx.commit()
                 return HttpResponseRedirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 

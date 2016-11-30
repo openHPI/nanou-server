@@ -30,11 +30,17 @@ class Command(BaseCommand):
                                 'id': obj.id,
                                 'attributes': obj.property_dict()
                             })
-                            for start_node, relationship, end_node, attrs in obj.relationships():
+                            for start_obj, relationship, end_obj, attrs in obj.relationships():
                                 export['relationships'].append({
+                                    'start': {
+                                        'model': '{}.{}'.format(start_obj.__module__, start_obj.__class__.__name__),
+                                        'id': start_obj.id,
+                                    },
+                                    'end': {
+                                        'model': '{}.{}'.format(end_obj.__module__, end_obj.__class__.__name__),
+                                        'id': end_obj.id,
+                                    },
                                     'type': relationship._RelatedObjects__match_args[1],
-                                    'start_node_id': start_node.id,
-                                    'end_node_id': end_node.id,
                                     'attributes': attrs,
                                 })
 

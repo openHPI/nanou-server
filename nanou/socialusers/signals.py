@@ -16,6 +16,9 @@ def create_neo_socialuser(sender, **kwargs):
         instance.user.groups.add(group)
 
         user = SocialUser()
-        user.user_id = instance.user_id
         with NeoGraph() as graph:
-            graph.create(user)
+            tx = graph.begin()
+            user.id = tx.run('MATCH (n:{}) RETURN COUNT(n)+1'.format(SocialUser.__primarylabel__)).evaluate()
+            user.user_id = instance.user_id
+            tx.create(user)
+            tx.commit()
