@@ -27,7 +27,6 @@ urlpatterns = [
     url(r'^', include('base.urls', namespace='landingpage')),
     url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^groups/', include('groups.urls', namespace='groups')),
-    url(r'^neo/', include('neoextras.urls', namespace='neoextras')),
     url(r'^socialusers/', include('socialusers.urls', namespace='socialusers')),
     url(r'^videos/', include('videos.urls', namespace='videos')),
 

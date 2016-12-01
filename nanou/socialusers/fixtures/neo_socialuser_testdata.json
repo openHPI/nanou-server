@@ -1,4 +1,36 @@
 {
+    "relationships": [
+        {
+            "start": {
+                "model": "socialusers.models.SocialUser",
+                "id": 1
+            },
+            "attributes": {
+                "date": "today",
+                "progress": 0.75,
+                "rating": 0.5
+            },
+            "end": {
+                "model": "videos.models.Video",
+                "id": 1
+            },
+            "type": "WATCHED"
+        },
+        {
+            "start": {
+                "model": "socialusers.models.SocialUser",
+                "id": 1
+            },
+            "attributes": {
+                "weight": 0.5
+            },
+            "end": {
+                "model": "categories.models.Category",
+                "id": 1
+            },
+            "type": "HAS_PREFERENCE"
+        }
+    ],
     "nodes": [
         {
             "attributes": {
@@ -20,6 +52,21 @@
             },
             "model": "socialusers.models.SocialUser",
             "id": 3
+        },
+        {
+            "attributes": {
+                "name": "Search",
+                "url": "http://www.google.com"
+            },
+            "model": "videos.models.Video",
+            "id": 1
+        },
+        {
+            "attributes": {
+                "name": "Test"
+            },
+            "model": "categories.models.Category",
+            "id": 1
         }
     ]
 }

@@ -15,6 +15,7 @@ from categories.models import Category
 from neo.forms import NeoForm, NeoRelationshipField
 from neo.utils import NeoGraph
 from neo.views import NeoDetailView, NeoListView, NeoUpdateView
+from neoextras.views import NeoRelationshipUpdateView
 from videos.models import Video
 
 from .models import SocialUser

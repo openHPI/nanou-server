@@ -6,10 +6,12 @@
         <a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a>
     </td>
     <td class="ui right aligned">
-        {% if reverse_relationship %}
-        <a href="{% url 'neoextras:relation' obj.id rel_type start_obj.id %}" class="ui mini button">Edit relationship</a>
-        {% else %}
-        <a href="{% url 'neoextras:relation' start_obj.id rel_type obj.id %}" class="ui mini button">Edit relationship</a>
+        {% if url_name %}
+            {% if reverse_relationship %}
+            <a href="{% url url_name obj.id start_obj.id %}" class="ui mini button">Edit relationship</a>
+            {% else %}
+            <a href="{% url url_name start_obj.id obj.id %}" class="ui mini button">Edit relationship</a>
+            {% endif %}
         {% endif %}
     </td>
 </tr>

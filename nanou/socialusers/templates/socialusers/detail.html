@@ -6,10 +6,10 @@
     <h1>Social user with id {{ socialuser.id }}</h1>
     <ul>
         <li>
-            {% show_relationship_items socialuser socialuser.preferences 'Preferences' %}
+            {% show_relationship_items socialuser socialuser.preferences 'Preferences' 'socialusers:has_preference' %}
         </li>
         <li>
-            {% show_relationship_items socialuser socialuser.watched_videos 'Watched videos' %}
+            {% show_relationship_items socialuser socialuser.watched_videos 'Watched videos' 'socialusers:watched' %}
         </li>
     </ul>
     <p>

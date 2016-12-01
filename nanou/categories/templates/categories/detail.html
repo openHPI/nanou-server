@@ -6,7 +6,7 @@
     <h1>Category: {{ category.name }}</h1>
     <ul>
         <li>
-            {% show_relationship_items category category.videos 'Videos' %}
+            {% show_relationship_items category category.videos 'Videos' 'videos:belongs_to' %}
         </li>
     </ul>
     <p>
