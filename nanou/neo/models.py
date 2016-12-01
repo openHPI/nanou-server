@@ -23,6 +23,11 @@ class NeoModel(GraphObject):
         with NeoGraph() as graph:
             return cls.select(graph).first()
 
+    @classmethod
+    def get(cls, pk):
+        with NeoGraph() as graph:
+            return cls.select(graph, pk).first()
+
     @property
     def pk(self):
         return self.id

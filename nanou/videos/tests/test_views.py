@@ -24,7 +24,7 @@ class VideoViewCorrcetPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        video = Video.first()
+        video = Video.get(1)
         response = self.client.get(reverse('videos:detail', kwargs={'pk': video.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('video', response.context)
@@ -35,8 +35,7 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_detail_view_not_allowed(self):
-        video = Video.first()
-        response = self.client.post(reverse('videos:detail', kwargs={'pk': video.id}))
+        response = self.client.post(reverse('videos:detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 405)
 
     # Create
@@ -70,8 +69,7 @@ class VideoViewCorrcetPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        video = Video.first()
-        response = self.client.get(reverse('videos:update', kwargs={'pk': video.id}))
+        response = self.client.get(reverse('videos:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)
 
@@ -80,24 +78,21 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view(self):
-        video = Video.first()
         data = {
             'name': 'Updated Video',
             'url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
         }
-        response = self.client.post(reverse('videos:update', kwargs={'pk': video.id}), data, follow=True)
+        response = self.client.post(reverse('videos:update', kwargs={'pk': 1}), data, follow=True)
         self.assertRedirects(response, reverse('videos:list'))
 
     def test_post_update_view_no_data(self):
-        video = Video.first()
-        response = self.client.post(reverse('videos:update', kwargs={'pk': video.id}))
+        response = self.client.post(reverse('videos:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
     def test_post_update_view_incomplete_data(self):
         data = {}
-        video = Video.first()
-        response = self.client.post(reverse('videos:update', kwargs={'pk': video.id}), data)
+        response = self.client.post(reverse('videos:update', kwargs={'pk': 1}), data)
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
@@ -106,13 +101,12 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view_without_csrf_token(self):
-        video = Video.first()
-        response = self.csrf_client.post(reverse('videos:update', kwargs={'pk': video.id}))
+        response = self.csrf_client.post(reverse('videos:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
     # Delete
     def test_get_delete_view(self):
-        video = Video.first()
+        video = Video.get(1)
         response = self.client.get(reverse('videos:delete', kwargs={'pk': video.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('video', response.context)
@@ -123,7 +117,7 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view(self):
-        video = Video.first()
+        video = Video.get(1)
         response = self.client.post(reverse('videos:delete', kwargs={'pk': video.id}), follow=True)
         self.assertRedirects(response, reverse('videos:list'))
         self.assertNotIn(video, Video.all())
@@ -133,8 +127,7 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view_without_csrf_token(self):
-        video = Video.first()
-        response = self.csrf_client.post(reverse('videos:delete', kwargs={'pk': video.id}))
+        response = self.csrf_client.post(reverse('videos:delete', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
     # belongs_to
@@ -214,8 +207,7 @@ class VideoViewWrongPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        video = Video.first()
-        url = reverse('videos:detail', kwargs={'pk': video.id})
+        url = reverse('videos:detail', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
@@ -227,15 +219,13 @@ class VideoViewWrongPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        video = Video.first()
-        url = reverse('videos:update', kwargs={'pk': video.id})
+        url = reverse('videos:update', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
     # Delete
     def test_get_delete_view(self):
-        video = Video.first()
-        url = reverse('videos:delete', kwargs={'pk': video.id})
+        url = reverse('videos:delete', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 

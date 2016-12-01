@@ -62,6 +62,20 @@ class SocialUserUpdateView(PermissionRequiredMixin, NeoUpdateView):
         return context
 
 
+class SocialUserHasPreferenceView(PermissionRequiredMixin, NeoRelationshipUpdateView):
+    permission_required = 'base.manage_curriculum'
+    start_model = SocialUser
+    end_model = Category
+    relationship_name = 'HAS_PREFERENCE'
+
+
+class SocialUserWatchedView(PermissionRequiredMixin, NeoRelationshipUpdateView):
+    permission_required = 'base.manage_curriculum'
+    start_model = SocialUser
+    end_model = Video
+    relationship_name = 'WATCHED'
+
+
 class LoginProvidersView(APIView):
     permission_classes = (AllowAny,)
     providers = {  # display_name: backend_name

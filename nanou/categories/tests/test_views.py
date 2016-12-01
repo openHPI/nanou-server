@@ -24,7 +24,7 @@ class CategoryViewCorrcetPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        category = Category.first()
+        category = Category.get(1)
         response = self.client.get(reverse('categories:detail', kwargs={'pk': category.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('category', response.context)
@@ -35,8 +35,7 @@ class CategoryViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_detail_view_not_allowed(self):
-        category = Category.first()
-        response = self.client.post(reverse('categories:detail', kwargs={'pk': category.id}))
+        response = self.client.post(reverse('categories:detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 405)
 
     # Create
@@ -69,8 +68,7 @@ class CategoryViewCorrcetPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        category = Category.first()
-        response = self.client.get(reverse('categories:update', kwargs={'pk': category.id}))
+        response = self.client.get(reverse('categories:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)
 
@@ -79,23 +77,20 @@ class CategoryViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view(self):
-        category = Category.first()
         data = {
             'name': 'Updated Category',
         }
-        response = self.client.post(reverse('categories:update', kwargs={'pk': category.id}), data, follow=True)
+        response = self.client.post(reverse('categories:update', kwargs={'pk': 1}), data, follow=True)
         self.assertRedirects(response, reverse('categories:list'))
 
     def test_post_update_view_no_data(self):
-        category = Category.first()
-        response = self.client.post(reverse('categories:update', kwargs={'pk': category.id}))
+        response = self.client.post(reverse('categories:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
     def test_post_update_view_incomplete_data(self):
         data = {}
-        category = Category.first()
-        response = self.client.post(reverse('categories:update', kwargs={'pk': category.id}), data)
+        response = self.client.post(reverse('categories:update', kwargs={'pk': 1}), data)
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
@@ -104,13 +99,12 @@ class CategoryViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view_without_csrf_token(self):
-        category = Category.first()
-        response = self.csrf_client.post(reverse('categories:update', kwargs={'pk': category.id}))
+        response = self.csrf_client.post(reverse('categories:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
     # Delete
     def test_get_delete_view(self):
-        category = Category.first()
+        category = Category.get(1)
         response = self.client.get(reverse('categories:delete', kwargs={'pk': category.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('category', response.context)
@@ -121,7 +115,7 @@ class CategoryViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view(self):
-        category = Category.first()
+        category = Category.get(1)
         response = self.client.post(reverse('categories:delete', kwargs={'pk': category.id}), follow=True)
         self.assertRedirects(response, reverse('categories:list'))
         self.assertNotIn(category, Category.all())
@@ -131,8 +125,7 @@ class CategoryViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view_without_csrf_token(self):
-        category = Category.first()
-        response = self.csrf_client.post(reverse('categories:delete', kwargs={'pk': category.id}))
+        response = self.csrf_client.post(reverse('categories:delete', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -147,8 +140,7 @@ class CategoryViewWrongPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        category = Category.first()
-        url = reverse('categories:detail', kwargs={'pk': category.id})
+        url = reverse('categories:detail', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
@@ -160,15 +152,13 @@ class CategoryViewWrongPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        category = Category.first()
-        url = reverse('categories:update', kwargs={'pk': category.id})
+        url = reverse('categories:update', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
     # Delete
     def test_get_delete_view(self):
-        category = Category.first()
-        url = reverse('categories:delete', kwargs={'pk': category.id})
+        url = reverse('categories:delete', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 

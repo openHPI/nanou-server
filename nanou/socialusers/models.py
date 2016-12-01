@@ -34,7 +34,7 @@ class SocialUser(NeoModel):
     def next_videos_without_preferences(self):
         with NeoGraph() as graph:
             cursor = graph.run('''
-                START u=node({user_id})
+                MATCH (u:SocialUser{id:{user_id}})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
                 WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps
                 WHERE deps AND NOT (v1)<-[:WATCHED]-(u)
@@ -48,7 +48,7 @@ class SocialUser(NeoModel):
     def next_videos_preferences(self, return_count=1):
         with NeoGraph() as graph:
             cursor = graph.run('''
-                START u=node({user_id})
+                MATCH (u:SocialUser{id:{user_id}})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
                 OPTIONAL MATCH (u)-[pref:HAS_PREFERENCE]->(cat:Category)<-[belongs:BELONGS_TO]-(v1)
                 WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps,

@@ -24,7 +24,7 @@ class SocialUserViewCorrcetPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        user = SocialUser.first()
+        user = SocialUser.get(1)
         response = self.client.get(reverse('socialusers:detail', kwargs={'pk': user.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('socialuser', response.context)
@@ -35,14 +35,12 @@ class SocialUserViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_detail_view_not_allowed(self):
-        user = SocialUser.first()
-        response = self.client.post(reverse('socialusers:detail', kwargs={'pk': user.id}))
+        response = self.client.post(reverse('socialusers:detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 405)
 
     # Update
     def test_get_update_view(self):
-        user = SocialUser.first()
-        response = self.client.get(reverse('socialusers:update', kwargs={'pk': user.id}))
+        response = self.client.get(reverse('socialusers:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)
 
@@ -51,23 +49,20 @@ class SocialUserViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view(self):
-        user = SocialUser.first()
         data = {
             'watched_videos': [],
         }
-        response = self.client.post(reverse('socialusers:update', kwargs={'pk': user.id}), data, follow=True)
+        response = self.client.post(reverse('socialusers:update', kwargs={'pk': 1}), data, follow=True)
         self.assertRedirects(response, reverse('socialusers:list'))
 
     # def test_post_update_view_no_data(self):
-    #     user = SocialUser.first()
-    #     response = self.client.post(reverse('socialusers:update', kwargs={'pk': user.id}))
+    #     response = self.client.post(reverse('socialusers:update', kwargs={'pk': 1}))
     #     self.assertEqual(response.status_code, 200)
     #     self.assertIn('form', response.context)  # shows form again
     #
     # def test_post_update_view_incomplete_data(self):
     #     data = {}
-    #     user = SocialUser.first()
-    #     response = self.client.post(reverse('socialusers:update', kwargs={'pk': user.id}), data)
+    #     response = self.client.post(reverse('socialusers:update', kwargs={'pk': 1}), data)
     #     self.assertEqual(response.status_code, 200)
     #     self.assertIn('form', response.context)  # shows form again
 
@@ -76,8 +71,7 @@ class SocialUserViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view_without_csrf_token(self):
-        user = SocialUser.first()
-        response = self.csrf_client.post(reverse('socialusers:update', kwargs={'pk': user.id}))
+        response = self.csrf_client.post(reverse('socialusers:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
     # has_preference
@@ -223,15 +217,13 @@ class SocialUserViewWrongPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        user = SocialUser.first()
-        url = reverse('socialusers:detail', kwargs={'pk': user.id})
+        url = reverse('socialusers:detail', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
     # Update
     def test_get_update_view(self):
-        user = SocialUser.first()
-        url = reverse('socialusers:update', kwargs={'pk': user.id})
+        url = reverse('socialusers:update', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
