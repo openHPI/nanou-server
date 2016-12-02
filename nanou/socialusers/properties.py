@@ -1,6 +1,5 @@
 from datetime import datetime
 
-
 WATCHED_DEFAULT_PROPS = {
     'date': datetime.min.isoformat(),
     'rating': -1,

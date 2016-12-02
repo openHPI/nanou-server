@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
-from py2neo.ogm import (GraphObject, Property, Related, RelatedFrom,
-                        RelatedObjects, RelatedTo)
+from py2neo.ogm import GraphObject, Property, Related, RelatedFrom, RelatedObjects, RelatedTo
 
 from .utils import NeoGraph
 

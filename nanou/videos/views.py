@@ -4,10 +4,8 @@ from django.urls import reverse_lazy
 
 from categories.models import Category
 from groups.models import Group
-from neo.forms import (NeoForm, NeoRelationshipField,
-                       NeoRelationshipNoSelfRefField)
-from neo.views import (NeoCreateView, NeoDeleteView, NeoDetailView,
-                       NeoListView, NeoUpdateView)
+from neo.forms import NeoForm, NeoRelationshipField, NeoRelationshipNoSelfRefField
+from neo.views import NeoCreateView, NeoDeleteView, NeoDetailView, NeoListView, NeoUpdateView
 from neoextras.views import NeoRelationshipUpdateView
 
 from .models import Video

@@ -2,8 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import render
 from django.views import View
 
-from neo.utils import (NeoGraph, get_neo_object_or_404,
-                       get_neo_relationship_or_404)
+from neo.utils import NeoGraph, get_neo_object_or_404, get_neo_relationship_or_404
 
 
 class NeoRelationshipUpdateView(View):

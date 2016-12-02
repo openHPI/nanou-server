@@ -7,7 +7,7 @@ from py2neo.ogm import Property
 
 from neo.models import NeoModel, NeoRelatedTo
 from neo.utils import NeoGraph
-from socialusers.properties import WATCHED_DEFAULT_PROPS, PREFERENCE_DEFAULT_PROPS
+from socialusers.properties import PREFERENCE_DEFAULT_PROPS, WATCHED_DEFAULT_PROPS
 from videos.models import Video
 
 
