@@ -15,6 +15,7 @@ from categories.models import Category
 from neo.forms import NeoForm, NeoRelationshipField
 from neo.utils import NeoGraph
 from neo.views import NeoDetailView, NeoListView, NeoUpdateView
+from neoextras.views import NeoRelationshipUpdateView
 from videos.models import Video
 
 from .models import SocialUser
@@ -59,6 +60,20 @@ class SocialUserUpdateView(PermissionRequiredMixin, NeoUpdateView):
             obj = SocialUser.select(graph, pk).first()
             context['user_id'] = obj.user_id
         return context
+
+
+class SocialUserHasPreferenceView(PermissionRequiredMixin, NeoRelationshipUpdateView):
+    permission_required = 'base.manage_curriculum'
+    start_model = SocialUser
+    end_model = Category
+    relationship_name = 'HAS_PREFERENCE'
+
+
+class SocialUserWatchedView(PermissionRequiredMixin, NeoRelationshipUpdateView):
+    permission_required = 'base.manage_curriculum'
+    start_model = SocialUser
+    end_model = Video
+    relationship_name = 'WATCHED'
 
 
 class LoginProvidersView(APIView):

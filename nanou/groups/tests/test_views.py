@@ -24,7 +24,7 @@ class GroupViewCorrcetPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        group = Group.first()
+        group = Group.get(1)
         response = self.client.get(reverse('groups:detail', kwargs={'pk': group.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('group', response.context)
@@ -35,8 +35,7 @@ class GroupViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_detail_view_not_allowed(self):
-        group = Group.first()
-        response = self.client.post(reverse('groups:detail', kwargs={'pk': group.id}))
+        response = self.client.post(reverse('groups:detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 405)
 
     # Create
@@ -69,8 +68,7 @@ class GroupViewCorrcetPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        group = Group.first()
-        response = self.client.get(reverse('groups:update', kwargs={'pk': group.id}))
+        response = self.client.get(reverse('groups:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)
 
@@ -79,23 +77,20 @@ class GroupViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view(self):
-        group = Group.first()
         data = {
             'name': 'Updated Group',
         }
-        response = self.client.post(reverse('groups:update', kwargs={'pk': group.id}), data, follow=True)
+        response = self.client.post(reverse('groups:update', kwargs={'pk': 1}), data, follow=True)
         self.assertRedirects(response, reverse('groups:list'))
 
     def test_post_update_view_no_data(self):
-        group = Group.first()
-        response = self.client.post(reverse('groups:update', kwargs={'pk': group.id}))
+        response = self.client.post(reverse('groups:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
     def test_post_update_view_incomplete_data(self):
         data = {}
-        group = Group.first()
-        response = self.client.post(reverse('groups:update', kwargs={'pk': group.id}), data)
+        response = self.client.post(reverse('groups:update', kwargs={'pk': 1}), data)
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
@@ -104,13 +99,12 @@ class GroupViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view_without_csrf_token(self):
-        group = Group.first()
-        response = self.csrf_client.post(reverse('groups:update', kwargs={'pk': group.id}))
+        response = self.csrf_client.post(reverse('groups:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
     # Delete
     def test_get_delete_view(self):
-        group = Group.first()
+        group = Group.get(1)
         response = self.client.get(reverse('groups:delete', kwargs={'pk': group.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('group', response.context)
@@ -121,7 +115,7 @@ class GroupViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view(self):
-        group = Group.first()
+        group = Group.get(1)
         response = self.client.post(reverse('groups:delete', kwargs={'pk': group.id}), follow=True)
         self.assertRedirects(response, reverse('groups:list'))
         self.assertNotIn(group, Group.all())
@@ -131,8 +125,7 @@ class GroupViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view_without_csrf_token(self):
-        group = Group.first()
-        response = self.csrf_client.post(reverse('groups:delete', kwargs={'pk': group.id}))
+        response = self.csrf_client.post(reverse('groups:delete', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -147,8 +140,7 @@ class GroupViewWrongPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        group = Group.first()
-        url = reverse('groups:detail', kwargs={'pk': group.id})
+        url = reverse('groups:detail', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
@@ -160,15 +152,13 @@ class GroupViewWrongPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        group = Group.first()
-        url = reverse('groups:update', kwargs={'pk': group.id})
+        url = reverse('groups:update', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
     # Delete
     def test_get_delete_view(self):
-        group = Group.first()
-        url = reverse('groups:delete', kwargs={'pk': group.id})
+        url = reverse('groups:delete', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 

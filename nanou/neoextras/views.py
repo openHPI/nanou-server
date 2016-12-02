@@ -1,20 +1,46 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import render
 from django.views import View
 
-from neo.utils import (NeoGraph, get_neo_node_or_404,
+from neo.utils import (NeoGraph, get_neo_object_or_404,
                        get_neo_relationship_or_404)
 
 
-class NeoRelationshipDetailView(PermissionRequiredMixin, View):
-    permission_required = 'base.manage_curriculum'
+class NeoRelationshipUpdateView(View):
     template_name = 'neoextras/relationship.html'
+    relationship_name = None
+    start_model = None
+    end_model = None
 
-    def check_objects(self, pk1, rel_type, pk2):
+    def get_relationship_name(self):
+        if self.relationship_name:
+            return self.relationship_name
+        else:
+            raise ImproperlyConfigured(
+                '{0} is missing a relationship name. Define {0}.relationship_name.'.format(self.__class__.__name__)
+            )
+
+    def get_start_model(self):
+        if self.start_model:
+            return self.start_model
+        else:
+            raise ImproperlyConfigured(
+                '{0} is missing a start model. Define {0}.start_model.'.format(self.__class__.__name__)
+            )
+
+    def get_end_model(self):
+        if self.end_model:
+            return self.end_model
+        else:
+            raise ImproperlyConfigured(
+                '{0} is missing a end model. Define {0}.end_model.'.format(self.__class__.__name__)
+            )
+
+    def check_objects(self, pk1, pk2):
         with NeoGraph() as graph:
-            a = get_neo_node_or_404(int(pk1), graph)
-            b = get_neo_node_or_404(int(pk2), graph)
-            rel = get_neo_relationship_or_404(a, rel_type, b, graph)
+            a = get_neo_object_or_404(self.get_start_model(), int(pk1), graph).node
+            b = get_neo_object_or_404(self.get_end_model(), int(pk2), graph).node
+            rel = get_neo_relationship_or_404(a, self.get_relationship_name(), b, graph)
             return a, rel, b
 
     def create_context_data(self, a, rel, b):
@@ -42,12 +68,12 @@ class NeoRelationshipDetailView(PermissionRequiredMixin, View):
             len(rel) > 0
         )
 
-    def get(self, request, pk1, rel_type, pk2):
-        context = self.create_context_data(*self.check_objects(pk1, rel_type, pk2))
+    def get(self, request, pk1, pk2):
+        context = self.create_context_data(*self.check_objects(pk1, pk2))
         return render(request, self.template_name, context)
 
-    def post(self, request, pk1, rel_type, pk2, *args, **kwargs):
-        a, rel, b = self.check_objects(pk1, rel_type, pk2)
+    def post(self, request, pk1, pk2, *args, **kwargs):
+        a, rel, b = self.check_objects(pk1, pk2)
         valid = self.validate_post_data(request.POST, rel)
         messages = {}
         if valid:

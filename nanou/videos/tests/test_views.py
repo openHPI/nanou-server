@@ -24,7 +24,7 @@ class VideoViewCorrcetPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        video = Video.first()
+        video = Video.get(1)
         response = self.client.get(reverse('videos:detail', kwargs={'pk': video.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('video', response.context)
@@ -35,8 +35,7 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_detail_view_not_allowed(self):
-        video = Video.first()
-        response = self.client.post(reverse('videos:detail', kwargs={'pk': video.id}))
+        response = self.client.post(reverse('videos:detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 405)
 
     # Create
@@ -70,8 +69,7 @@ class VideoViewCorrcetPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        video = Video.first()
-        response = self.client.get(reverse('videos:update', kwargs={'pk': video.id}))
+        response = self.client.get(reverse('videos:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)
 
@@ -80,24 +78,21 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view(self):
-        video = Video.first()
         data = {
             'name': 'Updated Video',
             'url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
         }
-        response = self.client.post(reverse('videos:update', kwargs={'pk': video.id}), data, follow=True)
+        response = self.client.post(reverse('videos:update', kwargs={'pk': 1}), data, follow=True)
         self.assertRedirects(response, reverse('videos:list'))
 
     def test_post_update_view_no_data(self):
-        video = Video.first()
-        response = self.client.post(reverse('videos:update', kwargs={'pk': video.id}))
+        response = self.client.post(reverse('videos:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
     def test_post_update_view_incomplete_data(self):
         data = {}
-        video = Video.first()
-        response = self.client.post(reverse('videos:update', kwargs={'pk': video.id}), data)
+        response = self.client.post(reverse('videos:update', kwargs={'pk': 1}), data)
         self.assertEqual(response.status_code, 200)
         self.assertIn('form', response.context)  # shows form again
 
@@ -106,13 +101,12 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_update_view_without_csrf_token(self):
-        video = Video.first()
-        response = self.csrf_client.post(reverse('videos:update', kwargs={'pk': video.id}))
+        response = self.csrf_client.post(reverse('videos:update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 403)
 
     # Delete
     def test_get_delete_view(self):
-        video = Video.first()
+        video = Video.get(1)
         response = self.client.get(reverse('videos:delete', kwargs={'pk': video.id}))
         self.assertEqual(response.status_code, 200)
         self.assertIn('video', response.context)
@@ -123,7 +117,7 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view(self):
-        video = Video.first()
+        video = Video.get(1)
         response = self.client.post(reverse('videos:delete', kwargs={'pk': video.id}), follow=True)
         self.assertRedirects(response, reverse('videos:list'))
         self.assertNotIn(video, Video.all())
@@ -133,8 +127,72 @@ class VideoViewCorrcetPermissionsMixin(object):
         self.assertEqual(response.status_code, 404)
 
     def test_post_delete_view_without_csrf_token(self):
-        video = Video.first()
-        response = self.csrf_client.post(reverse('videos:delete', kwargs={'pk': video.id}))
+        response = self.csrf_client.post(reverse('videos:delete', kwargs={'pk': 1}))
+        self.assertEqual(response.status_code, 403)
+
+    # belongs_to
+    def assertRelationContext(self, response, data=None):
+        for key in ['start_node', 'end_node', 'relationship']:
+            self.assertIn(key, response.context)
+
+    def test_get_belongs_to_view(self):
+        response = self.client.get(reverse('videos:belongs_to', kwargs={'pk1': 1, 'pk2': 1}))
+        self.assertEqual(response.status_code, 200)
+        self.assertRelationContext(response)
+
+    def test_get_belongs_to_view_not_existant(self):
+        for pk1, pk2 in [(1, 1000), (1000, 1), (1000, 1000)]:
+            response = self.client.get(reverse('videos:belongs_to', kwargs={'pk1': pk1, 'pk2': pk2}))
+            self.assertEqual(response.status_code, 404)
+
+    def test_post_belongs_to_view(self):
+        data = {
+            'weight': '0.7',
+        }
+        response = self.client.post(reverse('videos:belongs_to', kwargs={'pk1': 1, 'pk2': 1}), data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertRelationContext(response)
+        self.assertIn('messages', response.context)
+        for key in data:
+            props = response.context['relationship']['props']
+            self.assertIn(key, props)
+            self.assertEqual(props[key], data[key])
+        self.assertIn('success', response.context['messages'])
+
+    def test_post_belongs_to_view_no_data(self):
+        response = self.client.post(reverse('videos:belongs_to', kwargs={'pk1': 1, 'pk2': 1}))
+        self.assertEqual(response.status_code, 200)
+        self.assertRelationContext(response)
+        self.assertIn('messages', response.context)
+        self.assertIn('error', response.context['messages'])
+
+    def test_post_belongs_to_view_incomplete_data(self):
+        data = {}
+        response = self.client.post(reverse('videos:belongs_to', kwargs={'pk1': 1, 'pk2': 1}), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertRelationContext(response)
+        self.assertIn('messages', response.context)
+        self.assertIn('error', response.context['messages'])
+
+    def test_post_belongs_to_view_too_much_data(self):
+        data = {
+            'weight': 0.7,
+            'foo': 'baz',
+            'asdf': 1,
+        }
+        response = self.client.post(reverse('videos:belongs_to', kwargs={'pk1': 1, 'pk2': 1}), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertRelationContext(response)
+        self.assertIn('messages', response.context)
+        self.assertIn('error', response.context['messages'])
+
+    def test_post_belongs_to_view_not_existant(self):
+        for pk1, pk2 in [(1, 1000), (1000, 1), (1000, 1000)]:
+            response = self.client.post(reverse('videos:belongs_to', kwargs={'pk1': pk1, 'pk2': pk2}))
+            self.assertEqual(response.status_code, 404)
+
+    def test_post_belongs_to_view_without_csrf_token(self):
+        response = self.csrf_client.post(reverse('videos:belongs_to', kwargs={'pk1': 1, 'pk2': 1}))
         self.assertEqual(response.status_code, 403)
 
 
@@ -149,8 +207,7 @@ class VideoViewWrongPermissionsMixin(object):
 
     # Detail
     def test_get_detail_view(self):
-        video = Video.first()
-        url = reverse('videos:detail', kwargs={'pk': video.id})
+        url = reverse('videos:detail', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
@@ -162,15 +219,19 @@ class VideoViewWrongPermissionsMixin(object):
 
     # Update
     def test_get_update_view(self):
-        video = Video.first()
-        url = reverse('videos:update', kwargs={'pk': video.id})
+        url = reverse('videos:update', kwargs={'pk': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 
     # Delete
     def test_get_delete_view(self):
-        video = Video.first()
-        url = reverse('videos:delete', kwargs={'pk': video.id})
+        url = reverse('videos:delete', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertRedirects(response, reverse('login') + '?next=' + url)
+
+    # belongs_to
+    def test_get_belongs_to_view(self):
+        url = reverse('videos:belongs_to', kwargs={'pk1': 1, 'pk2': 1})
         response = self.client.get(url)
         self.assertRedirects(response, reverse('login') + '?next=' + url)
 

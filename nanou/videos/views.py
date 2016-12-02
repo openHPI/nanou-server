@@ -8,6 +8,7 @@ from neo.forms import (NeoForm, NeoRelationshipField,
                        NeoRelationshipNoSelfRefField)
 from neo.views import (NeoCreateView, NeoDeleteView, NeoDetailView,
                        NeoListView, NeoUpdateView)
+from neoextras.views import NeoRelationshipUpdateView
 
 from .models import Video
 
@@ -80,3 +81,10 @@ class VideoCreateView(PermissionRequiredMixin, NeoCreateView):
     template_name = 'videos/form.html'
     success_url = reverse_lazy('videos:list')
     form_class = VideoForm
+
+
+class VideoBelongToView(PermissionRequiredMixin, NeoRelationshipUpdateView):
+    permission_required = 'base.manage_curriculum'
+    start_model = Video
+    end_model = Category
+    relationship_name = 'BELONGS_TO'

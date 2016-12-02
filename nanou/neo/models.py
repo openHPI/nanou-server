@@ -9,6 +9,10 @@ DEFAULT_PROPS_KEY = 'default_props'
 
 
 class NeoModel(GraphObject):
+    __primarykey__ = 'id'
+
+    id = Property()
+
     @classmethod
     def all(cls):
         with NeoGraph() as graph:
@@ -19,13 +23,18 @@ class NeoModel(GraphObject):
         with NeoGraph() as graph:
             return cls.select(graph).first()
 
-    @property
-    def id(self):
-        return self.__primaryvalue__
+    @classmethod
+    def get(cls, pk):
+        with NeoGraph() as graph:
+            return cls.select(graph, pk).first()
 
     @property
     def pk(self):
-        return self.__primaryvalue__
+        return self.id
+
+    @property
+    def node(self):
+        return self._GraphObject__ogm.node
 
     def update_prop(self, k, v):
         if hasattr(self, k):
@@ -61,16 +70,13 @@ class NeoModel(GraphObject):
         }
 
     def relationships(self):
-        def node(obj):
-            return obj._GraphObject__ogm.node
-
         relationships = []
         with NeoGraph() as graph:
             for relationship_name, relationship in self.__class__.__dict__.items():
                 if isinstance(relationship, RelatedTo):
                     selection = getattr(self, relationship_name)
                     for obj in selection:
-                        rel = graph.match_one(node(self), selection._RelatedObjects__match_args[1], node(obj))
+                        rel = graph.match_one(self.node, selection._RelatedObjects__match_args[1], obj.node)
                         relationships.append((self, selection, obj, dict(rel)))
         return relationships
 

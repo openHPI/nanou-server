@@ -12,14 +12,6 @@ def get_neo_object_or_404(cls, pk, graph):
     return obj
 
 
-def get_neo_node_or_404(pk, graph):
-    try:
-        return graph.node(pk)
-    except IndexError:
-        raise Http404(_('No node found matching the id %(node_id)s') %
-                      {'node_id': pk})
-
-
 def get_neo_relationship_or_404(a, rel_type, b, graph):
     rel = graph.match_one(a, rel_type, b)
     if rel is None:

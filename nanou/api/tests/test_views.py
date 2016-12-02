@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.utils import six
 from rest_framework.authtoken.models import Token
 
-from categories.models import Category
 from neo.tests import NeoTestCase
 from neo.utils import NeoGraph
 from videos.models import Video
@@ -131,13 +130,12 @@ class ApiViewCorrectPermissionsMixin(object):
 
     # GET /api/preferences/
     def test_get_preferences(self):
-        category = Category.first()
         response = self.client.get(reverse('api:preferences'))
         self.assertEqual(response.status_code, 200)
         json = self.load_response_content(response)
         self.assertEqual(json.get('data'), [{
             u'type': u'preferences',
-            u'id': u'%s' % category.id,
+            u'id': u'1',
             u'attributes': {
                 u'name': u'Category',
                 u'weight': 0.75,
@@ -146,12 +144,11 @@ class ApiViewCorrectPermissionsMixin(object):
 
     # POST /api/preferences/
     def test_post_preferences(self):
-        category = Category.first()
         response = self.client.post(
             reverse('api:preferences'),
             json.dumps({u'data': {u'type': u'preferences',  u'attributes': {u'updates': [{
                 u'type': 'preferences',
-                u'id': u'%s' % category.id,
+                u'id': u'1',
                 u'attributes': {
                     u'weight': 0.25,
                 },
@@ -198,12 +195,11 @@ class ApiViewCorrectPermissionsMixin(object):
         self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
 
     def test_post_preferences_missing_attributes(self):
-        category = Category.first()
         response = self.client.post(
             reverse('api:preferences'),
             json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
                 u'type': 'preferences',
-                u'id': u'%s' % category.id,
+                u'id': u'1',
             }]}}}),
             content_type='application/vnd.api+json'
         )
@@ -212,12 +208,11 @@ class ApiViewCorrectPermissionsMixin(object):
         self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
 
     def test_post_preferences_missing_weight(self):
-        category = Category.first()
         response = self.client.post(
             reverse('api:preferences'),
             json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
                 u'type': 'preferences',
-                u'id': u'%s' % category.id,
+                u'id': u'1',
                 u'attributes': {},
             }]}}}),
             content_type='application/vnd.api+json'

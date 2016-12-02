@@ -1,37 +1,81 @@
 {
     "relationships": [
         {
-            "start_node_id": 3,
+            "start": {
+                "model": "groups.models.Group",
+                "id": 1
+            },
             "attributes": {},
-            "type": "CONTAINS",
-            "end_node_id": 5
+            "end": {
+                "model": "videos.models.Video",
+                "id": 5
+            },
+            "type": "CONTAINS"
         },
         {
-            "start_node_id": 3,
+            "start": {
+                "model": "groups.models.Group",
+                "id": 1
+            },
             "attributes": {},
-            "type": "CONTAINS",
-            "end_node_id": 4
+            "end": {
+                "model": "videos.models.Video",
+                "id": 4
+            },
+            "type": "CONTAINS"
         },
         {
-            "start_node_id": 1,
+            "start": {
+                "model": "videos.models.Video",
+                "id": 1
+            },
             "attributes": {},
-            "type": "REQUIRES_VIDEO",
-            "end_node_id": 0
+            "end": {
+                "model": "videos.models.Video",
+                "id": 2
+            },
+            "type": "REQUIRES_VIDEO"
         },
         {
-            "start_node_id": 2,
+            "start": {
+                "model": "videos.models.Video",
+                "id": 3
+            },
             "attributes": {
                 "weight": 0.5,
                 "foo": "bar"
             },
-            "type": "REQUIRES_GROUP",
-            "end_node_id": 3
+            "end": {
+                "model": "groups.models.Group",
+                "id": 1
+            },
+            "type": "REQUIRES_GROUP"
         },
         {
-            "start_node_id": 2,
+            "start": {
+                "model": "videos.models.Video",
+                "id": 3
+            },
             "attributes": {},
-            "type": "REQUIRES_VIDEO",
-            "end_node_id": 0
+            "end": {
+                "model": "videos.models.Video",
+                "id": 1
+            },
+            "type": "REQUIRES_VIDEO"
+        },
+        {
+            "start": {
+                "model": "videos.models.Video",
+                "id": 1
+            },
+            "attributes": {
+                "weight": 0.5
+            },
+            "end": {
+                "model": "categories.models.Category",
+                "id": 1
+            },
+            "type": "BELONGS_TO"
         }
     ],
     "nodes": [
@@ -40,28 +84,28 @@
                 "name": "Group"
             },
             "model": "groups.models.Group",
-            "id": 3
+            "id": 1
         },
         {
             "attributes": {
                 "name": "A"
             },
             "model": "videos.models.Video",
-            "id": 0
+            "id": 1
         },
         {
             "attributes": {
                 "name": "B"
             },
             "model": "videos.models.Video",
-            "id": 1
+            "id": 2
         },
         {
             "attributes": {
                 "name": "C"
             },
             "model": "videos.models.Video",
-            "id": 2
+            "id": 3
         },
         {
             "attributes": {
@@ -76,6 +120,13 @@
             },
             "model": "videos.models.Video",
             "id": 5
+        },
+        {
+            "attributes": {
+                "name": "Test"
+            },
+            "model": "categories.models.Category",
+            "id": 1
         }
     ]
 }

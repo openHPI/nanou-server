@@ -29,14 +29,15 @@ class Command(BaseCommand):
                 for node_entry in nodes:
                     model_class = _model_class(node_entry)
                     obj = model_class()
+                    obj.id = node_entry['id']
                     for name, value in node_entry['attributes'].items():
                         setattr(obj, name, value)
-                    object_map[node_entry['id']] = obj
+                    object_map[_key_for_node(node_entry)] = obj
 
                 # create relationship between objects
                 for rel_entry in relationships:
-                    start_obj = object_map[rel_entry['start_node_id']]
-                    end_obj = object_map[rel_entry['end_node_id']]
+                    start_obj = object_map[_key_for_node(rel_entry['start'])]
+                    end_obj = object_map[_key_for_node(rel_entry['end'])]
                     selection, to_obj = _find_selection(start_obj, end_obj, rel_entry['type'])
                     selection.add(to_obj, rel_entry['attributes'])
                     relationship_count += 1
@@ -56,6 +57,10 @@ def _model_class(entry):
     module_name, _, class_name = entry['model'].rpartition('.')
     module = __import__(module_name, fromlist='.')
     return getattr(module, class_name)
+
+
+def _key_for_node(entry):
+    return (entry['model'], entry['id'])
 
 
 def _find_selection(start_obj, end_obj, rel_type):

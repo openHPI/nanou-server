@@ -21,7 +21,7 @@
             {% show_relationship_items video video.contained_in_groups 'Contained in groups' %}
         </li>
         <li>
-            {% show_relationship_items video video.categories 'Categories' %}
+            {% show_relationship_items video video.categories 'Categories' 'videos:belongs_to' %}
         </li>
     </ul>
     <p>
