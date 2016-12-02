@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.utils import six
 from rest_framework.authtoken.models import Token
 
-from categories.models import Category
 from neo.tests import NeoTestCase
 from neo.utils import NeoGraph
 from videos.models import Video
