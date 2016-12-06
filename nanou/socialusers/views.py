@@ -107,9 +107,12 @@ class AuthStatusView(View):
                     raise AuthenticationFailed
                 token, _ = Token.objects.get_or_create(user=user)
             except AuthenticationFailed:
-                return HttpResponseRedirect(reverse('sociallogin:login_providers'))
+                return JsonResponse({
+                    'authenticated': False,
+                })
         socialuser = SocialUser.user_for_django_user(user.id)
         return JsonResponse({
-            'preferences_initialized': socialuser.has_initialized_preferences,
+            'authenticated': True,
+            'preferencesInitialized': socialuser.has_initialized_preferences,
             'token': token.key,
         })

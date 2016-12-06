@@ -17,7 +17,10 @@ class SocialLoginCorrectPermissionsMixin(object):
         if six.PY3:
             response_content = str(response_content, encoding='utf8')
         json_content = json.loads(response_content)
-        self.assertTrue('token' in json_content)
+        self.assertIn('authenticated', json_content)
+        self.assertEqual(json_content['authenticated'], True)
+        self.assertIn('token', json_content)
+        self.assertIn('preferencesInitialized', json_content)
 
 
 class SocialLoginWrongPermissionsMixin(object):
@@ -26,7 +29,13 @@ class SocialLoginWrongPermissionsMixin(object):
     # /social/status
     def test_get_authstatus(self):
         response = self.client.get(reverse('sociallogin:status'))
-        self.assertRedirects(response, reverse('sociallogin:login_providers'))
+        self.assertEqual(response.status_code, 200)
+        response_content = response.content
+        if six.PY3:
+            response_content = str(response_content, encoding='utf8')
+        json_content = json.loads(response_content)
+        self.assertIn('authenticated', json_content)
+        self.assertEqual(json_content['authenticated'], False)
 
 
 class SocialLoginManagerTests(TestCase, SocialLoginWrongPermissionsMixin):
