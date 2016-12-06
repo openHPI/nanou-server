@@ -79,7 +79,7 @@ class LoginProvidersView(APIView):
     permission_classes = (AllowAny,)
     providers = {  # display_name: backend_name
         'hpi': 'hpi-openid',
-        'google': 'google-oauth2',
+        # 'google': 'google-oauth2',
     }
 
     def get(self, request):
