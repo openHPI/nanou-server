@@ -46,42 +46,42 @@ class PreferencesView(APIView):
 
     def get(self, request):
         socialuser = SocialUser.user_for_django_user(request.user.id)
-        serializer = PreferenceSerializer(list(Category.all()), many=True, context={'socialuser': socialuser})
+        categories = sorted(Category.all(), key=lambda c: c.name)
+        serializer = PreferenceSerializer(categories, many=True, context={'socialuser': socialuser})
         return Response(serializer.data)
 
-    def post(self, request):
+
+class PreferencesUpdateView(APIView):
+    resource_name = 'preferences'
+
+    def post(self, request, pk):
         socialuser = SocialUser.user_for_django_user(request.user.id)
-        updates = request.data.get('updates')
-        if not updates or not isinstance(updates, list):
-            content = {'title': 'Found no preference updates'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        if not self.validate_updates(updates):
+        category, error = self.parse_update(pk)
+        if category is None:
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        if not self.validate_update(request.data, pk):
             content = {'title': 'Invalid preference updates'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
-        categories, error = self.parse_updates(updates)
-        if categories is None:
-            return Response(error, status=status.HTTP_400_BAD_REQUEST)
-        for category, attributes in categories:
-            socialuser.preferences.update(category, attributes)
+        properties = {
+            'weight': request.data.get('weight')
+        }
+        if category in socialuser.preferences:
+            socialuser.preferences.update(category, properties)
+        else:
+            socialuser.preferences.add(category, properties)
         with NeoGraph() as graph:
             graph.push(socialuser)
-        return Response({'meta': {'count': len(updates)}})
+        return Response({'meta': {'count': 1}})
 
-    def validate_updates(self, updates):
-        return all(
-            update.get('id') and update.get('attributes') and update.get('attributes').get('weight')
-            for update in updates
-        )
+    def validate_update(self, update, pk):
+        return update.get('id') == pk and update.get('weight')
 
-    def parse_updates(self, updates):
-        objects = []
+    def parse_update(self, pk):
         with NeoGraph() as graph:
-            for update in updates:
-                category = Category.select(graph, int(update.get('id'))).first()
-                if category is None:
-                    return None, {
-                        'title': 'Found non-existing category id',
-                        'id': update.get('id'),
-                    }
-                objects.append((category, update.get('attributes')))
-        return objects, {}
+            category = Category.select(graph, int(pk)).first()
+            if category is None:
+                return None, {
+                    'title': 'Found non-existing category id',
+                    'id': pk,
+                }
+            return category, {}

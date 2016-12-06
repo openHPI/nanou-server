@@ -139,68 +139,58 @@ class ApiViewCorrectPermissionsMixin(object):
             u'attributes': {
                 u'name': u'Category',
                 u'weight': 0.75,
-            },
+            }
+        }, {
+            u'type': u'preferences',
+            u'id': u'2',
+            u'attributes': {
+                u'name': u'Music',
+                u'weight': 1.0,
+            }
         }])
 
-    # POST /api/preferences/
+    # POST /api/preferences/<pk>/
     def test_post_preferences(self):
         response = self.client.post(
-            reverse('api:preferences'),
-            json.dumps({u'data': {u'type': u'preferences',  u'attributes': {u'updates': [{
+            reverse('api:preference_update', kwargs={'pk': 1}),
+            json.dumps({u'data': {
                 u'type': 'preferences',
                 u'id': u'1',
                 u'attributes': {
                     u'weight': 0.25,
                 },
-            }]}}}),
+            }}),
             content_type='application/vnd.api+json'
         )
         self.assertEqual(response.status_code, 200, response.content)
         json_response = self.load_response_content(response)
         self.assertEqual(json_response.get('meta'), {u'count': 1})
 
-    def test_post_preferences_missing_updates(self):
+    def test_post_preferences_new(self):
         response = self.client.post(
-            reverse('api:preferences'),
-            json.dumps({u'data': {u'type': u'preferences', u'attributes': {}}}),
+            reverse('api:preference_update', kwargs={'pk': 2}),
+            json.dumps({u'data': {
+                u'type': 'preferences',
+                u'id': u'2',
+                u'attributes': {
+                    u'weight': 0.1,
+                },
+            }}),
             content_type='application/vnd.api+json'
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200, response.content)
         json_response = self.load_response_content(response)
-        self.assertEqual(json_response.get('errors'), {u'title': u'Found no preference updates'})
-
-    def test_post_preferences_wrong_updates_format(self):
-        response = self.client.post(
-            reverse('api:preferences'),
-            json.dumps({u'data': {u'type': u'preferences', u'updates': 1}}),
-            content_type='application/vnd.api+json'
-        )
-        self.assertEqual(response.status_code, 400)
-        json_response = self.load_response_content(response)
-        self.assertEqual(json_response.get('errors'), {u'title': u'Found no preference updates'})
+        self.assertEqual(json_response.get('meta'), {u'count': 1})
 
     def test_post_preferences_missing_id(self):
         response = self.client.post(
-            reverse('api:preferences'),
-            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
+            reverse('api:preference_update', kwargs={'pk': 1}),
+            json.dumps({u'data': {
                 u'type': 'preferences',
                 u'attributes': {
                     u'weight': 0.25,
                 },
-            }]}}}),
-            content_type='application/vnd.api+json'
-        )
-        self.assertEqual(response.status_code, 400)
-        json_response = self.load_response_content(response)
-        self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
-
-    def test_post_preferences_missing_attributes(self):
-        response = self.client.post(
-            reverse('api:preferences'),
-            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
-                u'type': 'preferences',
-                u'id': u'1',
-            }]}}}),
+            }}),
             content_type='application/vnd.api+json'
         )
         self.assertEqual(response.status_code, 400)
@@ -209,28 +199,44 @@ class ApiViewCorrectPermissionsMixin(object):
 
     def test_post_preferences_missing_weight(self):
         response = self.client.post(
-            reverse('api:preferences'),
-            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
+            reverse('api:preference_update', kwargs={'pk': 1}),
+            json.dumps({u'data': {
                 u'type': 'preferences',
                 u'id': u'1',
                 u'attributes': {},
-            }]}}}),
+            }}),
             content_type='application/vnd.api+json'
         )
         self.assertEqual(response.status_code, 400)
         json_response = self.load_response_content(response)
         self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
 
-    def test_post_preferences_invalid_id(self):
+    def test_post_preferences_id_mismatch(self):
         response = self.client.post(
-            reverse('api:preferences'),
-            json.dumps({u'data': {u'type': u'preferences', u'attributes': {u'updates': [{
+            reverse('api:preference_update', kwargs={'pk': 1}),
+            json.dumps({u'data': {
                 u'type': 'preferences',
                 u'id': u'0',
                 u'attributes': {
                     u'weight': 0.25,
                 },
-            }]}}}),
+            }}),
+            content_type='application/vnd.api+json'
+        )
+        self.assertEqual(response.status_code, 400)
+        json_response = self.load_response_content(response)
+        self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
+
+    def test_post_preferences_not_existing(self):
+        response = self.client.post(
+            reverse('api:preference_update', kwargs={'pk': 0}),
+            json.dumps({u'data': {
+                u'type': 'preferences',
+                u'id': u'0',
+                u'attributes': {
+                    u'weight': 0.25,
+                },
+            }}),
             content_type='application/vnd.api+json'
         )
         self.assertEqual(response.status_code, 400, response.content)
@@ -267,9 +273,9 @@ class ApiViewWrongPermissionsMixin(object):
         response = self.client.get(reverse('api:preferences'))
         self.assertEqual(response.status_code, 401)
 
-    # POST /api/preferences/
+    # POST /api/preferences/<pk>/
     def test_post_preferences(self):
-        response = self.client.post(reverse('api:preferences'))
+        response = self.client.post(reverse('api:preference_update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 401)
 
 

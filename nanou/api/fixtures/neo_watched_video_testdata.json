@@ -76,6 +76,13 @@
             },
             "model": "categories.models.Category",
             "id": 1
+        },
+        {
+            "attributes": {
+                "name": "Music"
+            },
+            "model": "categories.models.Category",
+            "id": 2
         }
     ]
 }
