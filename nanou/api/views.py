@@ -54,7 +54,7 @@ class PreferencesView(APIView):
 class PreferencesUpdateView(APIView):
     resource_name = 'preferences'
 
-    def post(self, request, pk):
+    def patch(self, request, pk):
         socialuser = SocialUser.user_for_django_user(request.user.id)
         category, error = self.parse_update(pk)
         if category is None:

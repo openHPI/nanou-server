@@ -149,9 +149,9 @@ class ApiViewCorrectPermissionsMixin(object):
             }
         }])
 
-    # POST /api/preferences/<pk>/
-    def test_post_preferences(self):
-        response = self.client.post(
+    # PATCH /api/preferences/<pk>/
+    def test_patch_preferences(self):
+        response = self.client.patch(
             reverse('api:preference_update', kwargs={'pk': 1}),
             json.dumps({u'data': {
                 u'type': 'preferences',
@@ -166,8 +166,8 @@ class ApiViewCorrectPermissionsMixin(object):
         json_response = self.load_response_content(response)
         self.assertEqual(json_response.get('meta'), {u'count': 1})
 
-    def test_post_preferences_new(self):
-        response = self.client.post(
+    def test_patch_preferences_new(self):
+        response = self.client.patch(
             reverse('api:preference_update', kwargs={'pk': 2}),
             json.dumps({u'data': {
                 u'type': 'preferences',
@@ -182,8 +182,8 @@ class ApiViewCorrectPermissionsMixin(object):
         json_response = self.load_response_content(response)
         self.assertEqual(json_response.get('meta'), {u'count': 1})
 
-    def test_post_preferences_missing_id(self):
-        response = self.client.post(
+    def test_patch_preferences_missing_id(self):
+        response = self.client.patch(
             reverse('api:preference_update', kwargs={'pk': 1}),
             json.dumps({u'data': {
                 u'type': 'preferences',
@@ -194,11 +194,9 @@ class ApiViewCorrectPermissionsMixin(object):
             content_type='application/vnd.api+json'
         )
         self.assertEqual(response.status_code, 400)
-        json_response = self.load_response_content(response)
-        self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
 
-    def test_post_preferences_missing_weight(self):
-        response = self.client.post(
+    def test_patch_preferences_missing_weight(self):
+        response = self.client.patch(
             reverse('api:preference_update', kwargs={'pk': 1}),
             json.dumps({u'data': {
                 u'type': 'preferences',
@@ -211,8 +209,8 @@ class ApiViewCorrectPermissionsMixin(object):
         json_response = self.load_response_content(response)
         self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
 
-    def test_post_preferences_id_mismatch(self):
-        response = self.client.post(
+    def test_patch_preferences_id_mismatch(self):
+        response = self.client.patch(
             reverse('api:preference_update', kwargs={'pk': 1}),
             json.dumps({u'data': {
                 u'type': 'preferences',
@@ -227,8 +225,8 @@ class ApiViewCorrectPermissionsMixin(object):
         json_response = self.load_response_content(response)
         self.assertEqual(json_response.get('errors'), {u'title': u'Invalid preference updates'})
 
-    def test_post_preferences_not_existing(self):
-        response = self.client.post(
+    def test_patch_preferences_not_existing(self):
+        response = self.client.patch(
             reverse('api:preference_update', kwargs={'pk': 0}),
             json.dumps({u'data': {
                 u'type': 'preferences',
@@ -273,8 +271,8 @@ class ApiViewWrongPermissionsMixin(object):
         response = self.client.get(reverse('api:preferences'))
         self.assertEqual(response.status_code, 401)
 
-    # POST /api/preferences/<pk>/
-    def test_post_preferences(self):
+    # PATCH /api/preferences/<pk>/
+    def test_patch_preferences(self):
         response = self.client.post(reverse('api:preference_update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 401)
 
