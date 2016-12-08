@@ -46,7 +46,7 @@ class PreferencesView(APIView):
 
     def get(self, request):
         socialuser = SocialUser.user_for_django_user(request.user.id)
-        categories = sorted(Category.all(), key=lambda c: c.name)
+        categories = sorted(Category.all(), key=lambda c: c.name.lower())
         serializer = PreferenceSerializer(categories, many=True, context={'socialuser': socialuser})
         return Response(serializer.data)
 

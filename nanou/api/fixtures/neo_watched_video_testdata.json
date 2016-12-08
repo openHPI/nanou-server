@@ -79,7 +79,7 @@
         },
         {
             "attributes": {
-                "name": "Music"
+                "name": "aMusic"
             },
             "model": "categories.models.Category",
             "id": 2

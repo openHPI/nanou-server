@@ -135,17 +135,17 @@ class ApiViewCorrectPermissionsMixin(object):
         json = self.load_response_content(response)
         self.assertEqual(json.get('data'), [{
             u'type': u'preferences',
+            u'id': u'2',
+            u'attributes': {
+                u'name': u'aMusic',
+                u'weight': 1.0,
+            }
+        }, {
+            u'type': u'preferences',
             u'id': u'1',
             u'attributes': {
                 u'name': u'Category',
                 u'weight': 0.75,
-            }
-        }, {
-            u'type': u'preferences',
-            u'id': u'2',
-            u'attributes': {
-                u'name': u'Music',
-                u'weight': 1.0,
             }
         }])
 
