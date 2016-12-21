@@ -4,25 +4,23 @@ from django.views import View
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from socialusers.models import SocialUser
 
 
-class LoginProvidersView(APIView):
-    permission_classes = (AllowAny,)
+class LoginProvidersView(View):
     providers = {  # display_name: backend_name
         'hpi': 'hpi-openid',
         # 'google': 'google-oauth2',
     }
 
     def get(self, request):
-        return Response({
-            name: request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))
-            for name, backend in self.providers.items()
+        return JsonResponse({
+            'data': {
+                name: request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))
+                for name, backend in self.providers.items()
+            },
         })
 
 
