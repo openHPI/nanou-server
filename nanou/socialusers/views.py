@@ -1,23 +1,13 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse, reverse_lazy
-from django.views import View
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import AllowAny
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from django.urls import reverse_lazy
 
 from categories.models import Category
 from neo.forms import NeoForm, NeoRelationshipField
 from neo.utils import NeoGraph
 from neo.views import NeoDetailView, NeoListView, NeoUpdateView
 from neoextras.views import NeoRelationshipUpdateView
+from socialusers.models import SocialUser
 from videos.models import Video
-
-from .models import SocialUser
 
 
 class SocialUserForm(NeoForm):
@@ -73,46 +63,3 @@ class SocialUserWatchedView(PermissionRequiredMixin, NeoRelationshipUpdateView):
     start_model = SocialUser
     end_model = Video
     relationship_name = 'WATCHED'
-
-
-class LoginProvidersView(APIView):
-    permission_classes = (AllowAny,)
-    providers = {  # display_name: backend_name
-        'hpi': 'hpi-openid',
-        # 'google': 'google-oauth2',
-    }
-
-    def get(self, request):
-        return Response({
-            name: request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))
-            for name, backend in self.providers.items()
-        })
-
-
-class AuthStatusView(View):
-    def get(self, request):
-        rest_request = Request(request)
-        try:
-            user_token = TokenAuthentication().authenticate(rest_request)
-            if user_token is None:
-                raise AuthenticationFailed
-            user, token = user_token
-        except AuthenticationFailed:
-            try:
-                user_session = SessionAuthentication().authenticate(rest_request)
-                if user_session is None:
-                    raise AuthenticationFailed
-                user, _ = user_session
-                if not user.has_perm('base.consume_curriculum'):
-                    raise AuthenticationFailed
-                token, _ = Token.objects.get_or_create(user=user)
-            except AuthenticationFailed:
-                return JsonResponse({
-                    'authenticated': False,
-                })
-        socialuser = SocialUser.user_for_django_user(user.id)
-        return JsonResponse({
-            'authenticated': True,
-            'preferencesInitialized': socialuser.has_initialized_preferences,
-            'token': token.key,
-        })

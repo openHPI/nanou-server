@@ -31,6 +31,6 @@ urlpatterns = [
     url(r'^videos/', include('videos.urls', namespace='videos')),
 
     # user views
-    url(r'^social/', include('socialusers.urls_login', namespace='sociallogin')),
+    url(r'^api/', include('api.urls_login', namespace='sociallogin')),
     url(r'^api/', include('api.urls', namespace='api')),
 ]
