@@ -10,3 +10,10 @@
 .ui.grid.login-wrapper .column{
     max-width: 450px;
 }
+
+.imprint-wrapper {
+    bottom: 8px;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+}
