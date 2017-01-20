@@ -13,8 +13,7 @@ class NextVideosView(APIView):
     resource_name = 'videos'
 
     def get(self, request):
-        socialuser = SocialUser.user_for_django_user(request.user.id)
-        next_videos = socialuser.next_videos()
+        next_videos = SocialUser.next_videos(request.user.id)
         serializer = VideoSerializer(next_videos, many=True)
         return Response(serializer.data)
 

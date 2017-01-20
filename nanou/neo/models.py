@@ -86,6 +86,10 @@ class NeoModel(GraphObject):
         else:
             return attr
 
+    def save(self):
+        with NeoGraph() as graph:
+            return graph.push(self)
+
     def delete(self):
         with NeoGraph() as graph:
             for prop_name, prop in self.__class__.__dict__.items():

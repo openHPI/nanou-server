@@ -74,5 +74,33 @@
             "user": 3,
             "created": "2016-11-08T07:39:44.620Z"
         }
+    },
+    {
+        "model": "auth.user",
+        "pk": 4,
+        "fields": {
+            "password": "pbkdf2_sha256$30000$2Z7l45V06vJ1$qPG3gT54Dud4rii056sxlQXD2ClJqv/e02AZ+TGYLfc=",
+            "last_login": "2017-01-20T13:53:33.765Z",
+            "is_superuser": false,
+            "username": "abcd",
+            "first_name": "test user",
+            "last_name": "password is admin",
+            "email": "test@user.com",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2017-01-20T13:53:33.765Z",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "authtoken.token",
+        "pk": "e0249312ac464bbd6723114fd64baece56edc211",
+        "fields": {
+            "user": 4,
+            "created": "2017-01-20T13:53:33.765Z"
+        }
     }
 ]

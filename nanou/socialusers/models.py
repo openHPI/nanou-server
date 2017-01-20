@@ -28,27 +28,30 @@ class SocialUser(NeoModel):
                               {'verbose_name': cls.__name__})
             return obj
 
-    def next_videos(self):
-        return self.next_videos_preferences()
+    @classmethod
+    def next_videos(cls, user_id):
+        return cls.next_videos_preferences(user_id)
 
-    def next_videos_without_preferences(self):
+    @classmethod
+    def next_videos_without_preferences(self, user_id):
         with NeoGraph() as graph:
             cursor = graph.run('''
-                MATCH (u:SocialUser{id:{user_id}})
+                MATCH (u:SocialUser{user_id:{user_id}})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
                 WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps
                 WHERE deps AND NOT (v1)<-[:WATCHED]-(u)
                 RETURN v1
                 ORDER BY tostring(v1.name);
             ''', {
-                'user_id': self.id,
+                'user_id': user_id,
             })
             return [Video.wrap(d['v1']) for d in cursor.data()]
 
-    def next_videos_preferences(self, return_count=1):
+    @classmethod
+    def next_videos_preferences(self, user_id, return_count=1):
         with NeoGraph() as graph:
             cursor = graph.run('''
-                MATCH (u:SocialUser{id:{user_id}})
+                MATCH (u:SocialUser{user_id:{user_id}})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
                 OPTIONAL MATCH (u)-[pref:HAS_PREFERENCE]->(cat:Category)<-[belongs:BELONGS_TO]-(v1)
                 WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps,
@@ -57,7 +60,7 @@ class SocialUser(NeoModel):
                 RETURN v1, weight
                 ORDER BY weight DESC, tostring(v1.name)
             ''', {
-                'user_id': self.id,
+                'user_id': user_id,
             })
             objects = []
             last_weight = -1

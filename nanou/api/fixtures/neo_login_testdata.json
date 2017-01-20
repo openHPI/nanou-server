@@ -1,0 +1,66 @@
+{
+    "relationships": [
+        {
+            "start": {
+                "model": "socialusers.models.SocialUser",
+                "id": 1
+            },
+            "attributes": {
+                "date": "2017-01-01T00:00:00",
+                "rating": -1,
+                "progress": -1
+            },
+            "end": {
+                "model": "videos.models.Video",
+                "id": 1
+            },
+            "type": "WATCHED"
+        },
+        {
+            "start": {
+                "model": "socialusers.models.SocialUser",
+                "id": 2
+            },
+            "attributes": {
+                "date": "2017-01-02T00:00:00",
+                "rating": -1,
+                "progress": -1
+            },
+            "end": {
+                "model": "videos.models.Video",
+                "id": 2
+            },
+            "type": "WATCHED"
+        }
+    ],
+    "nodes": [
+        {
+            "attributes": {
+                "name": "A"
+            },
+            "model": "videos.models.Video",
+            "id": 1
+        },
+        {
+            "attributes": {
+                "name": "B"
+            },
+            "model": "videos.models.Video",
+            "id": 2
+        },
+        {
+            "attributes": {
+                "user_id": 3
+            },
+            "model": "socialusers.models.SocialUser",
+            "id": 1
+        },
+        {
+            "attributes": {
+                "user_id": 4
+            },
+            "model": "socialusers.models.SocialUser",
+            "id": 2
+        }
+    ]
+}
