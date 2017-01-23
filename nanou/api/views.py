@@ -32,10 +32,23 @@ class WatchVideoView(APIView):
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-            if video in socialuser.watched_videos:
-                return Response({'meta': {'count': 0}})
+            date = request.data.get('date')
+            progress = request.data.get('progress')
+            rating = request.data.get('rating')
 
-            socialuser.watched_videos.add(video)
+            if not all([date, progress, rating]):
+                content = {
+                    'title': 'Invalid attributes',
+                    'id': request.data['id'],
+                }
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+            properties = {
+                'date': date,
+                'progress': progress,
+                'rating': rating,
+            }
+            socialuser.watched_videos.add(video, properties)
             graph.push(socialuser)
             return Response({'meta': {'count': 1}})
 
