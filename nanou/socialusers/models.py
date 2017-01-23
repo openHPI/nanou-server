@@ -33,7 +33,7 @@ class SocialUser(NeoModel):
         return cls.next_videos_preferences(user_id)
 
     @classmethod
-    def next_videos_without_preferences(self, user_id):
+    def next_videos_without_preferences(cls, user_id):
         with NeoGraph() as graph:
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})
@@ -48,7 +48,7 @@ class SocialUser(NeoModel):
             return [Video.wrap(d['v1']) for d in cursor.data()]
 
     @classmethod
-    def next_videos_preferences(self, user_id, return_count=1):
+    def next_videos_preferences(cls, user_id, return_count=1):
         with NeoGraph() as graph:
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})
@@ -71,6 +71,19 @@ class SocialUser(NeoModel):
                 last_weight = weight
                 objects.append(Video.wrap(node))
             return objects
+
+    @classmethod
+    def watch_history(cls, user_id):
+        with NeoGraph() as graph:
+            cursor = graph.run('''
+                MATCH (u:SocialUser{user_id:{user_id}})
+                MATCH (u)-[w:WATCHED]->(v:Video)
+                RETURN DISTINCT v, w.date
+                ORDER BY w.date DESC;
+            ''', {
+                'user_id': user_id,
+            })
+            return [Video.wrap(d['v']) for d in cursor.data()]
 
     @property
     def has_initialized_preferences(self):

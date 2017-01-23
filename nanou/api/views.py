@@ -53,6 +53,15 @@ class WatchVideoView(APIView):
             return Response({'meta': {'count': 1}})
 
 
+class WatchHistoryView(APIView):
+    resource_name = 'videos'
+
+    def get(self, request):
+        watched_videos = SocialUser.watch_history(request.user.id)
+        serializer = VideoSerializer(watched_videos, many=True)
+        return Response(serializer.data)
+
+
 class PreferencesView(APIView):
     resource_name = 'preferences'
 

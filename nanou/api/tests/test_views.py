@@ -57,6 +57,27 @@ class ApiViewCorrectPermissionsMixin(object):
             self.assertEqual(response.status_code, 200)
             self.assertJSONDataVideoNames(response, next_videos)
 
+    def watch_and_history(self, video_name, history_videos):
+        with NeoGraph() as graph:
+            obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
+            response = self.client.post(
+                reverse('api:watch_videos'),
+                json.dumps({'data': {
+                    'type': 'videos',
+                    'id': obj.id,
+                    'attributes': {
+                        'date': datetime.now().isoformat(),
+                        'rating': 1,
+                        'progress': 1,
+                    }
+                }}),
+                content_type='application/vnd.api+json',
+            )
+            self.assertEqual(response.status_code, 200)
+            response = self.client.get(reverse('api:history'))
+            self.assertEqual(response.status_code, 200)
+            self.assertJSONDataVideoNames(response, history_videos)
+
     # GET /api/next/
     def test_next_videos_view(self):
         response = self.client.get(reverse('api:next_videos'))
@@ -201,6 +222,21 @@ class ApiViewCorrectPermissionsMixin(object):
         )
         self.assertEqual(response.status_code, 400)
 
+    # GET /api/history
+    def test_get_history(self):
+        response = self.client.get(reverse('api:history'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataVideoNames(response, [])
+
+    def test_get_history_workflow(self):
+        response = self.client.get(reverse('api:history'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataVideoNames(response, [])
+
+        self.watch_and_history('C', ['C'])
+        self.watch_and_history('A', ['A', 'C'])
+        self.watch_and_history('B', ['B', 'A', 'C'])
+
     # GET /api/preferences/
     def test_get_preferences(self):
         response = self.client.get(reverse('api:preferences'))
@@ -338,6 +374,11 @@ class ApiViewWrongPermissionsMixin(object):
                 content_type='application/vnd.api+json'
             )
             self.assertEqual(response.status_code, 401)
+
+    # GET /api/history
+    def test_get_history(self):
+        response = self.client.get(reverse('api:history'))
+        self.assertEqual(response.status_code, 401)
 
     # GET /api/preferences/
     def test_get_preferences(self):
