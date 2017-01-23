@@ -7,6 +7,9 @@
     <p>
         URL: <a href="{{ video.url }}">{{ video.url }}</a>
     </p>
+    <p>
+        Stream URL: <a href="{{ video.stream_url }}">{{ video.stream_url }}</a>
+    </p>
     <ul>
         <li>
             {% show_relationship_items video video.required_by_videos 'Required by videos' %}

@@ -21,6 +21,10 @@ class VideoForm(NeoForm):
         label='URL',
         required=True,
     )
+    stream_url = forms.URLField(
+        label='Stream URL',
+        required=True,
+    )
     required_by_videos = NeoRelationshipNoSelfRefField(
         label='Required by videos',
         model=Video,

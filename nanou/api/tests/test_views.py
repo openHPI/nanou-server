@@ -33,6 +33,7 @@ class ApiViewCorrectPermissionsMixin(object):
         self.assertTrue(all('attributes' in item for item in json_response['data']))
         self.assertTrue(all('name' in item['attributes'] for item in json_response['data']))
         self.assertTrue(all('url' in item['attributes'] for item in json_response['data']))
+        self.assertTrue(all('stream_url' in item['attributes'] for item in json_response['data']))
         response_names = [item['attributes']['name'] for item in json_response['data']]
         self.assertEqual(video_names, response_names)
 
