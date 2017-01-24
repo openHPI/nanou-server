@@ -1,4 +1,4 @@
-from social.backends.open_id import OpenIdAuth
+from social_core.backends.open_id import OpenIdAuth
 
 
 class HpiOpenIdAuth(OpenIdAuth):

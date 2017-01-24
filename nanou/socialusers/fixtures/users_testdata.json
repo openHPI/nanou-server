@@ -58,7 +58,7 @@
         }
     },
     {
-        "model": "social_auth.usersocialauth",
+        "model": "social_django.usersocialauth",
         "pk": 4,
         "fields": {
             "user": 3,

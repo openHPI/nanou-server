@@ -23,7 +23,7 @@ urlpatterns = [
     # manage views
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout_then_login, name='logout'),
-    url(r'^social/', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^social/', include('social_django.urls', namespace='social')),
     url(r'^', include('base.urls', namespace='landingpage')),
     url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^groups/', include('groups.urls', namespace='groups')),

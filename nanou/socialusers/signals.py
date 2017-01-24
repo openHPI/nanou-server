@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from social.apps.django_app.default.models import UserSocialAuth
+from social_django.models import UserSocialAuth
 
 from neo.utils import NeoGraph
 from socialusers.models import SocialUser

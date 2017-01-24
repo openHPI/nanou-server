@@ -12,7 +12,7 @@ def forwards_func(apps, schema_editor):
     # We use the historical versions instead.
     Group = apps.get_model('auth', 'Group')
     Permission = apps.get_model('auth', 'Permission')
-    UserSocialAuth = apps.get_model('social_auth', 'UserSocialAuth')
+    UserSocialAuth = apps.get_model('social_django', 'UserSocialAuth')
 
     db_alias = schema_editor.connection.alias
 

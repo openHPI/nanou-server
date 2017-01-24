@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'social.apps.django_app.default',
+    'social_django',
     'api.apps.ApiConfig',
     'base.apps.BaseConfig',
     'categories.apps.CategoriesConfig',
@@ -104,7 +104,7 @@ LOGIN_REDIRECT_URL = 'landingpage'
 
 
 AUTHENTICATION_BACKENDS = (
-    'social.backends.google.GoogleOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
     'socialusers.backends.HpiOpenIdAuth',
     'django.contrib.auth.backends.ModelBackend',
 )

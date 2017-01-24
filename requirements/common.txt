@@ -2,5 +2,5 @@ Django==1.10.2
 djangorestframework==3.5.2
 djangorestframework-jsonapi==2.1.1
 django-npm==1.0.0
-social-auth-app-django==0.1.0
+social-auth-app-django==1.0.0
 py2neo==3.1.2
