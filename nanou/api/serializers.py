@@ -5,6 +5,7 @@ class VideoSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     url = serializers.URLField()
     stream_url = serializers.URLField()
+    image_url = serializers.URLField()
 
 
 class PreferenceSerializer(serializers.Serializer):
