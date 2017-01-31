@@ -29,6 +29,10 @@ class VideoForm(NeoForm):
         label='Image URL',
         required=True,
     )
+    provider_name = forms.CharField(
+        label='Provider name',
+        required=True,
+    )
     required_by_videos = NeoRelationshipNoSelfRefField(
         label='Required by videos',
         model=Video,

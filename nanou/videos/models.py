@@ -13,6 +13,7 @@ class Video(NeoModel):
     url = Property()
     stream_url = Property()
     image_url = Property()
+    provider_name = Property()
     required_by_videos = NeoRelatedFrom('videos.models.Video', 'REQUIRES_VIDEO')
     required_videos = NeoRelatedTo('videos.models.Video', 'REQUIRES_VIDEO')
     required_groups = NeoRelatedTo('groups.models.Group', 'REQUIRES_GROUP')
