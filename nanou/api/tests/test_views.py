@@ -43,9 +43,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'date': datetime.now().isoformat(),
                         'rating': 1,
                         'progress': 1,
@@ -64,9 +64,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'date': datetime.now().isoformat(),
                         'rating': 1,
                         'progress': 1,
@@ -106,9 +106,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'date': datetime.now().isoformat(),
                         'rating': 1,
                         'progress': 1,
@@ -125,9 +125,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'date': datetime.now().isoformat(),
                         'rating': 1,
                         'progress': 1,
@@ -141,9 +141,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'date': datetime.now().isoformat(),
                         'rating': 0.5,
                         'progress': 1,
@@ -167,9 +167,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'rating': 1,
                         'progress': 1,
                     }
@@ -184,9 +184,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'date': datetime.now().isoformat(),
                         'progress': 1,
                     }
@@ -201,9 +201,9 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
-                    'type': 'videos',
-                    'id': obj.id,
+                    'type': 'watches',
                     'attributes': {
+                        'video_id': obj.id,
                         'date': datetime.now().isoformat(),
                         'rating': 1,
                     }
@@ -216,8 +216,10 @@ class ApiViewCorrectPermissionsMixin(object):
         response = self.client.post(
             reverse('api:watch_videos'),
             json.dumps({'data': {
-                'type': 'videos',
-                'id': '1234567',
+                'type': 'watches',
+                'attributes': {
+                    'video_id': '1234567',
+                }
             }}),
             content_type='application/vnd.api+json',
         )

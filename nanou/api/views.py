@@ -19,27 +19,33 @@ class NextVideosView(APIView):
 
 
 class WatchVideoView(APIView):
-    resource_name = 'videos'
+    resource_name = 'watches'
 
     def post(self, request):
         socialuser = SocialUser.user_for_django_user(request.user.id)
         with NeoGraph() as graph:
-            video = Video.select(graph, request.data['id']).first()
-            if not video:
+            video_id = request.data.get('video_id')
+            if not video_id:
                 content = {
-                    'title': 'Found non-existing video id',
-                    'id': request.data['id'],
+                    'title': 'Missing video id',
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
             date = request.data.get('date')
             progress = request.data.get('progress')
             rating = request.data.get('rating')
-
             if not all([date, progress, rating]):
                 content = {
                     'title': 'Invalid attributes',
-                    'id': request.data['id'],
+                    'id': video_id,
+                }
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+            video = Video.select(graph, int(video_id)).first()
+            if not video:
+                content = {
+                    'title': 'Found non-existing video id',
+                    'id': video_id,
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
