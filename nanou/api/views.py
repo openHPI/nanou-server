@@ -56,7 +56,7 @@ class WatchVideoView(APIView):
             }
             socialuser.watched_videos.add(video, properties)
             graph.push(socialuser)
-            return Response({'meta': {'count': 1}})
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class WatchHistoryView(APIView):
@@ -98,7 +98,7 @@ class PreferencesUpdateView(APIView):
             socialuser.preferences.add(category, properties)
         with NeoGraph() as graph:
             graph.push(socialuser)
-        return Response({'meta': {'count': 1}})
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def validate_update(self, update, pk):
         return update.get('id') == pk and update.get('weight')

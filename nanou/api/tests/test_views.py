@@ -21,12 +21,6 @@ class ApiViewCorrectPermissionsMixin(object):
             response_content = str(response_content, encoding='utf8')
         return json.loads(response_content)
 
-    def assertVideoCount(self, response, count):
-        json_response = self.load_response_content(response)
-        self.assertIn('meta', json_response)
-        self.assertIn('count', json_response['meta'])
-        self.assertEqual(count, json_response['meta']['count'])
-
     def assertJSONDataVideoNames(self, response, video_names):
         json_response = self.load_response_content(response)
         self.assertIn('data', json_response)
@@ -53,7 +47,7 @@ class ApiViewCorrectPermissionsMixin(object):
                 }}),
                 content_type='application/vnd.api+json',
             )
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 204)
             response = self.client.get(reverse('api:next_videos'))
             self.assertEqual(response.status_code, 200)
             self.assertJSONDataVideoNames(response, next_videos)
@@ -74,7 +68,7 @@ class ApiViewCorrectPermissionsMixin(object):
                 }}),
                 content_type='application/vnd.api+json',
             )
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 204)
             response = self.client.get(reverse('api:history'))
             self.assertEqual(response.status_code, 200)
             self.assertJSONDataVideoNames(response, history_videos)
@@ -116,8 +110,7 @@ class ApiViewCorrectPermissionsMixin(object):
                 }}),
                 content_type='application/vnd.api+json',
             )
-            self.assertEqual(response.status_code, 200)
-            self.assertVideoCount(response, 1)
+            self.assertEqual(response.status_code, 204, response.content)
 
     def test_post_watch_video_again(self):
         with NeoGraph() as graph:
@@ -136,8 +129,7 @@ class ApiViewCorrectPermissionsMixin(object):
                 content_type='application/vnd.api+json',
             )
 
-            self.assertEqual(response.status_code, 200)
-            self.assertVideoCount(response, 1)
+            self.assertEqual(response.status_code, 204, response.content)
             response = self.client.post(
                 reverse('api:watch_videos'),
                 json.dumps({'data': {
@@ -151,8 +143,7 @@ class ApiViewCorrectPermissionsMixin(object):
                 }}),
                 content_type='application/vnd.api+json',
             )
-            self.assertEqual(response.status_code, 200)
-            self.assertVideoCount(response, 1)
+            self.assertEqual(response.status_code, 204, response.content)
 
     def test_post_watch_video_missing_data(self):
         response = self.client.post(
@@ -274,9 +265,7 @@ class ApiViewCorrectPermissionsMixin(object):
             }}),
             content_type='application/vnd.api+json'
         )
-        self.assertEqual(response.status_code, 200, response.content)
-        json_response = self.load_response_content(response)
-        self.assertEqual(json_response.get('meta'), {u'count': 1})
+        self.assertEqual(response.status_code, 204, response.content)
 
     def test_patch_preferences_new(self):
         response = self.client.patch(
@@ -290,9 +279,7 @@ class ApiViewCorrectPermissionsMixin(object):
             }}),
             content_type='application/vnd.api+json'
         )
-        self.assertEqual(response.status_code, 200, response.content)
-        json_response = self.load_response_content(response)
-        self.assertEqual(json_response.get('meta'), {u'count': 1})
+        self.assertEqual(response.status_code, 204, response.content)
 
     def test_patch_preferences_missing_id(self):
         response = self.client.patch(
@@ -373,8 +360,16 @@ class ApiViewWrongPermissionsMixin(object):
             obj = Video.select(graph).where('_.name = "{}"'.format('A')).first()
             response = self.client.post(
                 reverse('api:watch_videos'),
-                json.dumps({'videos': [obj.id]}),
-                content_type='application/vnd.api+json'
+                json.dumps({'data': {
+                    'type': 'watches',
+                    'attributes': {
+                        'video_id': obj.id,
+                        'date': datetime.now().isoformat(),
+                        'rating': 1,
+                        'progress': 1,
+                    }
+                }}),
+                content_type='application/vnd.api+json',
             )
             self.assertEqual(response.status_code, 401)
 
