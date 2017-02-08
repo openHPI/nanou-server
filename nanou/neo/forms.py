@@ -20,18 +20,24 @@ class NeoForm(forms.Form):
                     self.add_error(field_name, msg)
 
 
-class NeoRelationshipField(forms.MultipleChoiceField):
+class NeoRelationshipField(forms.ModelMultipleChoiceField):
     def __init__(self, model, label, initial=None, required=False, widget=None):
+        self.model = model
         initial = [] if initial is None else initial
         widget = SemanticUISelectMultiple() if widget is None else widget
 
         super(NeoRelationshipField, self).__init__(
+            model,
             label=label,
-            choices=[(m.id, m.name) for m in model.all()],
             initial=initial,
             required=required,
             widget=widget,
         )
+
+    def _get_choices(self):
+        return [(m.id, m.name) for m in self.model.all()]
+
+    choices = property(_get_choices, forms.ModelMultipleChoiceField._set_choices)
 
     def clean(self, value):
         value = [int(v) for v in value] if isinstance(value, list) else value
