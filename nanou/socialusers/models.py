@@ -33,30 +33,21 @@ class SocialUser(NeoModel):
         return cls.next_videos_preferences(user_id)
 
     @classmethod
-    def next_videos_without_preferences(cls, user_id):
-        with NeoGraph() as graph:
-            cursor = graph.run('''
-                MATCH (u:SocialUser{user_id:{user_id}})
-                MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
-                WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps
-                WHERE deps AND NOT (v1)<-[:WATCHED]-(u)
-                RETURN v1
-                ORDER BY tostring(v1.name);
-            ''', {
-                'user_id': user_id,
-            })
-            return [Video.wrap(d['v1']) for d in cursor.data()]
-
-    @classmethod
     def next_videos_preferences(cls, user_id, return_count=1):
         with NeoGraph() as graph:
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
-                OPTIONAL MATCH (u)-[pref:HAS_PREFERENCE]->(cat:Category)<-[belongs:BELONGS_TO]-(v1)
-                WITH v1, u, none(x in COLLECT(DISTINCT v2) WHERE NOT (x)<-[:WATCHED]-(u) AND v1 <> x) as deps,
-                AVG(toFloat(coalesce(belongs.weight,0)) * toFloat(coalesce(pref.weight,1.0))) as weight
-                WHERE deps AND NOT (v1)<-[:WATCHED]-(u)
+                MATCH (u)-[:WATCHED]->(vw:Video)
+                WITH v1, v2, u, COLLECT(DISTINCT vw) as watchedV
+                WITH v1, u, watchedV, none(x in COLLECT(DISTINCT v2) WHERE NOT x in watchedV AND v1 <> x) as deps
+                WHERE deps AND NOT v1 in watchedV
+                MATCH (cat:Category)
+                OPTIONAL MATCH (u)-[pref:HAS_PREFERENCE]->(cat)
+                OPTIONAL MATCH (u)-[w:WATCHED]->(v:Video)-[b:BELONGS_TO]->(cat)
+                WHERE w.rating >= 0
+                WITH v1, toFloat(coalesce(max(pref.weight), 0)) as prefw, toFloat(coalesce(AVG(toFloat(w.rating) * toFloat(b.weight)), 1)) as ratew
+                WITH v1, prefw * ratew as weight
                 RETURN v1, weight
                 ORDER BY weight DESC, tostring(v1.name)
             ''', {
