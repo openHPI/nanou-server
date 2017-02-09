@@ -58,15 +58,14 @@ class SocialUser(NeoModel):
 
             return [Video.wrap(d['v1']) for d in cursor.data()]
 
-
     @classmethod
     def watch_history(cls, user_id):
         with NeoGraph() as graph:
             cursor = graph.run('''
-                MATCH (u:SocialUser{user_id:{user_id}})
-                MATCH (u)-[w:WATCHED]->(v:Video)
+                MATCH (u:SocialUser{user_id:{user_id}})-[w:WATCHED]->(v:Video)
+                WHERE w.progress > 0
                 RETURN DISTINCT v, w.date
-                ORDER BY w.date DESC;
+                ORDER BY w.date DESC
             ''', {
                 'user_id': user_id,
             })
