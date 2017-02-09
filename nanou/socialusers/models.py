@@ -33,7 +33,7 @@ class SocialUser(NeoModel):
         return cls.next_videos_preferences(user_id)
 
     @classmethod
-    def next_videos_preferences(cls, user_id, return_count=1):
+    def next_videos_preferences(cls, user_id, limit=1):
         with NeoGraph() as graph:
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})
@@ -50,18 +50,14 @@ class SocialUser(NeoModel):
                 WITH v1, prefw * ratew as weight
                 RETURN v1, weight
                 ORDER BY weight DESC, tostring(v1.name)
+                LIMIT {limit}
             ''', {
                 'user_id': user_id,
+                'limit': limit,
             })
-            objects = []
-            last_weight = -1
-            while cursor.forward():
-                node, weight = cursor.current()['v1'], cursor.current()['weight']
-                if weight < last_weight and len(objects) >= return_count:
-                    break
-                last_weight = weight
-                objects.append(Video.wrap(node))
-            return objects
+
+            return [Video.wrap(d['v1']) for d in cursor.data()]
+
 
     @classmethod
     def watch_history(cls, user_id):
