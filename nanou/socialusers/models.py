@@ -38,17 +38,19 @@ class SocialUser(NeoModel):
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
-                MATCH (u)-[:WATCHED]->(vw:Video)
-                WITH v1, v2, u, COLLECT(DISTINCT vw) as watchedV
-                WITH v1, u, watchedV, none(x in COLLECT(DISTINCT v2) WHERE NOT x in watchedV AND v1 <> x) as deps
+                OPTIONAL MATCH (u)-[:WATCHED]->(vw:Video)
+                WITH v1, v2, COLLECT(DISTINCT vw) as watchedV
+                WITH v1, watchedV, none(x in COLLECT(DISTINCT v2) WHERE NOT x in watchedV AND v1 <> x) as deps
                 WHERE deps AND NOT v1 in watchedV
-                MATCH (cat:Category)
+                MATCH (u:SocialUser{user_id:{user_id}})
+                OPTIONAL MATCH (cat:Category)
                 OPTIONAL MATCH (u)-[pref:HAS_PREFERENCE]->(cat)
                 OPTIONAL MATCH (u)-[w:WATCHED]->(v:Video)-[b:BELONGS_TO]->(cat)
                 WHERE w.rating >= 0
-                WITH v1, toFloat(coalesce(max(pref.weight), 0)) as prefw, toFloat(coalesce(AVG(toFloat(w.rating) * toFloat(b.weight)), 1)) as ratew
-                WITH v1, prefw * ratew as weight
-                RETURN v1, weight
+                WITH v1, cat, toFloat(coalesce(max(pref.weight), 0.5)) as prefw, toFloat(coalesce(AVG(toFloat(w.rating) * toFloat(b.weight)), 1)) as ratew
+                WITH v1, cat, prefw * ratew as catWeight
+                OPTIONAL MATCH (v1)-[belongs:BELONGS_TO]->(cat)
+                RETURN v1, toFloat(coalesce(AVG(belongs.weigth * catWeight), 0.5)) as weight
                 ORDER BY weight DESC, tostring(v1.name)
                 LIMIT {limit}
             ''', {

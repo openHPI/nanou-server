@@ -50,6 +50,13 @@
         },
         {
             "attributes": {
+                "name": "C"
+            },
+            "model": "videos.models.Video",
+            "id": 3
+        },
+        {
+            "attributes": {
                 "user_id": 3
             },
             "model": "socialusers.models.SocialUser",
