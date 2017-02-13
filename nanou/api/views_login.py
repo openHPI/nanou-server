@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group, User
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.views import View
