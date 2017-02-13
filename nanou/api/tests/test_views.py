@@ -241,7 +241,7 @@ class ApiViewCorrectPermissionsMixin(object):
             u'id': u'2',
             u'attributes': {
                 u'name': u'aMusic',
-                u'weight': 1.0,
+                u'weight': 0.5,
             }
         }, {
             u'type': u'preferences',

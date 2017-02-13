@@ -16,5 +16,5 @@ class PreferenceSerializer(serializers.Serializer):
     def get_weight(self, obj):
         socialuser = self.context.get('socialuser')
         if socialuser:
-            return float(socialuser.preferences.get(obj, 'weight', default=1.0))
-        return 1.0
+            return float(socialuser.preferences.get(obj, 'weight', default=0.5))
+        return 0.5

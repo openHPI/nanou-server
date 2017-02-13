@@ -7,5 +7,5 @@ WATCHED_DEFAULT_PROPS = {
 }
 
 PREFERENCE_DEFAULT_PROPS = {
-    'weight': 1.0,
+    'weight': 0.5,
 }
