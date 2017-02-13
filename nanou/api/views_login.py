@@ -75,9 +75,11 @@ class TestLoginView(View):
             create_neo_socialuser(user.id)
 
         token, _ = Token.objects.get_or_create(user=user)
+        socialuser = SocialUser.user_for_django_user(user.id)
 
         return JsonResponse({
             'authenticated': True,
+            'preferencesInitialized': socialuser.has_initialized_preferences,
             'token': token.key,
         })
 

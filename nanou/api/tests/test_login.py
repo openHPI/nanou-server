@@ -73,6 +73,7 @@ class SocialLoginTestCase(NeoTestCase):
         self.assertEqual(json_content['authenticated'], True)
         self.assertEqual(User.objects.count(), user_count+1)
         self.assertEqual(len(list(SocialUser.all())), socialuser_count+1)
+        self.assertIn('preferencesInitialized', json_content)
         self.assertIn('token', json_content)
         token = json_content['token']
 
