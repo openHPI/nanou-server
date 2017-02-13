@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import ugettext as _
@@ -38,7 +40,9 @@ class SocialUser(NeoModel):
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
-                OPTIONAL MATCH (u)-[:WATCHED]->(vw:Video)
+                OPTIONAL MATCH (u)-[hasW:WATCHED]->(vw:Video)
+                WITH v1, v2, vw, coalesce(max(hasW.progress), 0) as vwProgress, toString(coalesce(max(hasW.date), "")) as vwLastDate
+                WHERE NOT (vwProgress > 0 AND vwLastDate STARTS WITH "{today}")
                 WITH v1, v2, COLLECT(DISTINCT vw) as watchedV
                 WITH v1, watchedV, none(x in COLLECT(DISTINCT v2) WHERE NOT x in watchedV AND v1 <> x) as deps
                 WHERE deps AND NOT v1 in watchedV
@@ -55,6 +59,7 @@ class SocialUser(NeoModel):
                 LIMIT {limit}
             ''', {
                 'user_id': user_id,
+                'today': datetime.now().isoformat()[:10],  # returns date with format 'YYYY-MM-DD'
                 'limit': limit,
             })
 
