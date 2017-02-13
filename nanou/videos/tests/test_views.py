@@ -49,6 +49,8 @@ class VideoViewCorrcetPermissionsMixin(object):
             'name': 'Random Video',
             'url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
             'stream_url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
+            'image_url' : 'http://some.url.com/image',
+            'provider_name': 'nanou',
         }
         response = self.client.post(reverse('videos:create'), data, follow=True)
         self.assertRedirects(response, reverse('videos:list'))
@@ -83,6 +85,8 @@ class VideoViewCorrcetPermissionsMixin(object):
             'name': 'Updated Video',
             'url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
             'stream_url': 'https://www.youtube.com/watch?v=DLzxrzFCyOs',
+            'image_url' : 'http://some.url.com/image',
+            'provider_name': 'nanou',
         }
         response = self.client.post(reverse('videos:update', kwargs={'pk': 1}), data, follow=True)
         self.assertRedirects(response, reverse('videos:list'))
