@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.serializers import PreferenceSerializer, VideoSerializer
+from api.serializers import PreferenceSerializer, VideoSerializer, HistoryVideoSerializer
 from categories.models import Category
 from neo.utils import NeoGraph
 from socialusers.models import SocialUser
@@ -60,11 +60,12 @@ class WatchVideoView(APIView):
 
 
 class WatchHistoryView(APIView):
-    resource_name = 'videos'
+    resource_name = 'history'
 
     def get(self, request):
+        socialuser = SocialUser.user_for_django_user(request.user.id)
         watched_videos = SocialUser.watch_history(request.user.id)
-        serializer = VideoSerializer(watched_videos, many=True)
+        serializer = HistoryVideoSerializer(watched_videos, many=True, context={'socialuser': socialuser})
         return Response(serializer.data)
 
 

@@ -71,7 +71,7 @@ class SocialUser(NeoModel):
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})-[w:WATCHED]->(v:Video)
                 WHERE w.progress > 0
-                RETURN DISTINCT v, w.date
+                RETURN v, w.date
                 ORDER BY w.date DESC
             ''', {
                 'user_id': user_id,
