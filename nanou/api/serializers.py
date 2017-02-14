@@ -7,6 +7,11 @@ class VideoSerializer(serializers.Serializer):
     stream_url = serializers.URLField()
     image_url = serializers.URLField()
     provider_name = serializers.CharField(max_length=100)
+    tags = serializers.SerializerMethodField()
+
+    def get_tags(self, obj):
+        sorted_categories = sorted(obj.categories, key=lambda cat: obj.categories.get(cat, 'weight', default=0))
+        return ','.join([cat.name for cat in sorted_categories])
 
 
 class PreferenceSerializer(serializers.Serializer):
