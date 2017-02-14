@@ -34,7 +34,7 @@ class WatchVideoView(APIView):
             date = request.data.get('date')
             progress = request.data.get('progress')
             rating = request.data.get('rating')
-            if not all([date, progress, rating]):
+            if not all(value is not None for value in [date, progress, rating]):
                 content = {
                     'title': 'Invalid attributes',
                     'id': video_id,
