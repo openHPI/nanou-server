@@ -138,7 +138,7 @@ class SocialLoginTokenTests(SocialLoginCorrectPermissionsMixin, SocialLoginTestC
 
         # combine
         response = self.client.get(reverse('sociallogin:combine_accounts'), {'vendorId': 'abcd'})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         self.assertTrue(test_user.username.endswith('abcd'))
         self.assertEqual(socialuser.user_id, 3)
@@ -147,7 +147,7 @@ class SocialLoginTokenTests(SocialLoginCorrectPermissionsMixin, SocialLoginTestC
 
         # do it again
         response = self.client.get(reverse('sociallogin:combine_accounts'), {'vendorId': 'abcd'})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 204)
 
 
     def test_get_combine_missing_vendor_id(self):

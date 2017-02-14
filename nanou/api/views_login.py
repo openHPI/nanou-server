@@ -96,7 +96,7 @@ class CombineAccountsView(APIView):
 
         if vendor_user == request.user:
             # you can't combine with yourself
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST, reason='Unable to combine')
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT, reason='Unable to combine')
 
         socialuser = SocialUser.user_for_django_user(vendor_user.id)
         socialuser.user_id = request.user.id
@@ -108,4 +108,4 @@ class CombineAccountsView(APIView):
         request.user.username = vendor_id
         request.user.save()
 
-        return Response()
+        return Response(status=status.HTTP_201_CREATED)
