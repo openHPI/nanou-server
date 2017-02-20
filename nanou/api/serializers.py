@@ -15,6 +15,7 @@ class VideoSerializer(serializers.Serializer):
 
 
 class HistoryVideoSerializer(serializers.Serializer):
+    count = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
     url = serializers.URLField()
     image_url = serializers.URLField()
@@ -25,16 +26,22 @@ class HistoryVideoSerializer(serializers.Serializer):
     tags = serializers.SerializerMethodField()
 
     def get_date(self, obj):
-        socialuser = self.context.get('socialuser')
-        if socialuser:
-            return socialuser.watched_videos.get(obj, 'date', default='1970-01-01')
+        data = self.context.get(obj.id)
+        if data:
+            return data[0]
         return '1970-01-01'
 
+    def get_count(self, obj):
+        data = self.context.get(obj.id)
+        if data:
+            return data[1]
+        return 1
+
     def get_progress(self, obj):
-        socialuser = self.context.get('socialuser')
-        if socialuser:
-            return float(socialuser.watched_videos.get(obj, 'progress', default=0))
-        return 0
+        data = self.context.get(obj.id)
+        if data:
+            return data[2]
+        return 1
 
     def get_tags(self, obj):
         sorted_categories = sorted(obj.categories, key=lambda cat: obj.categories.get(cat, 'weight', default=0))

@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from py2neo.types import PropertyDict
 
 from api.serializers import PreferenceSerializer, VideoSerializer, HistoryVideoSerializer
 from categories.models import Category
@@ -49,13 +50,16 @@ class WatchVideoView(APIView):
                 }
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
-            properties = {
+            graph.run('''
+                MATCH (u:SocialUser{id:{user_id}}), (v:Video{id:{video_id}})
+                CREATE (u)-[:WATCHED{rating: {rating}, progress: {progress}, date: "{date}"}]->(v)
+            ''', {
+                'user_id': socialuser.id,
+                'video_id': video.id,
+                'rating': rating,
                 'date': date,
                 'progress': progress,
-                'rating': rating,
-            }
-            socialuser.watched_videos.add(video, properties)
-            graph.push(socialuser)
+            })
             return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -64,8 +68,8 @@ class WatchHistoryView(APIView):
 
     def get(self, request):
         socialuser = SocialUser.user_for_django_user(request.user.id)
-        watched_videos = SocialUser.watch_history(request.user.id)
-        serializer = HistoryVideoSerializer(watched_videos, many=True, context={'socialuser': socialuser})
+        watched_videos, context_data = SocialUser.watch_history(request.user.id)
+        serializer = HistoryVideoSerializer(watched_videos, many=True, context=context_data)
         return Response(serializer.data)
 
 

@@ -71,12 +71,15 @@ class SocialUser(NeoModel):
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})-[w:WATCHED]->(v:Video)
                 WHERE w.progress > 0
-                RETURN v, w.date
-                ORDER BY w.date DESC
+                RETURN DISTINCT v, MAX(w.date) as date, COUNT(w) as count, MAX(w.progress) as progress
+                ORDER BY date DESC
             ''', {
                 'user_id': user_id,
             })
-            return [Video.wrap(d['v']) for d in cursor.data()]
+            data = [(Video.wrap(d['v']), d['date'], d['count'], d['progress']) for d in cursor.data()]
+            videos = [d[0] for d in data]
+            context = {d[0].id: d[1:] for d in data}
+            return videos, context
 
     @property
     def has_initialized_preferences(self):
