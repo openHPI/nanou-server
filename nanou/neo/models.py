@@ -28,6 +28,12 @@ class NeoModel(GraphObject):
             return cls.select(graph, pk).first()
 
     @classmethod
+    def getAll(cls, pks):
+        values = pks if isinstance(pks, (list, tuple)) else [pks]
+        res = [cls.get(pk) for pk in values]
+        return res
+
+    @classmethod
     def none(self):
         return []
 
@@ -42,7 +48,7 @@ class NeoModel(GraphObject):
     def update_prop(self, k, v):
         if hasattr(self, k):
             if isinstance(self.__class__.__dict__[k], DefaultPropertyMixin):
-                int_values = [int(x) for x in v]
+                int_values = [int(x.id) for x in v]
                 default_props = self.__class__.__dict__[k].default_props
                 attr = getattr(self, k)
                 # Remove deleted objects
