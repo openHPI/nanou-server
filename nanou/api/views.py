@@ -52,7 +52,7 @@ class WatchVideoView(APIView):
 
             graph.run('''
                 MATCH (u:SocialUser{id:{user_id}}), (v:Video{id:{video_id}})
-                CREATE (u)-[:WATCHED{rating: {rating}, progress: {progress}, date: "{date}"}]->(v)
+                CREATE (u)-[:WATCHED{rating: {rating}, progress: {progress}, date: {date}}]->(v)
             ''', {
                 'user_id': socialuser.id,
                 'video_id': video.id,
@@ -67,7 +67,6 @@ class WatchHistoryView(APIView):
     resource_name = 'history'
 
     def get(self, request):
-        socialuser = SocialUser.user_for_django_user(request.user.id)
         watched_videos, context_data = SocialUser.watch_history(request.user.id)
         serializer = HistoryVideoSerializer(watched_videos, many=True, context=context_data)
         return Response(serializer.data)
