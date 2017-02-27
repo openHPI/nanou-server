@@ -104,8 +104,9 @@ LOGIN_REDIRECT_URL = 'landingpage'
 
 
 AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.google.GoogleOAuth2',
-    'socialusers.backends.HpiOpenIdAuth',
+    'socialusers.backends.OpenHPIOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -203,8 +204,15 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_LOGIN_URL = 'sociallogin:login-providers'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'sociallogin:status'
 
+SOCIAL_AUTH_FACEBOOK_KEY = ''  # configure facebook oauth2 in local_settings.py
+SOCIAL_AUTH_FACEBOOK_SECRET = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''  # configure google oauth2 in local_settings.py
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+SOCIAL_AUTH_OPENHPI_KEY = ''  # configure google oauth2 in local_settings.py
+SOCIAL_AUTH_OPENHPI_SECRET = ''
+
+
+FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
 
 
 ###########################################

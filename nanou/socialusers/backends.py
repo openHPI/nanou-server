@@ -1,6 +1,9 @@
-from social_core.backends.open_id import OpenIdAuth
+from social_core.backends.oauth import BaseOAuth2
 
 
-class HpiOpenIdAuth(OpenIdAuth):
-    name = 'hpi-openid'
-    URL = 'https://openid.hpi.uni-potsdam.de/'
+class OpenHPIOAuth2(BaseOAuth2):
+    name = 'openhpi'
+    AUTHORIZATION_URL = 'https://open.hpi.de/oauth/authorize'
+    ACCESS_TOKEN_URL = 'https://open.hpi.de/oauth/access_token'
+    DEFAULT_SCOPE = ['profile']
+    SCOPE_SEPARATOR = ','

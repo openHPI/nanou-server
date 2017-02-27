@@ -18,8 +18,9 @@ from socialusers.signals import create_neo_socialuser
 
 class LoginProvidersView(View):
     providers = {  # display_name: backend_name
-        'HPI': 'hpi-openid',
-        # 'google': 'google-oauth2',
+        'openHPI': 'openhpi',
+        'google': 'google-oauth2',
+        'facebook': 'facebook',
     }
 
     def get(self, request):
