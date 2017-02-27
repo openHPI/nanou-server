@@ -2,6 +2,7 @@ from rest_framework_json_api import serializers
 
 
 class VideoSerializer(serializers.Serializer):
+    duration = serializers.IntegerField()
     name = serializers.CharField(max_length=100)
     url = serializers.URLField()
     stream_url = serializers.URLField()
@@ -17,6 +18,7 @@ class VideoSerializer(serializers.Serializer):
 class HistoryVideoSerializer(serializers.Serializer):
     count = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
+    duration = serializers.IntegerField()
     url = serializers.URLField()
     image_url = serializers.URLField()
     name = serializers.CharField(max_length=100)

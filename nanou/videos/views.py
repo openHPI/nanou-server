@@ -33,6 +33,10 @@ class VideoForm(NeoForm):
         label='Provider name',
         required=True,
     )
+    duration = forms.IntegerField(
+        label='Duration (in seconds)',
+        required=True,
+    )
     required_by_videos = NeoRelationshipNoSelfRefField(
         label='Required by videos',
         model=Video,
