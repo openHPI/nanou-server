@@ -17,18 +17,18 @@ from socialusers.signals import create_neo_socialuser
 
 
 class LoginProvidersView(View):
-    providers = {  # display_name: backend_name
-        'openHPI': 'openhpi',
-        'google': 'google-oauth2',
-        'facebook': 'facebook',
-    }
+    providers = [  # (display_name, backend_name)
+        ('openHPI', 'openhpi'),
+        ('google', 'google-oauth2'),
+        ('facebook', 'facebook'),
+    ]
 
     def get(self, request):
         return JsonResponse({
-            'data': {
-                name: request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))
-                for name, backend in self.providers.items()
-            },
+            'data': [
+                [name, request.build_absolute_uri(reverse('social:begin', kwargs={'backend': backend}))]
+                for name, backend in self.providers
+            ],
         })
 
 
