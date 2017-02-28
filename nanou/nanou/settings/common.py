@@ -208,7 +208,7 @@ SOCIAL_AUTH_FACEBOOK_KEY = ''  # configure facebook oauth2 in local_settings.py
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''  # configure google oauth2 in local_settings.py
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
-SOCIAL_AUTH_OPENHPI_KEY = ''  # configure google oauth2 in local_settings.py
+SOCIAL_AUTH_OPENHPI_KEY = ''  # configure openHPI oauth2 in local_settings.py
 SOCIAL_AUTH_OPENHPI_SECRET = ''
 
 
