@@ -19,7 +19,7 @@ from socialusers.signals import create_neo_socialuser
 class LoginProvidersView(View):
     providers = [  # (display_name, backend_name)
         ('openHPI', 'openhpi'),
-        ('google', 'google-oauth2'),
+        # ('google', 'google-oauth2'),
         ('facebook', 'facebook'),
     ]
 
