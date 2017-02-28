@@ -63,7 +63,7 @@ class SocialUser(NeoModel):
                 'limit': limit,
             })
 
-            return [Video.wrap(d['v1']) for d in cursor.data()]
+            return [(Video.wrap(d['v1']), d['weight']) for d in cursor.data()]
 
     @classmethod
     def watch_history(cls, user_id):

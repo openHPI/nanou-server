@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,8 +16,24 @@ class NextVideosView(APIView):
     resource_name = 'videos'
 
     def get(self, request):
-        next_videos = SocialUser.next_videos(request.user.id)
+        next_videos_with_weights = SocialUser.next_videos(request.user.id)
+        next_videos = [d[0] for d in next_videos_with_weights]
         serializer = VideoSerializer(next_videos, many=True)
+
+        # track suggested videos
+        now = datetime.datetime.now().isoformat()
+        socialuser = SocialUser.user_for_django_user(request.user.id)
+        with NeoGraph() as graph:
+            for video, weight in next_videos_with_weights:
+                graph.run('''
+                    MATCH (u:SocialUser{id:{user_id}}), (v:Video{id:{video_id}})
+                    CREATE (v)-[:WAS_SUGGESTED{weight: {weight}, date: {date}}]->(u)
+                ''', {
+                    'user_id': socialuser.id,
+                    'video_id': video.id,
+                    'weight': weight,
+                    'date': now,
+                })
         return Response(serializer.data)
 
 

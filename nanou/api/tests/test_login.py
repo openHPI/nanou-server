@@ -133,8 +133,8 @@ class SocialLoginTokenTests(SocialLoginCorrectPermissionsMixin, SocialLoginTestC
         self.assertEqual(test_user.username, 'abcd')
         self.assertEqual(socialuser.user_id, 3)
         self.assertEqual(test_socialuser.user_id, 4)
-        self.assertEqual(sorted([video.name for video in SocialUser.next_videos(user.id)]), [u'B'])
-        self.assertEqual(sorted([video.name for video in SocialUser.next_videos(test_user.id)]), [u'A'])
+        self.assertEqual(sorted([video[0].name for video in SocialUser.next_videos(user.id)]), [u'B'])
+        self.assertEqual(sorted([video[0].name for video in SocialUser.next_videos(test_user.id)]), [u'A'])
 
         # combine
         response = self.client.get(reverse('sociallogin:combine_accounts'), {'vendorId': 'abcd'})
@@ -143,7 +143,7 @@ class SocialLoginTokenTests(SocialLoginCorrectPermissionsMixin, SocialLoginTestC
         self.assertTrue(test_user.username.endswith('abcd'))
         self.assertEqual(socialuser.user_id, 3)
         self.assertEqual(test_socialuser.user_id, 3)
-        self.assertEqual(sorted([video.name for video in SocialUser.next_videos(user.id)]), [u'C'])
+        self.assertEqual(sorted([video[0].name for video in SocialUser.next_videos(user.id)]), [u'C'])
 
         # do it again
         response = self.client.get(reverse('sociallogin:combine_accounts'), {'vendorId': 'abcd'})
