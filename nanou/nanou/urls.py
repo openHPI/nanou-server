@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^categories/', include('categories.urls', namespace='categories')),
     url(r'^groups/', include('groups.urls', namespace='groups')),
     url(r'^socialusers/', include('socialusers.urls', namespace='socialusers')),
+    url(r'^surveys/', include('surveys.urls', namespace='surveys')),
     url(r'^videos/', include('videos.urls', namespace='videos')),
 
     # user views

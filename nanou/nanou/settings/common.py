@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'neo.apps.NeoConfig',
     'neoextras.apps.NeoExtrasConfig',
     'socialusers.apps.SocialUsersConfig',
+    'surveys.apps.SurveyConfig',
     'videos.apps.VideosConfig',
 ]
 

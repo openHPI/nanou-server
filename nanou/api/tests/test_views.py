@@ -33,6 +33,13 @@ class ApiViewCorrectPermissionsMixin(object):
         response_names = [item['attributes']['name'] for item in json_response['data']]
         self.assertEqual(video_names, response_names)
 
+    def assertJSONDataSurveyLink(self, response, survey_link):
+        json_response = self.load_response_content(response)
+        self.assertIn('data', json_response)
+        self.assertTrue('attributes' in json_response['data'])
+        link = json_response['data']['attributes'].get('link', None)
+        self.assertEqual(link, survey_link)
+
     def watch_and_next_videos(self, video_name, next_videos):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
@@ -74,6 +81,31 @@ class ApiViewCorrectPermissionsMixin(object):
             response = self.client.get(reverse('api:history'))
             self.assertEqual(response.status_code, 200)
             self.assertJSONDataVideoNames(response, history_videos)
+
+    def watch_and_survey(self, video_name, survey_link):
+        with NeoGraph() as graph:
+            obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
+            response = self.client.post(
+                reverse('api:watch_videos'),
+                json.dumps({'data': {
+                    'type': 'watches',
+                    'attributes': {
+                        'video_id': obj.id,
+                        'date': datetime.now().isoformat(),
+                        'rating': 1,
+                        'progress': 1,
+                    }
+                }}),
+                content_type='application/vnd.api+json',
+            )
+            self.assertEqual(response.status_code, 204)
+            response = self.client.get(reverse('api:survey_latest'))
+            self.assertEqual(response.status_code, 200)
+            self.assertJSONDataSurveyLink(response, survey_link)
+
+    def complete_survey(self, survey_id):
+        response = self.client.post(reverse('api:survey_complete', kwargs={'pk': survey_id}))
+        self.assertEqual(response.status_code, 204)
 
     # GET /api/next/
     def test_next_videos_view(self):
@@ -342,6 +374,55 @@ class ApiViewCorrectPermissionsMixin(object):
         json_response = self.load_response_content(response)
         self.assertEqual(json_response.get('errors'), {u'id': u'0', u'title': u'Found non-existing category id'})
 
+    # GET /api/surveys/latest
+    def test_get_latest_survey(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 200)
+        json = self.load_response_content(response)
+        self.assertEqual(json, {
+            'data': {
+                'type': 'surveys',
+                'id': None,
+                'attributes': {
+                }
+            }
+        })
+
+    def test_get_survey_workflow(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataSurveyLink(response, None)
+
+        self.watch_and_survey('C', 'https://www.google.com/')
+        self.watch_and_survey('A', 'https://www.github.com/')
+        self.watch_and_survey('B', 'https://www.github.com/')
+
+    def test_get_survey_workflow_complete_1(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataSurveyLink(response, None)
+
+        self.watch_and_survey('C', 'https://www.google.com/')
+        self.complete_survey(1)
+        self.watch_and_survey('A', 'https://www.facebook.com/')
+        self.complete_survey(2)
+        self.watch_and_survey('B', None)
+
+    def test_get_survey_workflow_complete_2(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataSurveyLink(response, None)
+
+        self.watch_and_survey('C', 'https://www.google.com/')
+        self.watch_and_survey('A', 'https://www.github.com/')
+        self.complete_survey(2)
+        self.watch_and_survey('B', None)
+
+    # PATCH /api/surveys/<pk>/complete
+    def test_post_complete_survey(self):
+        response = self.client.post(reverse('api:survey_complete', kwargs={'pk': 1}))
+        self.assertEqual(response.status_code, 204)
+
 
 class ApiViewWrongPermissionsMixin(object):
     """Mixins for user testing the views is logged if the user lacks the required permissions."""
@@ -390,6 +471,16 @@ class ApiViewWrongPermissionsMixin(object):
         response = self.client.post(reverse('api:preference_update', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 401)
 
+    # GET /api/surveys/latest
+    def test_get_latest_survey(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 401)
+
+    # PATCH /api/surveys/<pk>/complete
+    def test_post_complete_survey(self):
+        response = self.client.post(reverse('api:survey_complete', kwargs={'pk': 1}))
+        self.assertEqual(response.status_code, 401)
+
 
 class ApiViewManagerTests(NeoTestCase, ApiViewWrongPermissionsMixin):
     """User testing the views is logged in as manager and therefore has the required permissions."""
@@ -402,7 +493,7 @@ class ApiViewManagerTests(NeoTestCase, ApiViewWrongPermissionsMixin):
 
 class ApiViewSocialUserests(NeoTestCase, ApiViewWrongPermissionsMixin):
     """User testing the views is logged in as social user and therefore lacking the required permissions."""
-    fixtures = ['users_testdata.json']
+    fixtures = ['users_testdata.json', 'surveys_testdata.json']
     neo_fixtures = ['api/fixtures/neo_watched_video_testdata.json']
 
     def setUp(self):
@@ -411,7 +502,7 @@ class ApiViewSocialUserests(NeoTestCase, ApiViewWrongPermissionsMixin):
 
 class ApiViewTokenTests(NeoTestCase, ApiViewCorrectPermissionsMixin):
     """User testing the views is not logged and therefore lacking the required permissions."""
-    fixtures = ['users_testdata']
+    fixtures = ['users_testdata', 'surveys_testdata.json']
     neo_fixtures = ['api/fixtures/neo_watched_video_testdata.json']
 
     def setUp(self):
@@ -425,5 +516,5 @@ class ApiViewTokenTests(NeoTestCase, ApiViewCorrectPermissionsMixin):
 
 class ApiViewNoPermissionTests(NeoTestCase, ApiViewWrongPermissionsMixin):
     """User testing the views is not logged and therefore lacking the required permissions."""
-    fixtures = ['users_testdata.json']
+    fixtures = ['users_testdata.json', 'surveys_testdata.json']
     neo_fixtures = ['api/fixtures/neo_watched_video_testdata.json']

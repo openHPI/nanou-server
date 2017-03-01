@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1>Survey: {{ survey.id }}</h1>
+    <p>Link: <a href="{{ survey.link }}">{{ survey.link }}</a></p>
+    <p>Watched Videos Minimum: {{ survey.watch_minimum }}</p>
+    <p>
+        {% if perms.base.manage_curriculum %}
+        <a href="{% url 'surveys:update' survey.id %}" class="ui primary basic button">Edit</a>
+        <a href="{% url 'surveys:delete' survey.id %}" class="ui negative basic button">Delete</a>
+        <a href="{% url 'surveys:list' %}" class="ui basic button">Back to list of surveys</a>
+        {% endif %}
+    </p>
+</div>
+{% endblock %}

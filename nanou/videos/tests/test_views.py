@@ -253,7 +253,7 @@ class VideoViewManagerTests(NeoTestCase, VideoViewCorrcetPermissionsMixin):
         self.client.login(username='manager', password='admin')
 
 
-class VideoViewSocialUserests(NeoTestCase, VideoViewWrongPermissionsMixin):
+class VideoViewSocialUserTests(NeoTestCase, VideoViewWrongPermissionsMixin):
     """User testing the views is logged in as social user and therefore lacking the required permissions."""
     fixtures = ['users_testdata']
     neo_fixtures = ['videos/fixtures/neo_video_group_testdata.json']

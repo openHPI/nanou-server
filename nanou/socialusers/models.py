@@ -81,6 +81,25 @@ class SocialUser(NeoModel):
             context = {d[0].id: d[1:] for d in data}
             return videos, context
 
+    @classmethod
+    def watch_count(cls, user_id):
+        with NeoGraph() as graph:
+            cursor = graph.run('''
+                MATCH (u:SocialUser{user_id:{user_id}})-[w:WATCHED]->(v:Video)
+                RETURN COUNT(DISTINCT v) as count
+            ''', {
+                'user_id': user_id,
+            })
+            data = cursor.data()
+            if not isinstance(data, list):
+                return 0
+            if len(data) == 0:
+                return 0
+            count = data[0].get('count')
+            if not isinstance(count, int):
+                return 0
+            return count
+
     @property
     def has_initialized_preferences(self):
         return len(self.preferences) > 0

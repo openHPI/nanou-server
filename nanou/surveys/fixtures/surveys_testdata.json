@@ -1,0 +1,20 @@
+[
+    {
+        "model": "surveys.Survey",
+        "pk": 1,
+        "fields": {
+            "link": "https://www.google.com/",
+            "secondary_link": "https://lmgtfy.com/",
+            "watch_minimum": 1
+        }
+    },
+    {
+        "model": "surveys.Survey",
+        "pk": 2,
+        "fields": {
+            "link": "https://www.facebook.com/",
+            "secondary_link": "https://www.github.com/",
+            "watch_minimum": 2
+        }
+    }
+]

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui main text container">
+    <h1 class="ui header">Surveys</h1>
+    <table class="ui single line table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Link</th>
+                <th>Watched Videos Minimum</th>
+                <th class="right aligned">
+                    {% if perms.base.manage_curriculum %}
+                    <a href="{% url 'surveys:create' %}" class="ui primary button">Add survey</a>
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for survey in surveys %}
+            <tr>
+                <td>
+                    <a href="{% url 'surveys:detail' survey.id %}">{{ survey.id }}</a>
+                </td>
+                <td>{{ survey.link }}</a></td>
+                <td>{{ survey.watch_minimum }}</td>
+                <td class="right aligned">
+                    {% if perms.base.manage_curriculum %}
+                    <a href="{% url 'surveys:update' survey.id %}" class="ui secondary basic button">Edit</a>
+                    <a href="{% url 'surveys:delete' survey.id %}" class="ui negative basic button">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">
+                    No surveys available.
+                </td>
+            </tr>
+            {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

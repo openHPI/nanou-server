@@ -1,14 +1,16 @@
 import datetime
 
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from py2neo.types import PropertyDict
 
-from api.serializers import PreferenceSerializer, VideoSerializer, HistoryVideoSerializer
+from api.serializers import PreferenceSerializer, VideoSerializer, HistoryVideoSerializer, SurveySerializer
 from categories.models import Category
 from neo.utils import NeoGraph
 from socialusers.models import SocialUser
+from surveys.models import Survey
 from videos.models import Video
 
 
@@ -134,3 +136,28 @@ class PreferencesUpdateView(APIView):
                     'id': pk,
                 }
             return category, {}
+
+
+class SurveyView(APIView):
+    resource_name = 'surveys'
+
+    def get(self, request):
+        watch_count = SocialUser.watch_count(request.user.id)
+        survey = Survey.objects.exclude(watch_minimum__gt=watch_count).order_by('watch_minimum').last()
+        survey = survey if survey and request.user not in survey.completed_by.all() else None
+        use_secondary = False
+        if survey:
+            old_uncompleted_surveys = Survey.objects.filter(watch_minimum__lt=survey.watch_minimum).exclude(completed_by=request.user)
+            use_secondary = len(old_uncompleted_surveys) > 0
+        serializer = SurveySerializer(survey, context={'use_secondary': use_secondary})
+        return Response(serializer.data)
+
+
+class SurveyCompleteView(APIView):
+    resource_name = 'surveys'
+
+    def post(self, request, pk):
+        survey = get_object_or_404(Survey, pk=pk)
+        survey.completed_by.add(request.user)
+        survey.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,5 +1,7 @@
 from rest_framework_json_api import serializers
 
+from surveys.models import Survey
+
 
 class VideoSerializer(serializers.Serializer):
     duration = serializers.IntegerField()
@@ -59,3 +61,14 @@ class PreferenceSerializer(serializers.Serializer):
         if socialuser:
             return float(socialuser.preferences.get(obj, 'weight', default=0.5))
         return 0.5
+
+
+class SurveySerializer(serializers.Serializer):
+    link = serializers.SerializerMethodField()
+
+    def get_link(self, obj):
+        use_secondary = self.context.get('use_secondary', False)
+        return obj.secondary_link if use_secondary and len(obj.secondary_link) > 0 else obj.link
+
+    class Meta:
+        model = Survey
