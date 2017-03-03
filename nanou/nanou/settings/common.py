@@ -101,7 +101,7 @@ USE_TZ = True
 
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'landingpage'
+LOGIN_REDIRECT_URL = 'base:landingpage'
 
 
 AUTHENTICATION_BACKENDS = (
