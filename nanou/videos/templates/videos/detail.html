@@ -16,6 +16,9 @@
     <p>
         Provider name: {{ video.provider_name }}
     </p>
+    <p>
+        Duration (in seconds): {{ video.duration }}
+    </p>
     <ul>
         <li>
             {% show_relationship_items video video.required_by_videos 'Required by videos' %}
