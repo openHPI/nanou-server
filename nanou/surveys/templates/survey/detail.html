@@ -4,6 +4,7 @@
 <div class="ui main text container">
     <h1>Survey: {{ survey.id }}</h1>
     <p>Link: <a href="{{ survey.link }}">{{ survey.link }}</a></p>
+    <p>2nd Link: <a href="{{ survey.secondary_link }}">{{ survey.secondary_link }}</a></p>
     <p>Watched Videos Minimum: {{ survey.watch_minimum }}</p>
     <p>
         {% if perms.base.manage_curriculum %}
