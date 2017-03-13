@@ -35,7 +35,7 @@ class NeoRelationshipField(forms.ModelMultipleChoiceField):
         )
 
     def _get_choices(self):
-        return [(m.id, m.name) for m in self.model.all()]
+        return sorted([(m.id, m.name) for m in self.model.all()], key=lambda e: e[0])
 
     choices = property(_get_choices, forms.ModelMultipleChoiceField._set_choices)
 

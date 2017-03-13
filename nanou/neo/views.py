@@ -8,7 +8,7 @@ from .utils import NeoGraph, get_neo_object_or_404
 class NeoListView(ListView):
     def get_queryset(self):
         with NeoGraph() as graph:
-            return self.model.select(graph)
+            return self.model.select(graph).order_by('_.id')
 
 
 class NeoDetailView(DetailView):
