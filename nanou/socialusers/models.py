@@ -39,13 +39,16 @@ class SocialUser(NeoModel):
         with NeoGraph() as graph:
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})
+                OPTIONAL MATCH (u)-[hasWatched:WATCHED]->(videosW:Video)
+                WHERE hasWatched.progress > 0
+                WITH COLLECT(DISTINCT videosW) as videosWatched
+                MATCH (u:SocialUser{user_id:{user_id}})
+                OPTIONAL MATCH (u)-[hasDismissed:WATCHED]->(videosSkiped:Video)
+                WHERE hasDismissed.progress = 0 AND hasDismissed.date STARTS WITH {today}
+                WITH videosWatched, COLLECT(DISTINCT videosSkiped) as videosSkipedToday
                 MATCH (v1:Video)-[:REQUIRES_VIDEO|REQUIRES_GROUP|CONTAINS*0..]->(v2:Video)
-                OPTIONAL MATCH (u)-[hasW:WATCHED]->(vw:Video)
-                WITH v1, v2, vw, coalesce(max(hasW.progress), 0) as vwProgress, toString(coalesce(max(hasW.date), "")) as vwLastDate
-                WHERE NOT (vwProgress > 0 AND vwLastDate STARTS WITH "{today}")
-                WITH v1, v2, COLLECT(DISTINCT vw) as watchedV
-                WITH v1, watchedV, none(x in COLLECT(DISTINCT v2) WHERE NOT x in watchedV AND v1 <> x) as deps
-                WHERE deps AND NOT v1 in watchedV
+                WITH v1, videosWatched, videosSkipedToday, none(x in COLLECT(DISTINCT v2) WHERE NOT x in videosWatched AND v1 <> x) as deps
+                WHERE deps AND NOT v1 in videosWatched AND NOT v1 in videosSkipedToday
                 MATCH (u:SocialUser{user_id:{user_id}})
                 OPTIONAL MATCH (cat:Category)
                 OPTIONAL MATCH (u)-[pref:HAS_PREFERENCE]->(cat)

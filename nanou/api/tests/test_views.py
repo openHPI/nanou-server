@@ -61,6 +61,27 @@ class ApiViewCorrectPermissionsMixin(object):
             self.assertEqual(response.status_code, 200)
             self.assertJSONDataVideoNames(response, next_videos)
 
+    def dismiss_and_next_videos(self, video_name, next_videos):
+        with NeoGraph() as graph:
+            obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
+            response = self.client.post(
+                reverse('api:watch_videos'),
+                json.dumps({'data': {
+                    'type': 'watches',
+                    'attributes': {
+                        'video_id': obj.id,
+                        'date': datetime.now().isoformat(),
+                        'rating': -1,
+                        'progress': 0,
+                    }
+                }}),
+                content_type='application/vnd.api+json',
+            )
+            self.assertEqual(response.status_code, 204)
+            response = self.client.get(reverse('api:next_videos'))
+            self.assertEqual(response.status_code, 200)
+            self.assertJSONDataVideoNames(response, next_videos)
+
     def watch_and_history(self, video_name, history_videos):
         with NeoGraph() as graph:
             obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
@@ -73,6 +94,27 @@ class ApiViewCorrectPermissionsMixin(object):
                         'date': datetime.now().isoformat(),
                         'rating': 1,
                         'progress': 1,
+                    }
+                }}),
+                content_type='application/vnd.api+json',
+            )
+            self.assertEqual(response.status_code, 204)
+            response = self.client.get(reverse('api:history'))
+            self.assertEqual(response.status_code, 200)
+            self.assertJSONDataVideoNames(response, history_videos)
+
+    def dismiss_and_history(self, video_name, history_videos):
+        with NeoGraph() as graph:
+            obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
+            response = self.client.post(
+                reverse('api:watch_videos'),
+                json.dumps({'data': {
+                    'type': 'watches',
+                    'attributes': {
+                        'video_id': obj.id,
+                        'date': datetime.now().isoformat(),
+                        'rating': -1,
+                        'progress': 0,
                     }
                 }}),
                 content_type='application/vnd.api+json',
@@ -121,6 +163,14 @@ class ApiViewCorrectPermissionsMixin(object):
         self.watch_and_next_videos('A', ['C'])
         self.watch_and_next_videos('C', ['B'])
         self.watch_and_next_videos('B', [])
+
+    def test_next_videos_view_workflow_dimiss(self):
+        response = self.client.get(reverse('api:next_videos'))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONDataVideoNames(response, ['A'])
+
+        self.dismiss_and_next_videos('A', ['C'])
+        self.dismiss_and_next_videos('C', [])
 
     # GET /api/watch/
     def test_get_watch_video(self):
@@ -264,6 +314,14 @@ class ApiViewCorrectPermissionsMixin(object):
         self.watch_and_history('C', ['C'])
         self.watch_and_history('A', ['A', 'C'])
         self.watch_and_history('B', ['B', 'A', 'C'])
+
+    def test_get_history_workflow_dismiss(self):
+        response = self.client.get(reverse('api:history'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataVideoNames(response, [])
+
+        self.dismiss_and_history('C', [])
+        self.dismiss_and_history('A', [])
 
     # GET /api/preferences/
     def test_get_preferences(self):
