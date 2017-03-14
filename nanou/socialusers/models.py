@@ -89,6 +89,7 @@ class SocialUser(NeoModel):
         with NeoGraph() as graph:
             cursor = graph.run('''
                 MATCH (u:SocialUser{user_id:{user_id}})-[w:WATCHED]->(v:Video)
+                WHERE w.progress > 0
                 RETURN COUNT(DISTINCT v) as count
             ''', {
                 'user_id': user_id,

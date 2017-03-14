@@ -145,6 +145,27 @@ class ApiViewCorrectPermissionsMixin(object):
             self.assertEqual(response.status_code, 200)
             self.assertJSONDataSurveyLink(response, survey_link)
 
+    def dismiss_and_survey(self, video_name, survey_link):
+        with NeoGraph() as graph:
+            obj = Video.select(graph).where('_.name = "{}"'.format(video_name)).first()
+            response = self.client.post(
+                reverse('api:watch_videos'),
+                json.dumps({'data': {
+                    'type': 'watches',
+                    'attributes': {
+                        'video_id': obj.id,
+                        'date': datetime.now().isoformat(),
+                        'rating': -1,
+                        'progress': 0,
+                    }
+                }}),
+                content_type='application/vnd.api+json',
+            )
+            self.assertEqual(response.status_code, 204)
+            response = self.client.get(reverse('api:survey_latest'))
+            self.assertEqual(response.status_code, 200)
+            self.assertJSONDataSurveyLink(response, survey_link)
+
     def complete_survey(self, survey_id):
         response = self.client.post(reverse('api:survey_complete', kwargs={'pk': survey_id}))
         self.assertEqual(response.status_code, 204)
@@ -475,6 +496,33 @@ class ApiViewCorrectPermissionsMixin(object):
         self.watch_and_survey('A', 'https://www.github.com/')
         self.complete_survey(2)
         self.watch_and_survey('B', None)
+
+    def test_get_survey_workflow_dismiss_1(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataSurveyLink(response, None)
+
+        self.dismiss_and_survey('C', None)
+        self.watch_and_survey('A', 'https://www.google.com/')
+        self.watch_and_survey('B', 'https://www.github.com/')
+
+    def test_get_survey_workflow_dismiss_2(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataSurveyLink(response, None)
+
+        self.watch_and_survey('C', 'https://www.google.com/')
+        self.dismiss_and_survey('A', 'https://www.google.com/')
+        self.watch_and_survey('B', 'https://www.github.com/')
+
+    def test_get_survey_workflow_dismiss_3(self):
+        response = self.client.get(reverse('api:survey_latest'))
+        self.assertEqual(response.status_code, 200)
+        json_content = self.assertJSONDataSurveyLink(response, None)
+
+        self.watch_and_survey('C', 'https://www.google.com/')
+        self.dismiss_and_survey('A', 'https://www.google.com/')
+        self.dismiss_and_survey('B', 'https://www.google.com/')
 
     # PATCH /api/surveys/<pk>/complete
     def test_post_complete_survey(self):
