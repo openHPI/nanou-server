@@ -37,6 +37,15 @@ class VideoForm(NeoForm):
         label='Duration (in seconds)',
         required=True,
     )
+    license_name = forms.CharField(
+        label='License Name',
+        max_length=100,
+        required=False,
+    )
+    license_url = forms.URLField(
+        label='License URL',
+        required=False,
+    )
     required_by_videos = NeoRelationshipNoSelfRefField(
         label='Required by videos',
         model=Video,

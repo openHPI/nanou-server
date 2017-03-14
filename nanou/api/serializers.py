@@ -5,12 +5,26 @@ from surveys.models import Survey
 
 class VideoSerializer(serializers.Serializer):
     duration = serializers.IntegerField()
+    license_name = serializers.SerializerMethodField()
+    license_url = serializers.SerializerMethodField()
     name = serializers.CharField(max_length=100)
     url = serializers.URLField()
     stream_url = serializers.URLField()
     image_url = serializers.URLField()
     provider_name = serializers.CharField(max_length=100)
     tags = serializers.SerializerMethodField()
+
+    def get_license_name(self, obj):
+        value = obj.license_name
+        if value is None or len(value) == 0:
+            return None
+        return value
+
+    def get_license_url(self, obj):
+        value = obj.license_url
+        if value is None or len(value) == 0:
+            return None
+        return value
 
     def get_tags(self, obj):
         sorted_categories = sorted(obj.categories, key=lambda cat: obj.categories.get(cat, 'weight', default=0))
@@ -23,6 +37,8 @@ class HistoryVideoSerializer(serializers.Serializer):
     duration = serializers.IntegerField()
     url = serializers.URLField()
     image_url = serializers.URLField()
+    license_name = serializers.SerializerMethodField()
+    license_url = serializers.SerializerMethodField()
     name = serializers.CharField(max_length=100)
     progress = serializers.SerializerMethodField()
     provider_name = serializers.CharField(max_length=100)
@@ -46,6 +62,18 @@ class HistoryVideoSerializer(serializers.Serializer):
         if data:
             return data[2]
         return 1
+
+    def get_license_name(self, obj):
+        value = obj.license_name
+        if value is None or len(value) == 0:
+            return None
+        return value
+
+    def get_license_url(self, obj):
+        value = obj.license_url
+        if value is None or len(value) == 0:
+            return None
+        return value
 
     def get_tags(self, obj):
         sorted_categories = sorted(obj.categories, key=lambda cat: obj.categories.get(cat, 'weight', default=0))

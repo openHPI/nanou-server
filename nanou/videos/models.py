@@ -15,6 +15,8 @@ class Video(NeoModel):
     image_url = Property()
     provider_name = Property()
     duration = Property()
+    license_name = Property()
+    license_url = Property()
     required_by_videos = NeoRelatedFrom('videos.models.Video', 'REQUIRES_VIDEO')
     required_videos = NeoRelatedTo('videos.models.Video', 'REQUIRES_VIDEO')
     required_groups = NeoRelatedTo('groups.models.Group', 'REQUIRES_GROUP')
