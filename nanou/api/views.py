@@ -144,7 +144,6 @@ class SurveyView(APIView):
     def get(self, request):
         watch_count = SocialUser.watch_count(request.user.id)
         survey = Survey.objects.exclude(watch_minimum__gt=watch_count).order_by('watch_minimum').last()
-        survey = survey if survey and request.user not in survey.completed_by.all() else None
         use_secondary = False
         if survey:
             old_uncompleted_surveys = Survey.objects.filter(watch_minimum__lt=survey.watch_minimum).exclude(completed_by=request.user)

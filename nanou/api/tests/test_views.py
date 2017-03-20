@@ -485,7 +485,7 @@ class ApiViewCorrectPermissionsMixin(object):
         self.complete_survey(1)
         self.watch_and_survey('A', 'https://www.facebook.com/')
         self.complete_survey(2)
-        self.watch_and_survey('B', None)
+        self.watch_and_survey('B', 'https://www.facebook.com/')
 
     def test_get_survey_workflow_complete_2(self):
         response = self.client.get(reverse('api:survey_latest'))
@@ -495,7 +495,7 @@ class ApiViewCorrectPermissionsMixin(object):
         self.watch_and_survey('C', 'https://www.google.com/')
         self.watch_and_survey('A', 'https://www.github.com/')
         self.complete_survey(2)
-        self.watch_and_survey('B', None)
+        self.watch_and_survey('B', 'https://www.github.com/')
 
     def test_get_survey_workflow_dismiss_1(self):
         response = self.client.get(reverse('api:survey_latest'))
