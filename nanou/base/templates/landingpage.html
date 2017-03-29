@@ -2,28 +2,143 @@
 
 {% block content %}
 <div class="ui main container">
-    <div class="ui three column doubling stackable grid">
-        <div class="column">
-            <div class="ui segment">
-                <h3>Videos</h3>
-                <p>{{ video_count }} Item{{ video_count|pluralize }}</p>
-                <a class="ui button" href="{% url 'videos:list' %}">Show list of videos</a>
-            </div>
+    <div class="ui three statistics">
+        <div class="ui statistic">
+            <div class="label">Videos</div>
+            <div class="value">{{ video_count }}</div>
         </div>
-        <div class="column">
-            <div class="ui segment">
-                <h3>Groups</h3>
-                <p>{{ group_count }} Item{{ group_count|pluralize }}</p>
-                <a class="ui button" href="{% url 'groups:list' %}">Show list of groups</a>
-            </div>
+        <div class="ui statistic">
+            <div class="label">Groups</div>
+            <div class="value">{{ group_count }}</div>
         </div>
-        <div class="column">
-            <div class="ui segment">
-                <h3>Social users</h3>
-                <p>{{ socialuser_count }} Item{{ socialuser_count|pluralize }}</p>
-                <a class="ui button" href="{% url 'socialusers:list' %}">Show list of users</a>
-            </div>
+        <div class="ui statistic">
+            <div class="label">Users</div>
+            <div class="value">{{ socialuser_count }}</div>
         </div>
     </div>
+    <div class="ui divider hidden"></div>
+    <div class="ui three statistics">
+        <div class="ui statistic">
+            <div class="label">overall suggestions</div>
+            <div class="value">{{ overall_suggestions_count }}</div>
+        </div>
+        <div class="ui statistic">
+            <div class="label">overall watch</div>
+            <div class="value">{{ overall_watch_count }}</div>
+        </div>
+        <div class="ui statistic">
+            <div class="label">overall dismiss</div>
+            <div class="value">{{ overall_dismiss_count }}</div>
+        </div>
+    </div>
+
+    <h4 class="ui horizontal divider header">
+        Detailed Suggestion Statistics
+    </h4>
+
+    <table class="ui compact table">
+        <thead>
+            <tr>
+                <th class="eight wide">Video</th>
+                <th class="four wide">#suggestions</th>
+                <th class="four wide">#users</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for suggestionstat in suggestions_user_count %}
+            <tr>
+                <td>
+                    {% if perms.base.manage_curriculum %}
+                    <a href={% url 'videos:detail' suggestionstat.video.id %}>{{ suggestionstat.video.name }}</a>
+                    {% else %}
+                    {{ suggestionstat.video.name }}
+                    {% endif %}
+                </td>
+                <td>{{suggestionstat.suggestion_count}}</td>
+                <td>{{suggestionstat.user_count}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>overall</th>
+                <th>{{ overall_suggestions_count }} suggestions</th>
+                <th>{{ overall_suggestions_user_count }} users</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h4 class="ui horizontal divider header">
+        Detailed Watch Statistics
+    </h4>
+
+    <table class="ui compact table">
+        <thead>
+            <tr>
+                <th class="eight wide">Video</th>
+                <th class="four wide">#watch</th>
+                <th class="four wide">#users</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for watchstat in watch_user_count %}
+            <tr>
+                <td>
+                    {% if perms.base.manage_curriculum %}
+                    <a href={% url 'videos:detail' watchstat.video.id %}>{{ watchstat.video.name }}</a>
+                    {% else %}
+                    {{ watchstat.video.name }}
+                    {% endif %}
+                </td>
+                <td>{{watchstat.watch_count}}</td>
+                <td>{{watchstat.user_count}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>overall</th>
+                <th>{{ overall_watch_count }} watch</th>
+                <th>{{ overall_watch_user_count }} users</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h4 class="ui horizontal divider header">
+        Detailed Dismiss Statistics
+    </h4>
+
+    <table class="ui compact table">
+        <thead>
+            <tr>
+                <th class="eight wide">Video</th>
+                <th class="four wide">#dismiss</th>
+                <th class="four wide">#users</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dismissstat in dismiss_user_count %}
+            <tr>
+                <td>
+                    {% if perms.base.manage_curriculum %}
+                    <a href={% url 'videos:detail' dismissstat.video.id %}>{{ dismissstat.video.name }}</a>
+                    {% else %}
+                    {{ dismissstat.video.name }}
+                    {% endif %}
+                </td>
+                <td>{{dismissstat.dismiss_count}}</td>
+                <td>{{dismissstat.user_count}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>overall</th>
+                <th>{{ overall_dismiss_count }} dismiss</th>
+                <th>{{ overall_dismiss_user_count }} users</th>
+            </tr>
+        </tfoot>
+    </table>
+
 </div>
 {% endblock %}
