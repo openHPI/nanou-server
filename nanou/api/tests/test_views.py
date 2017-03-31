@@ -174,24 +174,24 @@ class ApiViewCorrectPermissionsMixin(object):
     def test_next_videos_view(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONDataVideoNames(response, ['A'])
+        self.assertJSONDataVideoNames(response, ['C'])
 
     def test_next_videos_view_workflow(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONDataVideoNames(response, ['A'])
+        self.assertJSONDataVideoNames(response, ['C'])
 
-        self.watch_and_next_videos('A', ['C'])
-        self.watch_and_next_videos('C', ['B'])
+        self.watch_and_next_videos('C', ['A'])
+        self.watch_and_next_videos('A', ['B'])
         self.watch_and_next_videos('B', [])
 
     def test_next_videos_view_workflow_dimiss(self):
         response = self.client.get(reverse('api:next_videos'))
         self.assertEqual(response.status_code, 200)
-        self.assertJSONDataVideoNames(response, ['A'])
+        self.assertJSONDataVideoNames(response, ['C'])
 
-        self.dismiss_and_next_videos('A', ['C'])
-        self.dismiss_and_next_videos('C', [])
+        self.dismiss_and_next_videos('C', ['A'])
+        self.dismiss_and_next_videos('A', [])
 
     # GET /api/watch/
     def test_get_watch_video(self):

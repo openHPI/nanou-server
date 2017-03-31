@@ -57,7 +57,7 @@ class SocialUser(NeoModel):
                 WITH v1, cat, toFloat(coalesce(max(pref.weight), 0.5)) as prefw, toFloat(coalesce(AVG(toFloat(w.rating) * toFloat(b.weight)), 1)) as ratew
                 WITH v1, cat, prefw * ratew as catWeight
                 OPTIONAL MATCH (v1)-[belongs:BELONGS_TO]->(cat)
-                RETURN v1, toFloat(coalesce(AVG(belongs.weigth * catWeight), 0.5)) as weight
+                RETURN v1, toFloat(AVG(coalesce(belongs.weight, 0.1) * catWeight)) as weight
                 ORDER BY weight DESC, tostring(v1.name)
                 LIMIT {limit}
             ''', {
