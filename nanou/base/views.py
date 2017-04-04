@@ -22,4 +22,5 @@ def landingpage(request):
         'overall_dismiss_count': statistics.overall_dismiss_count(),
         'overall_dismiss_user_count': statistics.overall_dismiss_user_count(),
         'dismiss_user_count': statistics.dismiss_user_count(),
+        'user_watches': statistics.user_watches(),
     })

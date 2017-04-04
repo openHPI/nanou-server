@@ -1,4 +1,6 @@
 from neo.utils import NeoGraph
+from socialusers.models import SocialUser
+from surveys.models import Survey
 from videos.models import Video
 
 
@@ -42,7 +44,7 @@ def suggestions_user_count():
         return [{
             'video': Video.wrap(d['v']),
             'suggestion_count': d['suggestion_count'],
-            'user_count': d['user_count']
+            'user_count': d['user_count'],
         } for d in cursor.data()]
 
 
@@ -78,7 +80,7 @@ def watch_user_count():
         return [{
             'video': Video.wrap(d['v']),
             'watch_count': d['watch_count'],
-            'user_count': d['user_count']
+            'user_count': d['user_count'],
         } for d in cursor.data()]
 
 
@@ -114,5 +116,24 @@ def dismiss_user_count():
         return [{
             'video': Video.wrap(d['v']),
             'dismiss_count': d['dismiss_count'],
-            'user_count': d['user_count']
+            'user_count': d['user_count'],
+        } for d in cursor.data()]
+
+# watches per users
+def user_watches():
+    with NeoGraph() as graph:
+        cursor = graph.run('''
+            MATCH (u:SocialUser)
+            OPTIONAL MATCH (u)-[ww:WATCHED]->(vw:Video)
+            WHERE ww.progress > 0
+            WITH u, COUNT(DISTINCT vw) as watch_count
+            OPTIONAL MATCH (u)-[wd:WATCHED]->(vd:Video)
+            RETURN u, watch_count, COUNT(DISTINCT vd) as dismiss_count
+            ORDER BY watch_count DESC, dismiss_count DESC
+        ''')
+        return [{
+            'socialuser': SocialUser.wrap(d['u']),
+            'watch_count': d['watch_count'],
+            'dismiss_count': d['dismiss_count'],
+            'completed_surveys': Survey.objects.filter(completed_by=SocialUser.wrap(d['u']).user_id).count()
         } for d in cursor.data()]

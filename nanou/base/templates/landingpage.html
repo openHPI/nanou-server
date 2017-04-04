@@ -140,5 +140,37 @@
         </tfoot>
     </table>
 
+    <h4 class="ui horizontal divider header">
+        Detailed User Statistics
+    </h4>
+
+    <table class="ui compact table">
+        <thead>
+            <tr>
+                <th class="four wide">User</th>
+                <th class="three wide">Django Id</th>
+                <th class="three wide">#watch</th>
+                <th class="three wide">#dismiss</th>
+                <th class="three wide">#completed surveys (clicked)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for userdata in user_watches %}
+            <tr>
+                <td>
+                    {% if perms.base.manage_curriculum %}
+                    <a href={% url 'socialusers:detail' userdata.socialuser.id %}>{{ userdata.socialuser.id }}</a>
+                    {% else %}
+                    {{ userdata.socialuser.id }}
+                    {% endif %}
+                </td>
+                <td>{{ userdata.socialuser.user_id }}</td>
+                <td>{{ userdata.watch_count }}</td>
+                <td>{{ userdata.dismiss_count }}</td>
+                <td>{{ userdata.completed_surveys }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
