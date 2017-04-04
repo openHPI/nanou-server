@@ -20,7 +20,7 @@
 <body>
     <div class="ui container">
         <div class="ui borderless main menu">
-            <a class="header item">nanou</a>
+            <a href="{% url 'base:landingpage' %}"class="header item">nanou</a>
             {% if perms.base.manage_curriculum %}
             <a href="{% url 'videos:list' %}" class="item">Videos</a>
             <a href="{% url 'groups:list' %}" class="item">Groups</a>
