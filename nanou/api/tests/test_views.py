@@ -21,7 +21,7 @@ class ApiViewCorrectPermissionsMixin(object):
             response_content = str(response_content, encoding='utf8')
         return json.loads(response_content)
 
-    def assertJSONDataVideoNames(self, response, video_names):
+    def assertJSONDataVideoNames(self, response, video_names, test_dependency_count=True):
         json_response = self.load_response_content(response)
         self.assertIn('data', json_response)
         self.assertTrue(all('attributes' in item for item in json_response['data']))
@@ -30,6 +30,8 @@ class ApiViewCorrectPermissionsMixin(object):
         self.assertTrue(all('stream_url' in item['attributes'] for item in json_response['data']))
         self.assertTrue(all('provider_name' in item['attributes'] for item in json_response['data']))
         self.assertTrue(all('tags' in item['attributes'] for item in json_response['data']))
+        if test_dependency_count:
+            self.assertTrue(all('dependency_count' in item['attributes'] for item in json_response['data']))
         response_names = [item['attributes']['name'] for item in json_response['data']]
         self.assertEqual(video_names, response_names)
 
@@ -101,7 +103,7 @@ class ApiViewCorrectPermissionsMixin(object):
             self.assertEqual(response.status_code, 204)
             response = self.client.get(reverse('api:history'))
             self.assertEqual(response.status_code, 200)
-            self.assertJSONDataVideoNames(response, history_videos)
+            self.assertJSONDataVideoNames(response, history_videos, test_dependency_count=False)
 
     def dismiss_and_history(self, video_name, history_videos):
         with NeoGraph() as graph:

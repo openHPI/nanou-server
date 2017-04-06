@@ -18,15 +18,16 @@ class NextVideosView(APIView):
     resource_name = 'videos'
 
     def get(self, request):
-        next_videos_with_weights = SocialUser.next_videos(request.user.id)
-        next_videos = [d[0] for d in next_videos_with_weights]
-        serializer = VideoSerializer(next_videos, many=True)
+        next_videos, context_data = SocialUser.next_videos(request.user.id)
+        serializer = VideoSerializer(next_videos, many=True, context=context_data)
 
         # track suggested videos
         now = datetime.datetime.now().isoformat()
         socialuser = SocialUser.user_for_django_user(request.user.id)
         with NeoGraph() as graph:
-            for video, weight in next_videos_with_weights:
+            for video in next_videos:
+                video_context = context_data.get(video.id)
+                weight = video_context.get('weight', -1) if video_context is not None else -1
                 graph.run('''
                     MATCH (u:SocialUser{id:{user_id}}), (v:Video{id:{video_id}})
                     CREATE (v)-[:WAS_SUGGESTED{weight: {weight}, date: {date}}]->(u)

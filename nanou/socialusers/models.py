@@ -57,7 +57,9 @@ class SocialUser(NeoModel):
                 WITH v1, cat, toFloat(coalesce(max(pref.weight), 0.5)) as prefw, toFloat(coalesce(AVG(toFloat(w.rating) * toFloat(b.weight)), 1)) as ratew
                 WITH v1, cat, prefw * ratew as catWeight
                 OPTIONAL MATCH (v1)-[belongs:BELONGS_TO]->(cat)
-                RETURN v1, toFloat(AVG(coalesce(belongs.weight, 0.1) * catWeight)) as weight
+                WITH v1, toFloat(AVG(coalesce(belongs.weight, 0.1) * catWeight)) as weight
+                OPTIONAL MATCH (v3:Video)-[:REQUIRES_VIDEO]->(v1)
+                RETURN v1, weight, COUNT(DISTINCT v3) as dep_count
                 ORDER BY weight DESC, tostring(v1.name)
                 LIMIT {limit}
             ''', {
@@ -66,7 +68,13 @@ class SocialUser(NeoModel):
                 'limit': limit,
             })
 
-            return [(Video.wrap(d['v1']), d['weight']) for d in cursor.data()]
+            data = [(Video.wrap(d['v1']), d['weight'], d['dep_count']) for d in cursor.data()]
+            videos = [d[0] for d in data]
+            context = {d[0].id: {
+                'weigth': d[1],
+                'dep_count': d[2],
+            } for d in data}
+            return videos, context
 
     @classmethod
     def watch_history(cls, user_id):

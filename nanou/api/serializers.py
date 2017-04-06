@@ -4,6 +4,7 @@ from surveys.models import Survey
 
 
 class VideoSerializer(serializers.Serializer):
+    dependency_count = serializers.SerializerMethodField()
     duration = serializers.IntegerField()
     license_name = serializers.SerializerMethodField()
     license_url = serializers.SerializerMethodField()
@@ -13,6 +14,12 @@ class VideoSerializer(serializers.Serializer):
     image_url = serializers.URLField()
     provider_name = serializers.CharField(max_length=100)
     tags = serializers.SerializerMethodField()
+
+    def get_dependency_count(self, obj):
+        data = self.context.get(obj.id)
+        if data:
+            return data.get('dep_count', 0)
+        return 0
 
     def get_license_name(self, obj):
         value = obj.license_name
