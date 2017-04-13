@@ -1,6 +1,8 @@
+from django.contrib.auth.models import User
+from django.db.models import Count
+
 from neo.utils import NeoGraph
 from socialusers.models import SocialUser
-from surveys.models import Survey
 from videos.models import Video
 
 
@@ -131,9 +133,17 @@ def user_watches():
             RETURN u, watch_count, COUNT(DISTINCT vd) as dismiss_count
             ORDER BY watch_count DESC, dismiss_count DESC
         ''')
-        return [{
+        stats = [{
             'socialuser': SocialUser.wrap(d['u']),
             'watch_count': d['watch_count'],
             'dismiss_count': d['dismiss_count'],
-            'completed_surveys': Survey.objects.filter(completed_by=SocialUser.wrap(d['u']).user_id).count()
+            # 'completed_surveys': Survey.objects.filter(completed_by=SocialUser.wrap(d['u']).user_id).count(),
         } for d in cursor.data()]
+        user_ids = set([stat['socialuser'].user_id for stat in stats])
+        completed_surveys_per_user = {
+            user.id: user.survey_count
+            for user in User.objects.filter(id__in=user_ids).annotate(survey_count=Count('completed_surveys'))
+        }
+        for stat in stats:
+            stat['completed_surveys'] = completed_surveys_per_user.get(stat['socialuser'].user_id, 0)
+        return stats
