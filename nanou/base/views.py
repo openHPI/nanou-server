@@ -9,10 +9,12 @@ from videos.models import Video
 
 @permission_required('base.manage_curriculum')
 def landingpage(request):
+    user_ids = [s.user_id for s in SocialUser.all()]
     return render(request, 'landingpage.html', {
         'video_count': len(list(Video.all())),
         'group_count': len(list(Group.all())),
-        'socialuser_count': len(list(SocialUser.all())),
+        'socialuser_count': len(set(user_ids)),
+        'socialuser_all_count': len(user_ids),
         'overall_suggestions_count': statistics.overall_suggestions_count(),
         'overall_suggestions_user_count': statistics.overall_suggestions_user_count(),
         'suggestions_user_count': statistics.suggestions_user_count(),
