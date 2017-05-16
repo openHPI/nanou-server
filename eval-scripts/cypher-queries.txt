@@ -1,0 +1,204 @@
+# user group distruibution
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+OPTIONAL MATCH (u:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE u.user_id = user_id
+WITH user_id, COLLECT(w) as activities
+WITH
+	user_id,
+	size(activities) as activity_count,
+	size([x in activities WHERE x.progress > 0]) as watch_count,
+	size([x in activities WHERE x.progress = 0]) as dismiss_count
+WITH
+	user_id,
+	activity_count,
+	watch_count,
+	dismiss_count,
+	CASE
+		WHEN activity_count = 0 THEN 1
+		ELSE 0
+	END as no_activity,
+	CASE
+		WHEN watch_count = 0 AND dismiss_count > 0 THEN 1
+		ELSE 0
+	END as only_dismiss,
+	CASE
+		WHEN watch_count > 0 THEN 1
+		ELSE 0
+	END as watch_and_dismiss
+RETURN SUM(watch_and_dismiss), SUM(only_dismiss), SUM(no_activity)
+
+# watch count of video by distinct users
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+MATCH (u:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND u.user_id = user_id
+WITH v, user_id, COUNT(w) as user_video_watch_count
+RETURN v, COUNT(user_id)
+
+
+# watch order by videos (table with percentage values, order: 1-10 + other, most watched videos)
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+MATCH (v:Video)
+OPTIONAL MATCH (u:SocialUser)-[w:WATCHED]->(v)
+WHERE w.progress > 0 AND u.user_id = user_id
+RETURN user_id, v.id, MIN(w.date)
+
+# further processing with python
+- determine user count and video count
+- 2d array (users / videos)
+- output
+video name  1   2   3   4   5   later
+foo         0.1 0.1 0.2 0.3 0.1 0.2
+
+# dependency count for videos
+MATCH (v1:Video)
+OPTIONAL MATCH (v1)-[r:REQUIRES_VIDEO*]->(v2:Video)
+RETURN v1.id as vid, size(COLLECT(DISTINCT v2)) as dep_count
+ORDER BY vid
+
+
+# watch count on day x (boxplots for days)
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+OPTIONAL MATCH (u:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND u.user_id = user_id
+WITH user_id, LEFT(w.date, 10) as dat
+WITH user_id, dat, COUNT(dat) as watch_count
+WHERE watch_count > 0
+RETURN user_id, dat, watch_count
+
+# watch count on day x + first_act
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+OPTIONAL MATCH (v:Video)-[ws:WAS_SUGGESTED]->(u:SocialUser)
+WHERE u.user_id = user_id
+WITH user_id, MIN(ws.date) as first_act
+OPTIONAL MATCH (su:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND su.user_id = user_id
+WITH user_id, first_act, LEFT(w.date, 10) as dat
+WITH user_id, first_act, dat, COUNT(dat) as watch_count
+WHERE watch_count > 0
+RETURN user_id, LEFT(first_act), dat, watch_count
+
+# watch count on day x | different videos (boxplot for days)
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+OPTIONAL MATCH (u:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND u.user_id = user_id
+WITH user_id, v.id as vid, LEFT(w.date, 10) as dat
+WITH user_id, dat, COUNT(DISTINCT vid) as watch_count
+WHERE watch_count > 0
+RETURN user_id, dat, watch_count
+
+# first activity (suggestion) by user
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+OPTIONAL MATCH (v:Video)-[ws:WAS_SUGGESTED]->(u:SocialUser)
+WHERE u.user_id = user_id
+RETURN user_id, MIN(ws.date) as first_act
+
+
+# usage duration (normal ditribution)
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+OPTIONAL MATCH (v:Video)-[ws:WAS_SUGGESTED]->(u:SocialUser)
+WHERE u.user_id = user_id
+RETURN user_id, MIN(ws.date) as first_act, MAX(ws.date) as last_act
+
+
+# days of usage
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+OPTIONAL MATCH (v:Video)-[ws:WAS_SUGGESTED]->(u:SocialUser)
+WHERE u.user_id = user_id
+WITH user_id, LEFT(ws.date, 10) as subdate
+WITH user_id, COUNT(DISTINCT subdate) as count
+WHERE count > 0
+RETURN count, COUNT(count)
+ORDER BY count
+
+
+# Rewatched videos (user, video)
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+MATCH (u)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND u.user_id = user_id
+WITH user_id, v.id as video_id, COUNT(w) as watch_count
+WHERE watch_count > 2
+RETURN user_id, video_id, watch_count as rewatch_count
+ORDER BY rewatch_count DESC
+
+# Rewatched videos (video)
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+MATCH (u)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND u.user_id = user_id
+WITH user_id, v.id as video_id, COUNT(w) as watch_count
+WHERE watch_count > 2
+RETURN video_id, COUNT(DISTINCT user_id), SUM(watch_count) as rewatch_count
+ORDER BY rewatch_count DESC
+
+
+# Prewatch dismiss
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+MATCH (u:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND u.user_id = user_id
+WITH user_id, v.id as video_id
+OPTIONAL MATCH (ud:SocialUser)-[wd:WATCHED]->(vd:Video)
+WHERE ud.user_id = user_id AND wd.progress = 0 AND vd.id = video_id
+WITH user_id, video_id, COUNT(wd) as pre_watch_dismiss, 1 as watch_count
+WITH video_id, SUM(watch_count) as sum_watch_count, SUM(pre_watch_dismiss) as sum_pre_watch_dismiss
+RETURN video_id, sum_watch_count, sum_pre_watch_dismiss, toFloat(sum_pre_watch_dismiss)/toFloat(sum_watch_count+sum_pre_watch_dismiss) as dismiss_quota
+ORDER BY dismiss_quota DESC
+
+# videos with only dismisses
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+MATCH (u:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE u.user_id = user_id
+WITH user_id, v.id as video_id, COLLECT(w) as watch_or_dismiss
+WHERE all(x in watch_or_dismiss WHERE x.progress = 0)
+WITH user_id, video_id, COUNT(watch_or_dismiss) as dismiss_count
+RETURN video_id, COUNT(DISTINCT user_id), SUM(dismiss_count) as sum_dismiss_count
+ORDER BY sum_dismiss_count DESC
+
+
+# watch activity times
+MATCH (u:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0
+RETURN w.date
+
+# suggest activity times
+MATCH (u:SocialUser)<-[w:WAS_SUGGESTED]-(v:Video)
+RETURN w.date
+
+
+# dismiss ratio
+MATCH (v:Video)
+OPTIONAL MATCH (uw:SocialUser)-[w:WATCHED]->(v)
+WHERE w.progress > 0
+WITH v, COUNT(DISTINCT uw.user_id) as watch_count
+OPTIONAL MATCH (ud:SocialUser)-[d:WATCHED]->(v)
+WHERE d.progress = 0
+WITH v, watch_count, COUNT(d) as dismiss_count
+RETURN v.id as vid, watch_count, dismiss_count,
+	CASE
+		WHEN dismiss_count = 0 THEN -1
+		ELSE toFloat(dismiss_count/toFloat(watch_count+dismiss_count))
+	END as ratio
+ORDER BY ratio DESC, watch_count DESC, dismiss_count DESC
+
+# pre-watch dismiss average (new)
+MATCH (uo:SocialUser)
+WITH DISTINCT uo.user_id as user_id
+MATCH (uw:SocialUser)-[w:WATCHED]->(v:Video)
+WHERE w.progress > 0 AND uw.user_id = user_id
+WITH user_id, v, 1 as watch_count
+MATCH (ud:SocialUser)-[d:WATCHED]->(v)
+WHERE d.progress = 0 AND ud.user_id = user_id
+WITH user_id, v.id as vid, watch_count, COUNT(d) as dismiss_count
+RETURN vid, SUM(watch_count), SUM(dismiss_count), AVG(dismiss_count) as avg_count, stDev(dismiss_count)
+ORDER BY avg_count DESC
